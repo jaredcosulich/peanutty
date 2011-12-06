@@ -3,8 +3,8 @@ fs = require('fs')
 
 
 task 'build:client', 'Build the development environment', ->
-    source = 'src/client'
-    target = 'build/client'
+    source = './src/client'
+    target = './build/client'
     fs.mkdir target, 0755, (err) ->
         buildClientJS source, target, () ->
             buildClientCSS source, target, () ->
@@ -109,7 +109,7 @@ task 'build:server', 'Compile server .coffee files to .js', ->
         "mkdir -p #{target}"
         "coffee --compile --bare --output #{target} #{source}/*.coffee",
         "coffee --compile --bare --output #{target}/lib #{source}/lib/*.coffee",
-        "coffee --compile --bare --output #{target}/api #{source}/api/*.coffee",
+        # "coffee --compile --bare --output #{target}/api #{source}/api/*.coffee",
         "ln -sf ../../#{source}/package.json #{target}",
         "cd #{target}",
         'npm install',
@@ -188,9 +188,6 @@ buildClientJS = (source, target, callback) ->
 buildClientCSS = (source, target, callback) ->
     cmds = [
         "mkdir -p #{target}/css",
-        "ln -sf ../../../#{source}/css/images #{target}/css/",
-        "ln -sf ../../../#{source}/css/fonts #{target}/css/",
-        "ln -sf ../../../#{source}/css/animations #{target}/css/",
         "lessc #{source}/css/all.less #{target}/css/all.css",
     ]
     

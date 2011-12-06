@@ -8,4 +8,10 @@
         renderView: () ->
             @el.html(@template.render())
             
+            
+    $.route.add
+        '': () ->
+            $('#content').view
+                name: 'Home'
+                data: {}  
 )(ender)

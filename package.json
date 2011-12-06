@@ -1,6 +1,6 @@
 {
     "private": true,
-    "name": "mingl",
+    "name": "peanutty",
     "version": "0.0.0",
     "devDependencies": {
         "coffee-script": "latest",

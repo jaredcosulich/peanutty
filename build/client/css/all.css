@@ -1,0 +1,274 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+dd,
+dl,
+dt,
+li,
+ol,
+ul,
+fieldset,
+form,
+label,
+legend,
+button,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 100%;
+  line-height: 1;
+  font-family: inherit;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+ol, ul {
+  list-style: none;
+}
+q:before,
+q:after,
+blockquote:before,
+blockquote:after {
+  content: "";
+}
+header,
+section,
+footer,
+article,
+aside {
+  display: block;
+}
+.icon-font {
+  font-family: 'Mingl Icons';
+  -webkit-font-smoothing: antialiased;
+}
+.clearfix {
+  zoom: 1;
+}
+.clearfix:before, .clearfix:after {
+  clear: both;
+  display: table;
+  content: "";
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.fill {
+  width: 100%;
+  height: 100%;
+}
+.behind {
+  z-index: -1;
+}
+.front {
+  z-index: 1;
+}
+.cover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+@font-face {
+  font-family: 'Mingl Icons';
+  src: url('fonts/icons-webfont.eot');
+  src: url('fonts/icons-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/icons-webfont.woff') format('woff'), url('fonts/icons-webfont.ttf') format('truetype'), url('fonts/icons-webfont.svg#MinglIcons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Museo: A font by Jos Buivenga (exljbris) -> www.exljbris.com */@font-face {
+  font-family: 'Museo';
+  src: url('fonts/museo500-regular-webfont.eot');
+  src: url('fonts/museo500-regular-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/museo500-regular-webfont.woff') format('woff'), url('fonts/museo500-regular-webfont.ttf') format('truetype'), url('fonts/museo500-regular-webfont.svg#webfontnuwysBIH') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo';
+  src: url('fonts/museo300-regular-webfont.eot');
+  src: url('fonts/museo300-regular-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/museo300-regular-webfont.woff') format('woff'), url('fonts/museo300-regular-webfont.ttf') format('truetype'), url('fonts/museo300-regular-webfont.svg#webfontMmwAEq4Z') format('svg');
+  font-weight: lighter;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo';
+  src: url('fonts/museo700-regular-webfont.eot');
+  src: url('fonts/museo700-regular-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/museo700-regular-webfont.woff') format('woff'), url('fonts/museo700-regular-webfont.ttf') format('truetype'), url('fonts/museo700-regular-webfont.svg#webfonthvYIakly') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('fonts/museosans500-webfont.eot');
+  src: url('fonts/museosans500-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/museosans500-webfont.woff') format('woff'), url('fonts/museosans500-webfont.ttf') format('truetype'), url('fonts/museosans500-webfont.svg#webfont1H1968T3') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('fonts/museosans500_italic-webfont.eot');
+  src: url('fonts/museosans500-italic-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/museosans500_italic-webfont.woff') format('woff'), url('fonts/museosans500_italic-webfont.ttf') format('truetype'), url('fonts/museosans500_italic-webfont.svg#webfontq2OnKNVm') format('svg');
+  font-weight: normal;
+  font-style: italic;
+}
+body {
+  font-weight: lighter;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 18px;
+  font-family: 'Museo', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+  color: #333333;
+  text-rendering: optimizeLegibility;
+}
+a {
+  color: #66aa44;
+  text-decoration: none;
+  cursor: pointer;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:active, a:focus {
+  outline: none;
+}
+h1 {
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 24px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+h2 {
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 22px;
+}
+h3 {
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+}
+h4 {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+}
+h5 {
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 20px;
+}
+small {
+  font-size: 0.8em;
+  color: #888888;
+}
+strong {
+  font-weight: bold;
+}
+em {
+  font-style: italic;
+}
+p {
+  margin-bottom: 20px;
+}
+address {
+  font-style: normal;
+  line-height: 18px;
+  margin-bottom: 20px;
+}
+label,
+input,
+select,
+textarea,
+.option-label {
+  font-weight: lighter;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 18px;
+  font-family: 'Museo Sans', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+  color: #666666;
+  vertical-align: middle;
+}
+label:active,
+input:active,
+select:active,
+textarea:active,
+.option-label:active,
+label:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.option-label:focus {
+  outline: none;
+}
+img {
+  -ms-interpolation-mode: bicubic;
+  image-rendering: optimizeQuality;
+}
+#header {
+  background-color: #4f3526;
+  padding: 12px;
+  color: white;
+}
+#header h1 {
+  margin-bottom: 0;
+}
+#content {
+  padding: 12px;
+}
+#screen {
+  width: 66%;
+  height: 600px;
+  border-right: 1px solid #4f3526;
+  overflow: hidden;
+  float: left;
+}
+#console {
+  width: 33%;
+  float: right;
+}

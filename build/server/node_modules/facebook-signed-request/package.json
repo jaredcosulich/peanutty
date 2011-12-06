@@ -1,0 +1,26 @@
+{
+    "name" : "facebook-signed-request",
+    "description" : "Facebook Signed Request de- and encoder for node.js",
+    "version" : "0.0.2",
+    "main" : "./index",
+    "author" : "Patrick Huesler <patrick.huesler@googlemail.com>",
+    "contributors" : [
+        {
+            "name" : "Patrick Huesler",
+            "email" : "patrick.huesler@googlemail.com"
+        }
+    ],
+    "repository" : {
+        "type" : "git",
+        "url" : "http://github.com/wooga/node-facebook-signed-request.git"
+    },
+    "bugs" : {
+        "web" : "http://github.com/wooga/node-facebook-signed-request/issues"
+    },
+    "licenses" : [
+        {
+            "type": "MIT",
+            "url": "http://github.com/wooga/node-facebook-signed-request/master/LICENSE"
+        }
+    ]
+}
