@@ -1,0 +1,5 @@
+ec2-run-instances ami-74f0061d -t t1.micro -k mingl
+ec2-allocate-address
+ec2-associate-address -i i-yourinstance XXX.XXX.XXX.XXX
+
+sshfs -o IdentityFile=~/.ec2/mingl.pem ec2-user@50.17.243.158:mingl ~/mingl -oauto_cache,reconnect,volname=mingl

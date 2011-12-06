@@ -1,0 +1,85 @@
+// Colors
+@black: #000;
+@white: #fff;
+@off-white: #fbfcfd;
+@shade: #f8f8f8;
+@lighter-gray: #aaa;
+@light-gray: #999;
+@gray: #888;
+@dark-gray: #777;
+@darker-gray: #666;
+@red: #f86;
+@orange: #f04227;
+@green: #8c6;
+@blue: #6ca3e8;
+@dark-blue: #064780;
+
+@logo-light-blue: #c2eef2;
+@logo-dark-blue: #266999;
+@logo-pink: #f2a2d8;
+
+@body-bg: #2780c7;
+@text-color: #333;
+@link-color: #6a4;
+@input-color: #666;
+@placeholder-color: #ccc;
+
+// Color Scheme
+@main-color:         @body-bg;               // Set a base color
+@complement:        spin(@main-color, 180);  // Determine a complementary color
+@split1:            spin(@main-color, 158);  // Split complements
+@split2:            spin(@main-color, -158);
+@triad1:            spin(@main-color, 135);  // Triads colors
+@triad2:            spin(@main-color, -135);
+@tetra1:            spin(@main-color, 90);   // Tetra colors
+@tetra2:            spin(@main-color, -90);
+@analog1:           spin(@main-color, 22);   // Analogs colors
+@analog2:           spin(@main-color, -22);
+
+// Typography
+@serif-font-family: 'Museo', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+@sans-serif-font-family: 'Museo Sans', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+
+@body-font-style: normal;
+@body-font-weight: lighter;
+@body-font-size: 12px;
+@body-line-height: 18px;
+@body-font-family: @serif-font-family;
+
+@h1-font-size: 24px;
+@h2-font-size: 18px;
+@h3-font-size: 16px;
+@h4-font-size: 14px;
+@h5-font-size: 13px;
+
+@h1-font-weight: bold;
+@h2-font-weight: normal;
+@h3-font-weight: normal;
+@h4-font-weight: normal;
+@h5-font-weight: normal;
+
+@h1-line-height: 24px;
+@h2-line-height: 22px;
+@h3-line-height: 24px;
+@h4-line-height: 22px;
+@h5-line-height: 20px;
+
+
+// Effects
+@default-radius: 3px;
+@default-text-shadow-blur: 1px;
+@default-text-shadow-alpha: 0.24;
+@default-box-shadow-blur: 6px;
+@default-box-shadow-alpha: 0.24;
+@default-box-highlight-blur: 6px;
+@default-box-highlight-alpha: 0.24;
+@default-opacity: 0.9;
+@default-shade: 0.24;
+
+// Grid
+@grid-columns: 16;
+@grid-column-width: 40px;
+@grid-gutter-width: 20px;
+@content-width: (@grid-columns * @grid-column-width) + (@grid-gutter-width * (@grid-columns - 1));
+
+@default-margin: 20px;

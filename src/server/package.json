@@ -1,0 +1,12 @@
+{
+    "private": true,
+    "name": "mingl-client",
+    "version": "0.0.0",
+    "directories": { "lib" : "lib" },
+    "dependencies": {
+        "bcrypt": "*",
+        "cookies": "*",
+        "riak-js": "*",
+        "facebook-signed-request": "*"
+    }
+}

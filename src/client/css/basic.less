@@ -1,0 +1,82 @@
+// Basic Rules
+body {
+    .serif-font;
+    color: @text-color;
+    text-rendering: optimizeLegibility;
+}
+
+a {
+    color: @link-color;
+    text-decoration: none;
+    cursor: pointer;
+    
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:active, &:focus {
+        outline: none;
+    }
+}
+
+h1 {
+    font-weight: @h1-font-weight;
+    font-size: @h1-font-size;
+    line-height: @h1-line-height;
+    margin-bottom: @h1-line-height;
+    text-align: center;
+}
+
+h2 {
+    font-weight: @h2-font-weight;
+    font-size: @h2-font-size;
+    line-height: @h2-line-height;
+}
+
+h3 {
+    font-weight: @h3-font-weight;
+    font-size: @h3-font-size;
+    line-height: @h3-line-height;
+}
+
+h4 {
+    font-weight: @h4-font-weight;
+    font-size: @h4-font-size;
+    line-height: @h4-line-height;
+}
+
+h5 {
+    font-weight: @h5-font-weight;
+    font-size: @h5-font-size;
+    line-height: @h5-line-height;
+}
+
+small {
+    font-size: 0.8em;
+    color: @gray;
+}
+    
+strong { font-weight: bold; }
+em { font-style: italic; }
+p { margin-bottom: @default-margin; }
+
+address {
+    font-style: normal;
+    line-height: @body-line-height;
+    margin-bottom: @default-margin;
+}
+
+label, input, select, textarea, .option-label {
+    .sans-serif-font(14px);
+    color: @input-color;
+    vertical-align: middle;
+
+    &:active, &:focus {
+        outline: none;
+    }
+}
+
+img {
+    -ms-interpolation-mode: bicubic;
+    image-rendering: optimizeQuality;
+}
