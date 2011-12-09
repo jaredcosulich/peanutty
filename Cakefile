@@ -25,7 +25,7 @@ task 'build:ender', 'Build the ender compiled library', ->
     
         ['node_modules/.bin/ender', 'build',
          'es5-basic', 'domready', 'sel', 'bonzo', 'bean',
-         'morpheus', 'reqwest', 'hashchange', 'route',
+         'morpheus', 'reqwest', 'hashchange', 'route', '~/Src/coffee-box2d',
          'timeout', 'upload', 'wings', 'jar', 'ender-json'].join(' '),
          
          'cd -',

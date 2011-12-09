@@ -261,12 +261,12 @@ img {
 #content {
   padding: 12px;
 }
-#screen {
+#canvas {
   width: 66%;
-  height: 600px;
+  height: 500px;
+  background-color: #eee;
   border-right: 1px solid #4f3526;
-  overflow: hidden;
-  float: left;
+  margin-bottom: 60px;
 }
 #console {
   width: 33%;
