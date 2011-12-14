@@ -23,11 +23,3 @@ exports.b2TimeStep = b2TimeStep = b2TimeStep = (function() {
   b2TimeStep.prototype.iterations = 0;
   return b2TimeStep;
 })();
-/*
-var b2TimeStep = Class.create();
-b2TimeStep.prototype = 
-{
-	dt: null,
-	inv_dt: null,
-	iterations: 0,
-	initialize: function() {}};*/

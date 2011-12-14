@@ -262,8 +262,6 @@ img {
   padding: 12px;
 }
 #canvas {
-  width: 66%;
-  height: 500px;
   background-color: #eee;
   border-right: 1px solid #4f3526;
   margin-bottom: 60px;

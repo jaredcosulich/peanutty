@@ -21,13 +21,3 @@ exports.b2TimeStep = b2TimeStep = class b2TimeStep
     dt: null
     inv_dt: null
     iterations: 0
-
-
-###
-var b2TimeStep = Class.create();
-b2TimeStep.prototype = 
-{
-	dt: null,
-	inv_dt: null,
-	iterations: 0,
-	initialize: function() {}};

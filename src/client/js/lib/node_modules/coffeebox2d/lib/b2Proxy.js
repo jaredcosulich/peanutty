@@ -37,24 +37,3 @@ exports.b2Proxy = b2Proxy = b2Proxy = (function() {
   b2Proxy.prototype.userData = null;
   return b2Proxy;
 })();
-/*
-var b2Proxy = Class.create()
-b2Proxy.prototype = {
-	GetNext: function(){ return @lowerBounds[0] },
-	SetNext: function(next) { @lowerBounds[0] = next },
-
-	IsValid: function(){ return @overlapCount != b2BroadPhase.b2_invalid },
-
-	lowerBounds: [(0), (0)],
-	upperBounds: [(0), (0)],
-	overlapCount: 0,
-	timeStamp: 0,
-
-	userData: null,
-
-	initialize: function() {
-		// initialize instance variables for references
-		@lowerBounds = [(0), (0)]
-		@upperBounds = [0), (0)]
-		//
-}}*/

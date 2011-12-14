@@ -22,10 +22,3 @@ exports.b2BufferedPair = b2BufferedPair = b2BufferedPair = (function() {
   b2BufferedPair.prototype.proxyId2 = 0;
   return b2BufferedPair;
 })();
-/*
-var b2BufferedPair = Class.create();
-b2BufferedPair.prototype = {
-	proxyId1: 0,
-	proxyId2: 0,
-
-	initialize: function() {}}*/

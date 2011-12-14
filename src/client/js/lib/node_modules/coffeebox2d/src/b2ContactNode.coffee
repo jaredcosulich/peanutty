@@ -23,13 +23,3 @@ exports.b2ContactNode = b2ContactNode = class b2ContactNode
     prev: null
     next: null
     
-
-###
-var b2ContactNode = Class.create();
-b2ContactNode.prototype = 
-{
-	other: null,
-	contact: null,
-	prev: null,
-	next: null,
-	initialize: function() {}};

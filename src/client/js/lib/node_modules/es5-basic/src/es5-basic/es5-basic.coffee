@@ -122,7 +122,7 @@ if not Array.prototype.lastIndexOf
 
 # Object
 if not Object.keys
-    Object.keys = (obj) -> (key for key of obj if Object.prototype.hasOwnProperty.call(obj, key))  
+    Object.keys = (obj) -> (key for own key of obj)  
 
 # Date
 if not Date.now

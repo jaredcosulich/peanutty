@@ -41,27 +41,3 @@ exports.b2Bound = b2Bound = b2Bound = (function() {
   b2Bound.prototype.stabbingCount = 0;
   return b2Bound;
 })();
-/*
-var b2Bound = Class.create()
-b2Bound.prototype = {
-	IsLower: function(){ return (@value & 1) == 0 },
-	IsUpper: function(){ return (@value & 1) == 1 },
-	Swap: function(b){
-		var tempValue = @value
-		var tempProxyId = @proxyId
-		var tempStabbingCount = @stabbingCount
-
-		@value = b.value
-		@proxyId = b.proxyId
-		@stabbingCount = b.stabbingCount
-
-		b.value = tempValue
-		b.proxyId = tempProxyId
-		b.stabbingCount = tempStabbingCount
-	},
-
-	value: 0,
-	proxyId: 0,
-	stabbingCount: 0,
-
-	initialize: function() {}}*/

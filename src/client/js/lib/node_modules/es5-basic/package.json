@@ -1,6 +1,6 @@
 {
     "name": "es5-basic",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "A basic set of ECMAScript 5 shim methods for older browsers",
     "keywords": ["ender", "ecmascript5", "es5", "shim"],
     "author": "Andrew McCollum <amccollum@gmail.com>",
