@@ -52,41 +52,41 @@ exports.b2Body = b2Body = class b2Body
         @m_shapeCount = 0
         @m_center = new b2Vec2(0.0, 0.0)
         for i in [0...b2Settings.b2_maxShapesPerBody]
-        	sd = bd.shapes[i]
-        	break if (sd == null) 
-        	massData = massDatas[ i ]
-        	sd.ComputeMass(massData)
-        	@m_mass += massData.mass
-        	@m_center.x += massData.mass * (sd.localPosition.x + massData.center.x)
-        	@m_center.y += massData.mass * (sd.localPosition.y + massData.center.y)
-        	++@m_shapeCount
+            sd = bd.shapes[i]
+            break if (sd == null) 
+            massData = massDatas[ i ]
+            sd.ComputeMass(massData)
+            @m_mass += massData.mass
+            @m_center.x += massData.mass * (sd.localPosition.x + massData.center.x)
+            @m_center.y += massData.mass * (sd.localPosition.y + massData.center.y)
+            ++@m_shapeCount
 
         # Compute center of mass, and shift the origin to the COM.
         if @m_mass > 0.0
-        	@m_center.Multiply( 1.0 / @m_mass )
-        	@m_position.Add( b2Math.b2MulMV(@m_R, @m_center) )
+            @m_center.Multiply( 1.0 / @m_mass )
+            @m_position.Add( b2Math.b2MulMV(@m_R, @m_center) )
         else
-        	@m_flags |= b2Body.e_staticFlag
+            @m_flags |= b2Body.e_staticFlag
 
         # Compute the moment of inertia.
         @m_I = 0.0
         for i in [0...@m_shapeCount]
-        	sd = bd.shapes[i]
-        	massData = massDatas[ i ]
-        	@m_I += massData.I
-        	r = b2Math.SubtractVV( b2Math.AddVV(sd.localPosition, massData.center), @m_center )
-        	@m_I += massData.mass * b2Math.b2Dot(r, r)
+            sd = bd.shapes[i]
+            massData = massDatas[ i ]
+            @m_I += massData.I
+            r = b2Math.SubtractVV( b2Math.AddVV(sd.localPosition, massData.center), @m_center )
+            @m_I += massData.mass * b2Math.b2Dot(r, r)
 
         if @m_mass > 0.0
-        	@m_invMass = 1.0 / @m_mass
+            @m_invMass = 1.0 / @m_mass
         else
-        	@m_invMass = 0.0
+            @m_invMass = 0.0
 
         if @m_I > 0.0 && bd.preventRotation == false
-        	@m_invI = 1.0 / @m_I
+            @m_invI = 1.0 / @m_I
         else
-        	@m_I = 0.0
-        	@m_invI = 0.0
+            @m_I = 0.0
+            @m_invI = 0.0
 
         # Compute the center of mass velocity.
         @m_linearVelocity = b2Math.AddVV(bd.linearVelocity, b2Math.b2CrossFV(bd.angularVelocity, @m_center))
@@ -100,10 +100,10 @@ exports.b2Body = b2Body = class b2Body
         # Create the shapes.
         @m_shapeList = null
         for i in [0...@m_shapeCount]
-        	sd = bd.shapes[i]
-        	shape = b2Shape.Create(sd, @, @m_center)
-        	shape.m_next = @m_shapeList
-        	@m_shapeList = shape
+            sd = bd.shapes[i]
+            shape = b2Shape.Create(sd, @, @m_center)
+            shape.m_next = @m_shapeList
+            @m_shapeList = shape
 
         @m_sleepTime = 0.0
         @m_flags |= b2Body.e_allowSleepFlag if bd.allowSleep 
@@ -111,8 +111,8 @@ exports.b2Body = b2Body = class b2Body
         @m_flags |= b2Body.e_sleepFlag if bd.isSleeping 
 
         if (@m_flags & b2Body.e_sleepFlag) || @m_invMass == 0.0
-        	@m_linearVelocity.Set(0.0, 0.0)
-        	@m_angularVelocity = 0.0
+            @m_linearVelocity.Set(0.0, 0.0)
+            @m_angularVelocity = 0.0
 
         @m_userData = bd.userData
         

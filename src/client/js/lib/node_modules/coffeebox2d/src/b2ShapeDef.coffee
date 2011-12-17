@@ -63,7 +63,7 @@ exports.b2ShapeDef = b2ShapeDef = class b2ShapeDef
             when b2Shape.e_polyShape
                 poly = @
                 b2Shape.PolyMass(massData, poly.vertices, poly.vertexCount, @density)
-
+                
             else
                 massData.mass = 0.0
                 massData.center.Set(0.0, 0.0)

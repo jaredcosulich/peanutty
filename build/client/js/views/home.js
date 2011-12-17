@@ -18,168 +18,251 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvasElm, canvasHeight, canvasLeft, canvasTop, canvasWidth, continueFreeformShape, createBall, createBox, createGround, createHelloWorld, createPoly, createWorld, ctx, drawFreeformShape, drawShape, drawWorld, endFreeformShape, endShape, redrawCurrentShape, startFreeformShape, startShape, step, world;
+        var canvasElm, concaveShape, continueFreeformShape, createBox, createFixture, createGround, createHelloWorld, createLetter, createPoly, createRandomObjects, ctx, drawFreeformShape, endFreeformShape, endShape, initDraw, initWorld, noZigZag, redrawCurrentShape, runSimulation, startFreeformShape, startShape;
         var _this = this;
         this.el.html(this.template.render());
-        drawWorld = function(world, context) {
-          var b, j, s, _results;
-          j = world.m_jointList;
-          while (j != null) {
-            drawJoint(j, context);
-            j = j.m_next;
+        runSimulation = function(context) {
+          var update;
+          window.requestAnimFrame = (function() {
+            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback, element) {
+              return $.timeout(1000 / 60, callback);
+            };
+          })();
+          update = function() {
+            _this.world.Step(1 / 60, 10, 10);
+            _this.world.DrawDebugData();
+            _this.world.ClearForces();
+            requestAnimFrame(update);
+            return redrawCurrentShape(context);
+          };
+          return requestAnimFrame(update);
+        };
+        initWorld = function() {
+          return _this.world = new b2d.Dynamics.b2World(new b2d.Common.Math.b2Vec2(0, 10), true);
+        };
+        initDraw = function(context) {
+          _this.debugDraw = new b2d.Dynamics.b2DebugDraw();
+          _this.debugDraw.SetSprite(context);
+          _this.debugDraw.SetDrawScale(_this.scale);
+          _this.debugDraw.SetFillAlpha(0.3);
+          _this.debugDraw.SetLineThickness(1.0);
+          _this.debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit);
+          return _this.world.SetDebugDraw(_this.debugDraw);
+        };
+        createGround = function() {
+          var bodyDef, fixDef;
+          fixDef = fixDef = createFixture();
+          bodyDef = new b2d.Dynamics.b2BodyDef;
+          bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody;
+          bodyDef.position.x = canvas.width / 2 / _this.scale;
+          bodyDef.position.y = canvas.height / _this.scale;
+          fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
+          fixDef.shape.SetAsBox((600 / _this.scale) / 2, (10 / _this.scale) / 2);
+          return _this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        };
+        createLetter = function(letter, x, y) {
+          switch (letter) {
+            case "H":
+              createBox(x - 40, y, 10, 20);
+              createBox(x, y, 10, 20);
+              createBox(x - 20, y - 25, 30, 5);
+              createBox(x - 40, y - 50, 10, 20);
+              return createBox(x, y - 50, 10, 20);
+            case "E":
+              createBox(x, y, 30, 5);
+              createBox(x - 20, y - 15, 10, 10);
+              createBox(x - 10, y - 30, 20, 5);
+              createBox(x - 20, y - 45, 10, 10);
+              createBox(x, y - 60, 30, 5);
+              return createBox(x - 30, y - 69, 6, 2, {
+                density: 10
+              });
+            case "L":
+              createBox(x, y, 20, 5);
+              return createBox(x - 15, y - 35, 5, 30);
+            case "O":
+              createBox(x - 15, y, 20, 5);
+              createBox(x - 30, y - 30, 5, 25);
+              createBox(x, y - 30, 5, 25);
+              return createBox(x - 15, y - 60, 20, 5);
+            case "W":
+              createBox(x - 30, y, 40, 5);
+              createBox(x - 60, y - 45, 10, 40);
+              createBox(x, y - 45, 10, 40);
+              return createBox(x - 30, y - 20, 5, 15);
+            case "R":
+              createBox(x - 30, y - 15, 5, 30);
+              createBox(x - 7, y, 5, 15);
+              createBox(x - 10, y - 20, 15, 5);
+              createBox(x, y - 35, 5, 10);
+              return createBox(x - 15, y - 50, 20, 5);
+            case "D":
+              createBox(x - 15, y, 20, 5);
+              createBox(x - 30, y - 30, 5, 25);
+              createBox(x, y - 30, 5, 25);
+              return createBox(x - 15, y - 60, 20, 5);
           }
-          b = world.m_bodyList;
-          _results = [];
-          while (b != null) {
-            s = b.GetShapeList();
-            while (s) {
-              drawShape(s, context);
-              s = s.GetNext();
+        };
+        createBox = function(x, y, width, height, options) {
+          var bodyDef, fixDef;
+          if (options == null) options = null;
+          bodyDef = new b2d.Dynamics.b2BodyDef;
+          bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
+          fixDef = createFixture(options);
+          fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
+          fixDef.shape.SetAsBox(width / _this.scale, height / _this.scale);
+          bodyDef.position.x = x / _this.scale;
+          bodyDef.position.y = y / _this.scale;
+          return _this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        };
+        createPoly = function(path) {
+          var body, bodyDef, fixDef, point, scaledPath;
+          bodyDef = new b2d.Dynamics.b2BodyDef;
+          bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
+          fixDef = createFixture({
+            density: 10
+          });
+          fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
+          scaledPath = (function() {
+            var _i, _len, _results, _step;
+            _results = [];
+            for (_i = 0, _len = path.length, _step = Math.ceil(path.length / 10); _i < _len; _i += _step) {
+              point = path[_i];
+              _results.push(new b2d.Common.Math.b2Vec2(point.x / this.scale, point.y / this.scale));
             }
-            _results.push(b = b.m_next);
+            return _results;
+          }).call(_this);
+          fixDef.shape.SetAsArray(scaledPath, scaledPath.length);
+          body = _this.world.CreateBody(bodyDef);
+          body.CreateFixture(fixDef);
+          bodyDef.position.x = body.GetWorldCenter().x;
+          return bodyDef.position.y = body.GetWorldCenter().y;
+        };
+        concaveShape = function(path) {
+          var concave, dir, leftsAndRights, nextPoint, point, prevPoint, testPoint, upsAndDowns, _i, _j, _len, _len2, _ref, _ref2, _results;
+          concave = [path[0]];
+          upsAndDowns = [];
+          leftsAndRights = [];
+          prevPoint = path[0];
+          _ref = path.slice(1, path.length + 1 || 9e9);
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            point = _ref[_i];
+            if (point.y < prevPoint.y && upsAndDowns[upsAndDowns.length - 1] !== 0) {
+              if (((function() {
+                var _j, _len2, _results;
+                _results = [];
+                for (_j = 0, _len2 = upsAndDowns.length; _j < _len2; _j++) {
+                  dir = upsAndDowns[_j];
+                  if (dir === 0) _results.push(downs);
+                }
+                return _results;
+              })()).length >= 2) {
+                continue;
+              }
+              upsAndDowns.push(0);
+            } else if (point.y > prevPoint.y && upsAndDowns[upsAndDowns.length - 1] !== 1) {
+              if (((function() {
+                var _j, _len2, _results;
+                _results = [];
+                for (_j = 0, _len2 = upsAndDowns.length; _j < _len2; _j++) {
+                  dir = upsAndDowns[_j];
+                  if (dir === 1) _results.push(ups);
+                }
+                return _results;
+              })()).length >= 2) {
+                continue;
+              }
+              upsAndDowns.push(1);
+            }
+            if (point.x < prevPoint.x && leftsAndRights[leftsAndRights.length - 1] !== 0) {
+              if (((function() {
+                var _j, _len2, _results;
+                _results = [];
+                for (_j = 0, _len2 = leftsAndRights.length; _j < _len2; _j++) {
+                  dir = leftsAndRights[_j];
+                  if (dir === 0) _results.push(lefts);
+                }
+                return _results;
+              })()).length >= 2) {
+                continue;
+              }
+              leftsAndRights.push(0);
+            } else if (point.x > prevPoint.x && leftsAndRights[leftsAndRights.length - 1] !== 1) {
+              if (((function() {
+                var _j, _len2, _results;
+                _results = [];
+                for (_j = 0, _len2 = leftsAndRights.length; _j < _len2; _j++) {
+                  dir = leftsAndRights[_j];
+                  if (dir === 1) _results.push(rights);
+                }
+                return _results;
+              })()).length >= 2) {
+                continue;
+              }
+              leftsAndRights.push(1);
+            }
+            concave.push(point);
+          }
+          return concave;
+          concaveShape = path.slice(0, 2);
+          _ref2 = path.slice(2, path.length + 1 || 9e9);
+          _results = [];
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            nextPoint = _ref2[_j];
+            testPoint = concaveShape[concaveShape.length];
+            prevPoint = concaveShape[concaveShape.length - 1];
+            if (noZigZag(prevPoint, testPoint, nextPoint)) {
+              _results.push(concaveShape.push(nextPoint));
+            } else {
+              _results.push(void 0);
+            }
           }
           return _results;
         };
-        createGround = function(world) {
-          var body, groundBd, groundSd;
-          groundSd = new b2d.b2BoxDef();
-          groundSd.extents.Set(400, 30);
-          groundSd.restitution = 0.0;
-          groundBd = new b2d.b2BodyDef();
-          groundBd.AddShape(groundSd);
-          groundBd.position.Set(400, 470);
-          body = world.CreateBody(groundBd);
-          return body;
+        noZigZag = function(prevPoint, testPoint, nextPoint, comingFrom) {
+          var horizChange, vertChange;
+          horizChange = (testPoint.x < prevPoint.x && testPoint.x < nextPoint.x) || (testPoint.x > prevPoint.x && testPoint.x > nextPoint.x);
+          return vertChange = (testPoint.y < prevPoint.y && testPoint.y < nextPoint.y) || (testPoint.y > prevPoint.y && testPoint.y > nextPoint.y);
         };
-        createWorld = function() {
-          var doSleep, gravity, world, worldAABB;
-          worldAABB = new b2d.b2AABB();
-          worldAABB.minVertex.Set(-1000, -1000);
-          worldAABB.maxVertex.Set(1000, 1000);
-          gravity = new b2d.b2Vec2(0, 300);
-          doSleep = true;
-          world = new b2d.b2World(worldAABB, gravity, doSleep);
-          createGround(world);
-          return world;
+        createFixture = function(options) {
+          var fixDef;
+          if (options == null) options = {};
+          fixDef = new b2d.Dynamics.b2FixtureDef;
+          fixDef.density = options.density || 1.0;
+          fixDef.friction = options.friction || 0.5;
+          fixDef.restitution = options.restitution || 0.2;
+          return fixDef;
+        };
+        createRandomObjects = function() {
+          var bodyDef, fixDef, i, _results;
+          fixDef = createFixture();
+          bodyDef = new b2d.Dynamics.b2BodyDef;
+          bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
+          _results = [];
+          for (i = 0; i < 150; i++) {
+            if (Math.random() > 0.5) {
+              fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
+              fixDef.shape.SetAsBox(Math.random() + 0.1, Math.random() + 0.1);
+            } else {
+              fixDef.shape = new b2d.Collision.Shapes.b2CircleShape(Math.random() + 0.1);
+            }
+            bodyDef.position.x = Math.random() * 25;
+            bodyDef.position.y = Math.random() * 10;
+            _results.push(_this.world.CreateBody(bodyDef).CreateFixture(fixDef));
+          }
+          return _results;
         };
         createHelloWorld = function() {
-          createBox(world, 50, 420, 10, 20, false);
-          createBox(world, 90, 420, 10, 20, false);
-          createBox(world, 70, 395, 30, 5, false);
-          createBox(world, 50, 370, 10, 20, false);
-          createBox(world, 90, 370, 10, 20, false);
-          createBox(world, 140, 435, 30, 5, false);
-          createBox(world, 120, 420, 10, 10, false);
-          createBox(world, 130, 405, 20, 5, false);
-          createBox(world, 120, 390, 10, 10, false);
-          createBox(world, 140, 375, 30, 5, true);
-          createBox(world, 200, 435, 20, 5, false);
-          createBox(world, 185, 400, 5, 30, false);
-          createBox(world, 250, 435, 20, 5, false);
-          createBox(world, 235, 400, 5, 30, false);
-          createBox(world, 300, 435, 20, 5, false);
-          createBox(world, 285, 405, 5, 25, false);
-          createBox(world, 315, 405, 5, 25, false);
-          createBox(world, 300, 375, 20, 5, false);
-          createBox(world, 390, 435, 40, 5, false);
-          createBox(world, 360, 390, 10, 40, false);
-          createBox(world, 420, 390, 10, 40, false);
-          createBox(world, 390, 415, 5, 15, false);
-          createBox(world, 460, 435, 20, 5, false);
-          createBox(world, 445, 405, 5, 25, false);
-          createBox(world, 475, 405, 5, 25, false);
-          createBox(world, 460, 375, 20, 5, false);
-          createBox(world, 495, 410, 5, 30, false);
-          createBox(world, 518, 425, 5, 15, false);
-          createBox(world, 515, 405, 15, 5, false);
-          createBox(world, 525, 390, 5, 10, false);
-          createBox(world, 510, 375, 20, 5, false);
-          createBox(world, 560, 435, 20, 5, false);
-          createBox(world, 545, 400, 5, 30, false);
-          createBox(world, 610, 435, 20, 5, false);
-          createBox(world, 595, 405, 5, 25, false);
-          createBox(world, 625, 405, 5, 25, false);
-          createBox(world, 610, 375, 20, 5, false);
-          createBox(world, 650, 430, 10, 10, false);
-          return createBox(world, 650, 380, 10, 40, false);
-        };
-        createPoly = function(world, path, fixed) {
-          var index, point, polyBd, polySD, _len;
-          if (fixed == null) fixed = true;
-          polySD = new b2d.b2PolyDef();
-          if (!fixed) polySD.density = 1.0;
-          polySD.restitution = 0.0;
-          polySD.friction = 1.0;
-          for (index = 0, _len = path.length; index < _len; index++) {
-            point = path[index];
-            polySD.vertices[index].Set(point.x, point.y);
-          }
-          polySD.vertexCount = path.length;
-          polyBd = new b2d.b2BodyDef();
-          polyBd.AddShape(polySD);
-          polyBd.position.Set(path[0].x, path[0].y);
-          return world.CreateBody(polyBd);
-        };
-        createBox = function(world, x, y, width, height, fixed) {
-          var boxBd, boxSd;
-          if (fixed == null) fixed = true;
-          boxSd = new b2d.b2BoxDef();
-          if (!fixed) boxSd.density = 1.0;
-          boxSd.restitution = 0.0;
-          boxSd.friction = 1.0;
-          boxSd.extents.Set(width, height);
-          boxBd = new b2d.b2BodyDef();
-          boxBd.AddShape(boxSd);
-          boxBd.position.Set(x, y);
-          return world.CreateBody(boxBd);
-        };
-        createBall = function(world, x, y) {
-          var ballBd, ballSd;
-          ballSd = new b2d.b2CircleDef();
-          ballSd.density = 1.0;
-          ballSd.radius = 20;
-          ballSd.restitution = 0.5;
-          ballSd.friction = 0.5;
-          ballBd = new b2d.b2BodyDef();
-          ballBd.AddShape(ballSd);
-          ballBd.position.Set(x, y);
-          return world.CreateBody(ballBd);
-        };
-        drawShape = function(shape, context) {
-          var ax, circle, d, dtheta, i, poly, pos, pos2, r, segments, tV, theta, v, _ref;
-          startShape(context, shape.density);
-          switch (shape.m_type) {
-            case b2d.b2Shape.e_circleShape:
-              circle = shape;
-              pos = circle.m_position;
-              r = circle.m_radius;
-              segments = 16.0;
-              theta = 0.0;
-              dtheta = 2.0 * Math.PI / segments;
-              context.moveTo(pos.x + r, pos.y);
-              for (i = 0; 0 <= segments ? i < segments : i > segments; 0 <= segments ? i++ : i--) {
-                d = new b2d.b2Vec2(r * Math.cos(theta), r * Math.sin(theta));
-                v = b2d.b2Math.AddVV(pos, d);
-                context.lineTo(v.x, v.y);
-                theta += dtheta;
-              }
-              context.lineTo(pos.x + r, pos.y);
-              context.moveTo(pos.x, pos.y);
-              ax = circle.m_R.col1;
-              pos2 = new b2d.b2Vec2(pos.x + r * ax.x, pos.y + r * ax.y);
-              context.lineTo(pos2.x, pos2.y);
-              break;
-            case b2d.b2Shape.e_polyShape:
-              poly = shape;
-              tV = b2d.b2Math.AddVV(poly.m_position, b2d.b2Math.b2MulMV(poly.m_R, poly.m_vertices[0]));
-              context.moveTo(tV.x, tV.y);
-              for (i = 0, _ref = poly.m_vertexCount; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
-                v = b2d.b2Math.AddVV(poly.m_position, b2d.b2Math.b2MulMV(poly.m_R, poly.m_vertices[i]));
-                context.lineTo(v.x, v.y);
-              }
-              context.lineTo(tV.x, tV.y);
-          }
-          return endShape(context);
+          createLetter("H", 150 + 20, 475);
+          createLetter("E", 195 + 20, 490);
+          createLetter("L", 250 + 20, 490);
+          createLetter("L", 295 + 20, 490);
+          createLetter("O", 355 + 20, 490);
+          createLetter("W", 450 + 40, 490);
+          createLetter("O", 500 + 40, 490);
+          createLetter("R", 545 + 40, 490);
+          createLetter("L", 575 + 40, 490);
+          return createLetter("D", 635 + 40, 490);
         };
         this.currentShape = null;
         redrawCurrentShape = function(context) {
@@ -222,10 +305,10 @@
         };
         endFreeformShape = function(context) {
           var firstPoint;
+          createPoly(_this.currentShape.path);
           firstPoint = _this.currentShape.path[0];
           _this.currentShape.path.push(firstPoint);
           drawFreeformShape(context, firstPoint.x, firstPoint.y);
-          createPoly(world, _this.currentShape.path, false);
           endShape(context);
           return _this.currentShape = null;
         };
@@ -233,28 +316,8 @@
           context.fill();
           context.stroke();
         };
-        step = function(cnt) {
-          var iteration, stepping, timeStep;
-          var _this = this;
-          stepping = false;
-          timeStep = 1.0 / 60;
-          iteration = 1;
-          world.Step(timeStep, iteration);
-          ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-          drawWorld(world, ctx);
-          redrawCurrentShape(ctx);
-          return $.timeout(10, function() {
-            return step(cnt || 0);
-          });
-        };
-        world = createWorld();
-        ctx = $('#canvas')[0].getContext('2d');
-        canvasElm = $('#canvas');
-        canvasWidth = parseInt(canvasElm.width());
-        canvasHeight = parseInt(canvasElm.height());
-        canvasTop = parseInt(canvasElm.css('top'));
-        canvasLeft = parseInt(canvasElm.css('left'));
-        createHelloWorld();
+        canvasElm = $("#canvas");
+        ctx = canvasElm[0].getContext("2d");
         this.mousedown = false;
         canvasElm.bind('mousedown', function(e) {
           _this.mousedown = true;
@@ -275,14 +338,12 @@
           if (!_this.mousedown) return;
           continueFreeformShape(ctx, e.offsetX, e.offsetY);
         });
-        canvasElm.bind('click', function(e) {
-          if (Math.random() > 0.5) {
-            return createBox(world, e.offsetX, e.offsetY, 10, 10, false);
-          } else {
-            return createBall(world, e.offsetX, e.offsetY);
-          }
-        });
-        return step();
+        this.scale = 30;
+        initWorld();
+        initDraw(ctx);
+        createGround();
+        createHelloWorld();
+        runSimulation(ctx);
       };
 
       return Home;

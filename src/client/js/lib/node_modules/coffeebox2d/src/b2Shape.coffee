@@ -107,7 +107,6 @@ b2Shape.PolyMass = (massData, vs, count, rho) ->
         p1 = pRef
         p2 = vs[i]
         p3 = if i + 1 < count then vs[i+1] else vs[0]
-
         e1 = b2Math.SubtractVV(p2, p1)
         e2 = b2Math.SubtractVV(p3, p1)
 

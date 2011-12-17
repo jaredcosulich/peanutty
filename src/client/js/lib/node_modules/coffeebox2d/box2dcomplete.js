@@ -1,3 +1,5 @@
+//http://code.google.com/p/box2dweb/source/browse/trunk/Box2D.js
+
 /*
 * Copyright (c) 2006-2007 Erin Catto http:
 *
