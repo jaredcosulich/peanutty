@@ -124,10 +124,14 @@
                 bodyDef = new b2d.Dynamics.b2BodyDef
                 bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody
                 
-                fixDef = createFixture(density: 10)
+                fixDef = createFixture()
                 fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
                 
-                scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@scale, point.y/@scale) for point in path by Math.ceil(path.length / 10))
+                path = (point for point in path by Math.ceil(path.length / 10))
+                path = path.reverse() if counterClockWise(path)
+                path = concaveShape(path)
+                
+                scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@scale, point.y/@scale) for point in path)
                 fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
 
                 body = @world.CreateBody(bodyDef)
@@ -135,43 +139,40 @@
                 bodyDef.position.x = body.GetWorldCenter().x
                 bodyDef.position.y = body.GetWorldCenter().y
                 
+            counterClockWise = (path) =>
+                rotation = []
+                for point, index in path
+                    nextPoint = path[index+1]
+                    nextPoint = path[0] unless nextPoint?
+                    dir = direction(point, nextPoint)
+                    
+                    rotation.push(dir) unless dir == 0 || rotation[rotation.length - 1] == dir
+                    
+                    if rotation.length == 2
+                        return rotation[0] < rotation[1] || rotation[0] - rotation[1] == -3
+                                  
             concaveShape = (path) =>
-                concave = [path[0]]
-                upsAndDowns = []
-                leftsAndRights = []
-                prevPoint = path[0]
-                for point in path[1..path.length]
-                    if point.y < prevPoint.y && upsAndDowns[upsAndDowns.length - 1] != 0
-                        continue if (downs for dir in upsAndDowns when dir == 0).length >= 2
-                        upsAndDowns.push(0)
-                    else if point.y > prevPoint.y && upsAndDowns[upsAndDowns.length - 1] != 1
-                        continue if (ups for dir in upsAndDowns when dir == 1).length >= 2
-                        upsAndDowns.push(1)
-                        
-                    if point.x < prevPoint.x && leftsAndRights[leftsAndRights.length - 1] != 0
-                        continue if (lefts for dir in leftsAndRights when dir == 0).length >= 2
-                        leftsAndRights.push(0)
-                    else if point.x > prevPoint.x && leftsAndRights[leftsAndRights.length - 1] != 1
-                        continue if (rights for dir in leftsAndRights when dir == 1).length >= 2
-                        leftsAndRights.push(1)
+                concave = []
+                directionsTaken = {}
+                lastDirection = null
+                for point, index in path
+                    nextPoint = path[index+1]
+                    nextPoint = path[0] unless nextPoint?
+                    dir = direction(point, nextPoint)
+                    if dir != lastDirection
+                        lastDirection = dir
+                        continue if directionsTaken[dir]
+                        directionsTaken[dir] = true
                         
                     concave.push(point)
 
-                return concave
-                    
-                
-                concaveShape = path[0..1]
-                for nextPoint in path[2..path.length]
-                    testPoint = concaveShape[concaveShape.length]
-                    prevPoint = concaveShape[concaveShape.length - 1]
-                    concaveShape.push(nextPoint) if noZigZag(prevPoint, testPoint, nextPoint)
-            
-            
-            noZigZag = (prevPoint, testPoint, nextPoint, comingFrom) =>
-                horizChange = (testPoint.x < prevPoint.x && testPoint.x < nextPoint.x) || (testPoint.x > prevPoint.x && testPoint.x > nextPoint.x) 
-                vertChange = (testPoint.y < prevPoint.y && testPoint.y < nextPoint.y) || (testPoint.y > prevPoint.y && testPoint.y > nextPoint.y)
-                
+                return concave              
                          
+            direction = (point, nextPoint) =>
+                dir = 1 if point.y > nextPoint.y
+                dir = 2 if point.y < nextPoint.y
+                dir = if dir == 2 then 3 else 4 if point.x < nextPoint.x
+                return dir
 
             createFixture = (options={}) =>
                 fixDef = new b2d.Dynamics.b2FixtureDef

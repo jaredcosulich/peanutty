@@ -18,7 +18,7 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvasElm, concaveShape, continueFreeformShape, createBox, createFixture, createGround, createHelloWorld, createLetter, createPoly, createRandomObjects, ctx, drawFreeformShape, endFreeformShape, endShape, initDraw, initWorld, noZigZag, redrawCurrentShape, runSimulation, startFreeformShape, startShape;
+        var canvasElm, concaveShape, continueFreeformShape, counterClockWise, createBox, createFixture, createGround, createHelloWorld, createLetter, createPoly, createRandomObjects, ctx, direction, drawFreeformShape, endFreeformShape, endShape, initDraw, initWorld, redrawCurrentShape, runSimulation, startFreeformShape, startShape;
         var _this = this;
         this.el.html(this.template.render());
         runSimulation = function(context) {
@@ -119,14 +119,23 @@
           var body, bodyDef, fixDef, point, scaledPath;
           bodyDef = new b2d.Dynamics.b2BodyDef;
           bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
-          fixDef = createFixture({
-            density: 10
-          });
+          fixDef = createFixture();
           fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-          scaledPath = (function() {
+          path = (function() {
             var _i, _len, _results, _step;
             _results = [];
             for (_i = 0, _len = path.length, _step = Math.ceil(path.length / 10); _i < _len; _i += _step) {
+              point = path[_i];
+              _results.push(point);
+            }
+            return _results;
+          })();
+          if (counterClockWise(path)) path = path.reverse();
+          path = concaveShape(path);
+          scaledPath = (function() {
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = path.length; _i < _len; _i++) {
               point = path[_i];
               _results.push(new b2d.Common.Math.b2Vec2(point.x / this.scale, point.y / this.scale));
             }
@@ -138,91 +147,47 @@
           bodyDef.position.x = body.GetWorldCenter().x;
           return bodyDef.position.y = body.GetWorldCenter().y;
         };
-        concaveShape = function(path) {
-          var concave, dir, leftsAndRights, nextPoint, point, prevPoint, testPoint, upsAndDowns, _i, _j, _len, _len2, _ref, _ref2, _results;
-          concave = [path[0]];
-          upsAndDowns = [];
-          leftsAndRights = [];
-          prevPoint = path[0];
-          _ref = path.slice(1, path.length + 1 || 9e9);
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            point = _ref[_i];
-            if (point.y < prevPoint.y && upsAndDowns[upsAndDowns.length - 1] !== 0) {
-              if (((function() {
-                var _j, _len2, _results;
-                _results = [];
-                for (_j = 0, _len2 = upsAndDowns.length; _j < _len2; _j++) {
-                  dir = upsAndDowns[_j];
-                  if (dir === 0) _results.push(downs);
-                }
-                return _results;
-              })()).length >= 2) {
-                continue;
-              }
-              upsAndDowns.push(0);
-            } else if (point.y > prevPoint.y && upsAndDowns[upsAndDowns.length - 1] !== 1) {
-              if (((function() {
-                var _j, _len2, _results;
-                _results = [];
-                for (_j = 0, _len2 = upsAndDowns.length; _j < _len2; _j++) {
-                  dir = upsAndDowns[_j];
-                  if (dir === 1) _results.push(ups);
-                }
-                return _results;
-              })()).length >= 2) {
-                continue;
-              }
-              upsAndDowns.push(1);
+        counterClockWise = function(path) {
+          var dir, index, nextPoint, point, rotation, _len;
+          rotation = [];
+          for (index = 0, _len = path.length; index < _len; index++) {
+            point = path[index];
+            nextPoint = path[index + 1];
+            if (nextPoint == null) nextPoint = path[0];
+            dir = direction(point, nextPoint);
+            if (!(dir === 0 || rotation[rotation.length - 1] === dir)) {
+              rotation.push(dir);
             }
-            if (point.x < prevPoint.x && leftsAndRights[leftsAndRights.length - 1] !== 0) {
-              if (((function() {
-                var _j, _len2, _results;
-                _results = [];
-                for (_j = 0, _len2 = leftsAndRights.length; _j < _len2; _j++) {
-                  dir = leftsAndRights[_j];
-                  if (dir === 0) _results.push(lefts);
-                }
-                return _results;
-              })()).length >= 2) {
-                continue;
-              }
-              leftsAndRights.push(0);
-            } else if (point.x > prevPoint.x && leftsAndRights[leftsAndRights.length - 1] !== 1) {
-              if (((function() {
-                var _j, _len2, _results;
-                _results = [];
-                for (_j = 0, _len2 = leftsAndRights.length; _j < _len2; _j++) {
-                  dir = leftsAndRights[_j];
-                  if (dir === 1) _results.push(rights);
-                }
-                return _results;
-              })()).length >= 2) {
-                continue;
-              }
-              leftsAndRights.push(1);
+            if (rotation.length === 2) {
+              return rotation[0] < rotation[1] || rotation[0] - rotation[1] === -3;
+            }
+          }
+        };
+        concaveShape = function(path) {
+          var concave, dir, directionsTaken, index, lastDirection, nextPoint, point, _len;
+          concave = [];
+          directionsTaken = {};
+          lastDirection = null;
+          for (index = 0, _len = path.length; index < _len; index++) {
+            point = path[index];
+            nextPoint = path[index + 1];
+            if (nextPoint == null) nextPoint = path[0];
+            dir = direction(point, nextPoint);
+            if (dir !== lastDirection) {
+              lastDirection = dir;
+              if (directionsTaken[dir]) continue;
+              directionsTaken[dir] = true;
             }
             concave.push(point);
           }
           return concave;
-          concaveShape = path.slice(0, 2);
-          _ref2 = path.slice(2, path.length + 1 || 9e9);
-          _results = [];
-          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-            nextPoint = _ref2[_j];
-            testPoint = concaveShape[concaveShape.length];
-            prevPoint = concaveShape[concaveShape.length - 1];
-            if (noZigZag(prevPoint, testPoint, nextPoint)) {
-              _results.push(concaveShape.push(nextPoint));
-            } else {
-              _results.push(void 0);
-            }
-          }
-          return _results;
         };
-        noZigZag = function(prevPoint, testPoint, nextPoint, comingFrom) {
-          var horizChange, vertChange;
-          horizChange = (testPoint.x < prevPoint.x && testPoint.x < nextPoint.x) || (testPoint.x > prevPoint.x && testPoint.x > nextPoint.x);
-          return vertChange = (testPoint.y < prevPoint.y && testPoint.y < nextPoint.y) || (testPoint.y > prevPoint.y && testPoint.y > nextPoint.y);
+        direction = function(point, nextPoint) {
+          var dir;
+          if (point.y > nextPoint.y) dir = 1;
+          if (point.y < nextPoint.y) dir = 2;
+          dir = dir === 2 ? 3 : point.x < nextPoint.x ? 4 : void 0;
+          return dir;
         };
         createFixture = function(options) {
           var fixDef;
