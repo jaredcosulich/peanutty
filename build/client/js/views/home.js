@@ -131,7 +131,6 @@
             return _results;
           })();
           if (counterClockWise(path)) path = path.reverse();
-          path = concaveShape(path);
           scaledPath = (function() {
             var _i, _len, _results;
             _results = [];

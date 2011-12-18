@@ -129,7 +129,6 @@
                 
                 path = (point for point in path by Math.ceil(path.length / 10))
                 path = path.reverse() if counterClockWise(path)
-                path = concaveShape(path)
                 
                 scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@scale, point.y/@scale) for point in path)
                 fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
