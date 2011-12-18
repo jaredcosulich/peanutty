@@ -18,7 +18,7 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvasElm, continueFreeformShape, counterClockWise, createBox, createFixture, createGround, createHelloWorld, createLetter, createPoly, createRandomObjects, ctx, direction, drawFreeformShape, endFreeformShape, endShape, initDraw, initWorld, redrawCurrentShape, runSimulation, startFreeformShape, startShape;
+        var canvasElm, continueFreeformShape, counterClockWise, createBall, createBox, createFixture, createGround, createHelloWorld, createLetter, createPoly, createRandomObjects, ctx, direction, drawFreeformShape, endFreeformShape, endShape, initDraw, initWorld, initiateBall, initiateBlock, initiateFree, redrawCurrentShape, runSimulation, startFreeformShape, startShape, unbindMouseEvents;
         var _this = this;
         this.el.html(this.template.render());
         runSimulation = function(context) {
@@ -111,6 +111,18 @@
           fixDef = createFixture(options);
           fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
           fixDef.shape.SetAsBox(width / _this.scale, height / _this.scale);
+          bodyDef.position.x = x / _this.scale;
+          bodyDef.position.y = y / _this.scale;
+          return _this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        };
+        createBall = function(x, y, radius, options) {
+          var bodyDef, fixDef;
+          if (options == null) options = null;
+          bodyDef = new b2d.Dynamics.b2BodyDef;
+          bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
+          fixDef = createFixture(options);
+          fixDef.shape = new b2d.Collision.Shapes.b2CircleShape;
+          fixDef.shape.SetRadius(radius / _this.scale);
           bodyDef.position.x = x / _this.scale;
           bodyDef.position.y = y / _this.scale;
           return _this.world.CreateBody(bodyDef).CreateFixture(fixDef);
@@ -263,31 +275,62 @@
         };
         canvasElm = $("#canvas");
         ctx = canvasElm[0].getContext("2d");
-        this.mousedown = false;
-        canvasElm.bind('mousedown', function(e) {
-          _this.mousedown = true;
-          _this.currentShape = {
-            start: {
-              x: e.offsetX,
-              y: e.offsetY
-            },
-            path: []
-          };
-          startFreeformShape(ctx, e.offsetX, e.offsetY);
-        });
-        canvasElm.bind('mouseup', function(e) {
+        unbindMouseEvents = function() {
+          canvasElm.unbind('mousedown');
+          canvasElm.unbind('mouseup');
+          canvasElm.unbind('mousemove');
+          return canvasElm.unbind('click');
+        };
+        initiateFree = function() {
+          unbindMouseEvents();
           _this.mousedown = false;
-          endFreeformShape(ctx);
-        });
-        canvasElm.bind('mousemove', function(e) {
-          if (!_this.mousedown) return;
-          continueFreeformShape(ctx, e.offsetX, e.offsetY);
-        });
+          canvasElm.bind('mousedown', function(e) {
+            _this.mousedown = true;
+            _this.currentShape = {
+              start: {
+                x: e.offsetX,
+                y: e.offsetY
+              },
+              path: []
+            };
+            startFreeformShape(ctx, e.offsetX, e.offsetY);
+          });
+          canvasElm.bind('mouseup', function(e) {
+            _this.mousedown = false;
+            endFreeformShape(ctx);
+          });
+          return canvasElm.bind('mousemove', function(e) {
+            if (!_this.mousedown) return;
+            continueFreeformShape(ctx, e.offsetX, e.offsetY);
+          });
+        };
+        initiateBlock = function() {
+          unbindMouseEvents();
+          return canvasElm.bind('click', function(e) {
+            return createBox(e.offsetX - 10, e.offsetY - 10, 20, 20);
+          });
+        };
+        initiateBall = function() {
+          unbindMouseEvents();
+          return canvasElm.bind('click', function(e) {
+            return createBall(e.offsetX - 10, e.offsetY - 10, 20);
+          });
+        };
         this.scale = 30;
         initWorld();
         initDraw(ctx);
         createGround();
         createHelloWorld();
+        initiateFree();
+        $('#tools #freeform').bind('click', function() {
+          return initiateFree();
+        });
+        $('#tools #block').bind('click', function() {
+          return initiateBlock();
+        });
+        $('#tools #ball').bind('click', function() {
+          return initiateBall();
+        });
         runSimulation(ctx);
       };
 

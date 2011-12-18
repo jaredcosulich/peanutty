@@ -119,6 +119,21 @@
                 bodyDef.position.y = (y/@scale)
                 
                 @world.CreateBody(bodyDef).CreateFixture(fixDef)
+
+
+            createBall = (x,y,radius,options=null) =>
+                bodyDef = new b2d.Dynamics.b2BodyDef
+                bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody
+
+                fixDef = createFixture(options)
+                fixDef.shape = new b2d.Collision.Shapes.b2CircleShape
+
+                fixDef.shape.SetRadius(radius/@scale)
+                bodyDef.position.x = (x/@scale)
+                bodyDef.position.y = (y/@scale)
+
+                @world.CreateBody(bodyDef).CreateFixture(fixDef)
+
                 
             createPoly = (path) =>
                 bodyDef = new b2d.Dynamics.b2BodyDef
@@ -251,22 +266,40 @@
             canvasElm = $("#canvas")
             ctx = canvasElm[0].getContext("2d")
             
-            @mousedown = false  
-            canvasElm.bind 'mousedown', (e) => 
-                @mousedown = true
-                @currentShape = {start: {x: e.offsetX, y: e.offsetY}, path: []}
-                startFreeformShape(ctx, e.offsetX, e.offsetY)
-                return
+            unbindMouseEvents = () =>
+                canvasElm.unbind 'mousedown'
+                canvasElm.unbind 'mouseup'
+                canvasElm.unbind 'mousemove'
+                canvasElm.unbind 'click'
+            
+            initiateFree = () =>
+                unbindMouseEvents()
+                @mousedown = false  
+                canvasElm.bind 'mousedown', (e) => 
+                    @mousedown = true
+                    @currentShape = {start: {x: e.offsetX, y: e.offsetY}, path: []}
+                    startFreeformShape(ctx, e.offsetX, e.offsetY)
+                    return
                            
-            canvasElm.bind 'mouseup', (e) => 
-                @mousedown = false                
-                endFreeformShape(ctx)
-                return
+                canvasElm.bind 'mouseup', (e) => 
+                    @mousedown = false                
+                    endFreeformShape(ctx)
+                    return
                     
-            canvasElm.bind 'mousemove', (e) =>
-                return unless @mousedown
-                continueFreeformShape(ctx, e.offsetX, e.offsetY)
-                return
+                canvasElm.bind 'mousemove', (e) =>
+                    return unless @mousedown
+                    continueFreeformShape(ctx, e.offsetX, e.offsetY)
+                    return
+            
+            initiateBlock = () =>
+                unbindMouseEvents()
+                canvasElm.bind 'click', (e) => 
+                    createBox(e.offsetX - 10, e.offsetY - 10, 20, 20)
+                
+            initiateBall = () =>
+                unbindMouseEvents()
+                canvasElm.bind 'click', (e) => 
+                    createBall(e.offsetX - 10, e.offsetY - 10, 20)
             
             @scale = 30
             initWorld()
@@ -274,6 +307,10 @@
             createGround()
             # createRandomObjects()
             createHelloWorld()
+            initiateFree()
+            $('#tools #freeform').bind 'click', () => initiateFree()
+            $('#tools #block').bind 'click', () => initiateBlock()
+            $('#tools #ball').bind 'click', () => initiateBall()
             runSimulation(ctx)
 
             
