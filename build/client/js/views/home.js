@@ -18,7 +18,7 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvasElm, concaveShape, continueFreeformShape, counterClockWise, createBox, createFixture, createGround, createHelloWorld, createLetter, createPoly, createRandomObjects, ctx, direction, drawFreeformShape, endFreeformShape, endShape, initDraw, initWorld, redrawCurrentShape, runSimulation, startFreeformShape, startShape;
+        var canvasElm, continueFreeformShape, counterClockWise, createBox, createFixture, createGround, createHelloWorld, createLetter, createPoly, createRandomObjects, ctx, direction, drawFreeformShape, endFreeformShape, endShape, initDraw, initWorld, redrawCurrentShape, runSimulation, startFreeformShape, startShape;
         var _this = this;
         this.el.html(this.template.render());
         runSimulation = function(context) {
@@ -154,38 +154,19 @@
             nextPoint = path[index + 1];
             if (nextPoint == null) nextPoint = path[0];
             dir = direction(point, nextPoint);
-            if (!(dir === 0 || rotation[rotation.length - 1] === dir)) {
+            if ((dir != null) && rotation[rotation.length - 1] !== dir) {
               rotation.push(dir);
             }
             if (rotation.length === 2) {
-              return rotation[0] < rotation[1] || rotation[0] - rotation[1] === -3;
+              return rotation[0] > rotation[1] || rotation[0] - rotation[1] === 3;
             }
           }
-        };
-        concaveShape = function(path) {
-          var concave, dir, directionsTaken, index, lastDirection, nextPoint, point, _len;
-          concave = [];
-          directionsTaken = {};
-          lastDirection = null;
-          for (index = 0, _len = path.length; index < _len; index++) {
-            point = path[index];
-            nextPoint = path[index + 1];
-            if (nextPoint == null) nextPoint = path[0];
-            dir = direction(point, nextPoint);
-            if (dir !== lastDirection) {
-              lastDirection = dir;
-              if (directionsTaken[dir]) continue;
-              directionsTaken[dir] = true;
-            }
-            concave.push(point);
-          }
-          return concave;
         };
         direction = function(point, nextPoint) {
           var dir;
           if (point.y > nextPoint.y) dir = 1;
           if (point.y < nextPoint.y) dir = 2;
-          dir = dir === 2 ? 3 : point.x < nextPoint.x ? 4 : void 0;
+          if (point.x > nextPoint.x) dir = (dir === 2 ? 3 : 4);
           return dir;
         };
         createFixture = function(options) {

@@ -145,32 +145,20 @@
                     nextPoint = path[0] unless nextPoint?
                     dir = direction(point, nextPoint)
                     
-                    rotation.push(dir) unless dir == 0 || rotation[rotation.length - 1] == dir
+                    rotation.push(dir) if dir? && rotation[rotation.length - 1] != dir
                     
                     if rotation.length == 2
-                        return rotation[0] < rotation[1] || rotation[0] - rotation[1] == -3
+                        return rotation[0] > rotation[1] || rotation[0] - rotation[1] == 3
                                   
-            concaveShape = (path) =>
-                concave = []
-                directionsTaken = {}
-                lastDirection = null
-                for point, index in path
-                    nextPoint = path[index+1]
-                    nextPoint = path[0] unless nextPoint?
-                    dir = direction(point, nextPoint)
-                    if dir != lastDirection
-                        lastDirection = dir
-                        continue if directionsTaken[dir]
-                        directionsTaken[dir] = true
-                        
-                    concave.push(point)
-
-                return concave              
-                         
             direction = (point, nextPoint) =>
+                # up right 1
+                # down right  2
+                # down left 3
+                # up left 4
                 dir = 1 if point.y > nextPoint.y
                 dir = 2 if point.y < nextPoint.y
-                dir = if dir == 2 then 3 else 4 if point.x < nextPoint.x
+                if point.x > nextPoint.x
+                    dir = (if dir == 2 then 3 else 4) 
                 return dir
 
             createFixture = (options={}) =>
