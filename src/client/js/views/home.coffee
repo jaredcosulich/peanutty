@@ -107,9 +107,9 @@
                         createBox(x-15, y-60, 20, 5)
                     
 
-            createBox = (x,y,width,height,options=null) =>
+            createBox = (x,y,width,height,options={}) =>
                 bodyDef = new b2d.Dynamics.b2BodyDef
-                bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody
+                bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
                 
                 fixDef = createFixture(options)
                 fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
@@ -121,9 +121,9 @@
                 @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
 
-            createBall = (x,y,radius,options=null) =>
+            createBall = (x,y,radius,options={}) =>
                 bodyDef = new b2d.Dynamics.b2BodyDef
-                bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody
+                bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
 
                 fixDef = createFixture(options)
                 fixDef.shape = new b2d.Collision.Shapes.b2CircleShape
@@ -135,9 +135,9 @@
                 @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
                 
-            createPoly = (path) =>
+            createPoly = (path, options={}) =>
                 bodyDef = new b2d.Dynamics.b2BodyDef
-                bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody
+                bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
                 
                 fixDef = createFixture()
                 fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
@@ -249,8 +249,8 @@
                 @currentShape.path.push({x: x, y: y})
                 return
 
-            endFreeformShape = (context) =>
-                createPoly(@currentShape.path)
+            endFreeformShape = (context, static) =>
+                createPoly(@currentShape.path, static)
                 firstPoint = @currentShape.path[0]
                 @currentShape.path.push(firstPoint)
                 drawFreeformShape(context, firstPoint.x, firstPoint.y)
@@ -283,7 +283,7 @@
                            
                 canvasElm.bind 'mouseup', (e) => 
                     @mousedown = false                
-                    endFreeformShape(ctx)
+                    endFreeformShape(ctx, static: @static)
                     return
                     
                 canvasElm.bind 'mousemove', (e) =>
@@ -294,13 +294,14 @@
             initiateBlock = () =>
                 unbindMouseEvents()
                 canvasElm.bind 'click', (e) => 
-                    createBox(e.offsetX - 10, e.offsetY - 10, 20, 20)
+                    createBox(e.offsetX - 10, e.offsetY - 10, 20, 20, static: @static)
                 
             initiateBall = () =>
                 unbindMouseEvents()
                 canvasElm.bind 'click', (e) => 
-                    createBall(e.offsetX - 10, e.offsetY - 10, 20)
-            
+                    createBall(e.offsetX - 10, e.offsetY - 10, 20, static: @static)                
+                
+            @static = true
             @scale = 30
             initWorld()
             initDraw(ctx)
@@ -311,6 +312,8 @@
             $('#tools #freeform').bind 'click', () => initiateFree()
             $('#tools #block').bind 'click', () => initiateBlock()
             $('#tools #ball').bind 'click', () => initiateBall()
+            $('#tools #static').bind 'click', () => @static = true
+            $('#tools #dynamic').bind 'click', () => @static = false
             runSimulation(ctx)
 
             

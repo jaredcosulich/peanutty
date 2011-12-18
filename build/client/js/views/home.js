@@ -105,9 +105,9 @@
         };
         createBox = function(x, y, width, height, options) {
           var bodyDef, fixDef;
-          if (options == null) options = null;
+          if (options == null) options = {};
           bodyDef = new b2d.Dynamics.b2BodyDef;
-          bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
+          bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
           fixDef = createFixture(options);
           fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
           fixDef.shape.SetAsBox(width / _this.scale, height / _this.scale);
@@ -117,9 +117,9 @@
         };
         createBall = function(x, y, radius, options) {
           var bodyDef, fixDef;
-          if (options == null) options = null;
+          if (options == null) options = {};
           bodyDef = new b2d.Dynamics.b2BodyDef;
-          bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
+          bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
           fixDef = createFixture(options);
           fixDef.shape = new b2d.Collision.Shapes.b2CircleShape;
           fixDef.shape.SetRadius(radius / _this.scale);
@@ -127,10 +127,11 @@
           bodyDef.position.y = y / _this.scale;
           return _this.world.CreateBody(bodyDef).CreateFixture(fixDef);
         };
-        createPoly = function(path) {
+        createPoly = function(path, options) {
           var body, bodyDef, fixDef, point, scaledPath;
+          if (options == null) options = {};
           bodyDef = new b2d.Dynamics.b2BodyDef;
-          bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
+          bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
           fixDef = createFixture();
           fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
           path = (function() {
@@ -260,9 +261,9 @@
             y: y
           });
         };
-        endFreeformShape = function(context) {
+        endFreeformShape = function(context, static) {
           var firstPoint;
-          createPoly(_this.currentShape.path);
+          createPoly(_this.currentShape.path, static);
           firstPoint = _this.currentShape.path[0];
           _this.currentShape.path.push(firstPoint);
           drawFreeformShape(context, firstPoint.x, firstPoint.y);
@@ -297,7 +298,9 @@
           });
           canvasElm.bind('mouseup', function(e) {
             _this.mousedown = false;
-            endFreeformShape(ctx);
+            endFreeformShape(ctx, {
+              static: _this.static
+            });
           });
           return canvasElm.bind('mousemove', function(e) {
             if (!_this.mousedown) return;
@@ -307,15 +310,20 @@
         initiateBlock = function() {
           unbindMouseEvents();
           return canvasElm.bind('click', function(e) {
-            return createBox(e.offsetX - 10, e.offsetY - 10, 20, 20);
+            return createBox(e.offsetX - 10, e.offsetY - 10, 20, 20, {
+              static: _this.static
+            });
           });
         };
         initiateBall = function() {
           unbindMouseEvents();
           return canvasElm.bind('click', function(e) {
-            return createBall(e.offsetX - 10, e.offsetY - 10, 20);
+            return createBall(e.offsetX - 10, e.offsetY - 10, 20, {
+              static: _this.static
+            });
           });
         };
+        this.static = true;
         this.scale = 30;
         initWorld();
         initDraw(ctx);
@@ -330,6 +338,12 @@
         });
         $('#tools #ball').bind('click', function() {
           return initiateBall();
+        });
+        $('#tools #static').bind('click', function() {
+          return _this.static = true;
+        });
+        $('#tools #dynamic').bind('click', function() {
+          return _this.static = false;
         });
         runSimulation(ctx);
       };
