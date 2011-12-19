@@ -21,7 +21,7 @@ task 'build:ender', 'Build the ender compiled library', ->
         'rm -rf node_modules',
         
         'npm install --dev',
-        'npm install https://github.com/amccollum/bonzo/tarball/master',
+        'npm install https://github.com/amccollum/bonzo/tarball/master'
     
         ['node_modules/.bin/ender', 'build',
          'es5-basic', 'domready', 'sel', 'bonzo', 'bean',

@@ -1,21 +1,27 @@
-<canvas id="canvas" width="800" height="500"></canvas>
-<div id='console'>Console</div>
 <div id='tools'>
-    <div id='freeform' class='tool'>
+    <div id='free' class='tool'>
         Free
     </div>
-    <div id='block' class='tool'>
-        Block
+    <div id='box' class='tool'>
+        Box
     </div>
-    <div id='ball' class='tool'>
+    <div id='ball' class='tool selected'>
         Ball
     </div>
-    <br/>
-    <br/>
-    <div id='static' class='tool'>
+    <div class='tool_spacer'></div>
+    <div id='static' class='setting selected'>
         Static
     </div>
-    <div id='dynamic' class='tool'>
+    <div id='dynamic' class='setting'>
         Fall
     </div>
+</div>
+<canvas id="canvas" width="800" height="500"></canvas>
+<div id='console'>
+    <div id='tabs'>
+        <a>Script</a>
+        <a>Stage</a>
+        <a>Environment</a>
+    </div>
+    <div id='code' contenteditable=true></div>
 </div>

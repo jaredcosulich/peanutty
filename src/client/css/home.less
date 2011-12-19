@@ -1,22 +1,58 @@
 #canvas {
-    width: 60%;
     background-color: #eee;
-    border-right: 1px solid @header-background;
+    border: 1px solid @header-background;
     margin-bottom: 60px;
+    float: left;
+    cursor: pointer;
 }
 
 #tools {
     width: 45px;
     float: left;
     text-align: center;
-    .tool {
+    border-left: 1px solid @header-background;
+    border-top: 1px solid @header-background;
+    .tool, .setting, .tool_spacer {
         line-height: 45px;
         height: 45px;
-        border: 1px solid #ccc;
+        border-bottom: 1px solid @header-background;
+    }
+    .tool, .setting {
+        cursor: pointer;
+        &.selected {
+            background-color: @header-background;
+            color: white;
+        }
     }
 }
 
 #console {
-    width: 30%;
-    float: right;
+    width: 390px;
+    float: left;
+    
+    #tabs {
+        overflow: hidden;
+        a {
+            float: left;
+            display: block;
+            width: 90px;
+            padding: 6px 0;
+            border: 1px solid @header-background;
+            text-align: center;
+            margin-left: 12px;
+        }
+    }
+    
+    #code {
+        border-top: 1px solid @header-background;
+        border-right: 1px solid @header-background;
+        background-color: white;
+        padding: 12px 12px 12px 36px;
+        height: 480px;
+        overflow: auto;
+        .inner-shadow(10,10)
+        p {
+            text-indent: -24px;
+        }
+    }
 }

@@ -262,22 +262,55 @@ img {
   padding: 12px;
 }
 #canvas {
-  width: 60%;
   background-color: #eee;
-  border-right: 1px solid #4f3526;
+  border: 1px solid #4f3526;
   margin-bottom: 60px;
+  float: left;
+  cursor: pointer;
 }
 #tools {
   width: 45px;
   float: left;
   text-align: center;
+  border-left: 1px solid #4f3526;
+  border-top: 1px solid #4f3526;
 }
-#tools .tool {
+#tools .tool, #tools .setting, #tools .tool_spacer {
   line-height: 45px;
   height: 45px;
-  border: 1px solid #ccc;
+  border-bottom: 1px solid #4f3526;
+}
+#tools .tool, #tools .setting {
+  cursor: pointer;
+}
+#tools .tool.selected, #tools .setting.selected {
+  background-color: #4f3526;
+  color: white;
 }
 #console {
-  width: 30%;
-  float: right;
+  width: 390px;
+  float: left;
+}
+#console #tabs {
+  overflow: hidden;
+}
+#console #tabs a {
+  float: left;
+  display: block;
+  width: 90px;
+  padding: 6px 0;
+  border: 1px solid #4f3526;
+  text-align: center;
+  margin-left: 12px;
+}
+#console #code {
+  border-top: 1px solid #4f3526;
+  border-right: 1px solid #4f3526;
+  background-color: white;
+  padding: 12px 12px 12px 36px;
+  height: 480px;
+  overflow: auto;
+}
+#console #code p {
+  text-indent: -24px;
 }
