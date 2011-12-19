@@ -272,7 +272,6 @@ img {
   width: 45px;
   float: left;
   text-align: center;
-  border-left: 1px solid #4f3526;
   border-top: 1px solid #4f3526;
 }
 #tools .tool, #tools .setting, #tools .tool_spacer {
@@ -281,6 +280,7 @@ img {
   border-bottom: 1px solid #4f3526;
 }
 #tools .tool, #tools .setting {
+  border-left: 1px solid #4f3526;
   cursor: pointer;
 }
 #tools .tool.selected, #tools .setting.selected {
@@ -294,23 +294,35 @@ img {
 #console #tabs {
   overflow: hidden;
 }
-#console #tabs a {
+#console #tabs .tab {
   float: left;
   display: block;
   width: 90px;
   padding: 6px 0;
-  border: 1px solid #4f3526;
+  border-top: 1px solid #4f3526;
+  border-left: 1px solid #4f3526;
+  border-right: 1px solid #4f3526;
   text-align: center;
   margin-left: 12px;
 }
-#console #code {
+#console #tabs .tab.selected {
+  background-color: #4f3526;
+  color: white;
+}
+#console #codes {
   border-top: 1px solid #4f3526;
   border-right: 1px solid #4f3526;
   background-color: white;
   padding: 12px 12px 12px 36px;
-  height: 480px;
+  height: 450px;
   overflow: auto;
 }
-#console #code p {
+#console #codes .code {
+  display: none;
+}
+#console #codes .code p {
   text-indent: -24px;
+}
+#console #codes .code.selected {
+  display: block;
 }

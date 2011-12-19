@@ -11,10 +11,13 @@
         Function(CoffeeScript.compile code, options)()  
         
     class Peanutty
-        constructor: (context, scale, code) ->
-            @context = context
+        constructor: (canvas, scale, code) ->
+            @canvas = canvas
+            @context = canvas[0].getContext("2d")
             @scale = scale
             @code = code
+            @script = @code.find(".script")
+            @stage = @code.find(".stage")
             @world = new b2d.Dynamics.b2World(
                   new b2d.Common.Math.b2Vec2(0, 10),    #gravity
                   true                                  #allow sleep
@@ -43,7 +46,43 @@
                 @redrawCurrentShape(@context)
             
             requestAnimFrame(update)
+            
+        resetWorld: () =>
+            body = @world.m_bodyList
+            while body?
+                b = body
+                body = body.m_next
+                @world.DestroyBody(b)
+            @world.ClearForces()   
+            
+        runCode: (code) =>
+            parsed = []
+            sanitized = code.replace(/\<\/p\>/ig, "").replace(/\n*(\s*)\<br\>\n/ig, "$1\n")
+            segments = sanitized.split(/\<p\>/)
+            active = []
+            indent = ""
+            for segment in segments
+                if segment.indexOf("peanutty.wait") > -1
+                    parsed.push(active.join(""))
+                    active = []
+                    time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, "")) * 1000
+                    parsed.push(indent + "$.timeout #{time}, () =>\n")
+                    indent += "    "
+                else
+                    active.push(indent + segment.replace(/\n/ig, "\n" + indent).replace(/\s*$/, "\n"))
+            parsed.push(active.join(""))
+            console.log(parsed.join(""))
+            CoffeeScript.run(parsed.join(""))
+                    
+        runScript: () => @runCode(@script.html())    
         
+        setStage: () => @runCode(@stage.html())
+
+        addToScript: (command) =>  
+            @script.html("#{@script.html()}\n<p>peanutty.wait(1)</p>") if @script.html().length > 0
+            @script.html("#{@script.html()}\n<p>#{command.replace(/\n/ig, '<br>\n')}</p>")
+            CoffeeScript.run(command)             
+            
         initDraw: () =>
             #setup debug draw
             @debugDraw = new b2d.Dynamics.b2DebugDraw()
@@ -54,7 +93,7 @@
             @debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit)
             @world.SetDebugDraw(@debugDraw)
             
-        createGround: () =>
+        createGround: (options={}) =>
             fixDef = fixDef = @createFixture()
             bodyDef = new b2d.Dynamics.b2BodyDef
 
@@ -62,16 +101,20 @@
             bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody
 
             # positions the center of the object (not upper left!)
-            bodyDef.position.x = canvas.width / 2 / @scale
-            bodyDef.position.y = canvas.height / @scale
+            bodyDef.position.x = options.x / @scale
+            bodyDef.position.y = options.y / @scale
 
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
 
             # half width, half height. eg actual height here is 1 unit
-            fixDef.shape.SetAsBox((600 / @scale) / 2, (10 / @scale) / 2)
+            fixDef.shape.SetAsBox((options.width / @scale) / 2, (options.height / @scale) / 2)
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
             
-        createLetter: (letter,x,y) =>
+        createLetter: (options={}) =>
+            x = options.x
+            y = options.y
+            letter = options.letter
+            
             switch letter
                 when "H"
                     @createBox(x: x-40, y: y, width: 10, height: 20)
@@ -208,18 +251,6 @@
                 bodyDef.position.x = Math.random() * 25
                 bodyDef.position.y = Math.random() * 10
                 @world.CreateBody(bodyDef).CreateFixture(fixDef)
-          
-        createHelloWorld: () =>
-            @createLetter("H", 150+20, 475)
-            @createLetter("E", 195+20, 490)
-            @createLetter("L", 250+20, 490)
-            @createLetter("L", 295+20, 490)
-            @createLetter("O", 355+20, 490)
-            @createLetter("W", 450+40, 490)
-            @createLetter("O", 500+40, 490)
-            @createLetter("R", 545+40, 490)
-            @createLetter("L", 575+40, 490)
-            @createLetter("D", 635+40, 490)
             
         @currentShape: null
         redrawCurrentShape: () =>
@@ -276,48 +307,48 @@
             @context.stroke()
             return                  
     
-        addToScript: (command) =>  
-            @code.html("#{@code.html()}<p>peanutty.wait(1)</p>") if @code.html().length > 0
-            @code.html("#{@code.html()}<p>#{command.replace(/\n/ig, '<br/>')}</p>")
-            CoffeeScript.run(command)             
-    
-
 
 
     class views.Home extends views.BaseView
         prepare: () ->
-            @template = @_requireTemplate('templates/home.html')
+            @templates = {
+                main: @_requireTemplate('templates/home.html'),
+                script: @_requireTemplate('templates/hello_world_script.html'),
+                stage: @_requireTemplate('templates/hello_world_stage.html'),
+            }
     
         renderView: () ->
-            @el.html(@template.render())
+            @el.html(@templates.main.render())
+            @$('#codes .script').html(@templates.script.render())
+            @$('#codes .stage').html(@templates.stage.render())
             
             unbindMouseEvents = () =>
-                canvasElm.unbind 'mousedown'
-                canvasElm.unbind 'mouseup'
-                canvasElm.unbind 'mousemove'
-                canvasElm.unbind 'click'
+                canvas.unbind 'mousedown'
+                canvas.unbind 'mouseup'
+                canvas.unbind 'mousemove'
+                canvas.unbind 'click'
             
             initiateFree = () =>
                 unbindMouseEvents()
                 @mousedown = false  
-                canvasElm.bind 'mousedown', (e) => 
+                canvas.bind 'mousedown', (e) => 
                     @mousedown = true
                     @peanutty.initFreeformShape(e.offsetX, e.offsetY)
                     return
                            
-                canvasElm.bind 'mouseup', (e) => 
+                canvas.bind 'mouseup', (e) => 
                     @mousedown = false                
                     @peanutty.endFreeformShape(@static)
                     return
                     
-                canvasElm.bind 'mousemove', (e) =>
+                canvas.bind 'mousemove', (e) =>
                     return unless @mousedown
                     @peanutty.continueFreeformShape(e.offsetX, e.offsetY)
                     return
             
             initiateBox = () =>
                 unbindMouseEvents()
-                canvasElm.bind 'click', (e) => 
+                canvas.bind 'click', (e) => 
                     peanutty.addToScript(
                         """
                         peanutty.createBox
@@ -331,7 +362,7 @@
                 
             initiateBall = () =>
                 unbindMouseEvents()
-                canvasElm.bind 'click', (e) =>     
+                canvas.bind 'click', (e) =>     
                     peanutty.addToScript(
                         """
                         peanutty.createBall
@@ -342,43 +373,43 @@
                         """
                     )                
                 
-            @static = true
+            @static = false
             scale = 30
-            canvasElm = $("#canvas")
-            context = canvasElm[0].getContext("2d")
-            code = $('#code')
+            canvas = $("#canvas")     
+            code = $('#codes')
             
-            
-            window.peanutty = @peanutty = new Peanutty(context, 30, code)
-            @peanutty.initDraw()
-            @peanutty.createGround()
-            # createRandomObjects()
-            @peanutty.createHelloWorld()
+            window.peanutty = @peanutty = new Peanutty(canvas, 30, code)
+            @peanutty.runScript()
             initiateBall()
             
-            $('#tools #free').bind 'click', () => 
+            @$('#tools #free').bind 'click', () => 
                 $('#tools .tool').removeClass('selected')
                 $('#tools #free').addClass('selected')
                 initiateFree()
-            $('#tools #box').bind 'click', () => 
+            @$('#tools #box').bind 'click', () => 
                 $('#tools .tool').removeClass('selected')
                 $('#tools #box').addClass('selected')
                 initiateBox()
-            $('#tools #ball').bind 'click', () => 
+            @$('#tools #ball').bind 'click', () => 
                 $('#tools .tool').removeClass('selected')
                 $('#tools #ball').addClass('selected')
                 initiateBall()
-            $('#tools #static').bind 'click', () => 
+            @$('#tools #static').bind 'click', () => 
                 $('#tools .setting').removeClass('selected')
                 $('#tools #static').addClass('selected')
                 @static = true
-            $('#tools #dynamic').bind 'click', () => 
+            @$('#tools #dynamic').bind 'click', () => 
                 $('#tools .setting').removeClass('selected')
                 $('#tools #dynamic').addClass('selected')
                 @static = false
                 
-            @peanutty.runSimulation()
 
+            @$('#tabs .tab').bind 'click', (e) =>
+                $('#tabs .tab').removeClass('selected')
+                tab = $(e.currentTarget)
+                tab.addClass('selected')
+                $('#codes .code').removeClass('selected')
+                @$("#codes .#{tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '')}").addClass('selected')
                         
     $.route.add
         '': () ->

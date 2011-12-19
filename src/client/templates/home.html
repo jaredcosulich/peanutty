@@ -1,3 +1,5 @@
+<div id='message'></div>
+
 <div id='tools'>
     <div id='free' class='tool'>
         Free
@@ -9,19 +11,23 @@
         Ball
     </div>
     <div class='tool_spacer'></div>
-    <div id='static' class='setting selected'>
+    <div id='static' class='setting'>
         Static
     </div>
-    <div id='dynamic' class='setting'>
-        Fall
+    <div id='dynamic' class='setting selected'>
+        Falling
     </div>
 </div>
 <canvas id="canvas" width="800" height="500"></canvas>
 <div id='console'>
     <div id='tabs'>
-        <a>Script</a>
-        <a>Stage</a>
-        <a>Environment</a>
+        <a class='tab script selected'>Script</a>
+        <a class='tab stage'>Stage</a>
+        <a class='tab environment'>Environment</a>
     </div>
-    <div id='code' contenteditable=true></div>
+    <div id='codes'>
+        <div class='code script selected' contenteditable=true></div>
+        <div class='code stage' contenteditable=true></div>
+        <div class='code environment' contenteditable=true></div>        
+    </div>
 </div>

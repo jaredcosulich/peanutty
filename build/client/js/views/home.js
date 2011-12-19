@@ -16,8 +16,7 @@
     };
     Peanutty = (function() {
 
-      function Peanutty(context, scale, code) {
-        this.addToScript = __bind(this.addToScript, this);
+      function Peanutty(canvas, scale, code) {
         this.endShape = __bind(this.endShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
         this.continueFreeformShape = __bind(this.continueFreeformShape, this);
@@ -26,7 +25,6 @@
         this.initFreeformShape = __bind(this.initFreeformShape, this);
         this.drawFreeformShape = __bind(this.drawFreeformShape, this);
         this.redrawCurrentShape = __bind(this.redrawCurrentShape, this);
-        this.createHelloWorld = __bind(this.createHelloWorld, this);
         this.createRandomObjects = __bind(this.createRandomObjects, this);
         this.createFixture = __bind(this.createFixture, this);
         this.direction = __bind(this.direction, this);
@@ -37,9 +35,17 @@
         this.createLetter = __bind(this.createLetter, this);
         this.createGround = __bind(this.createGround, this);
         this.initDraw = __bind(this.initDraw, this);
-        this.runSimulation = __bind(this.runSimulation, this);        this.context = context;
+        this.addToScript = __bind(this.addToScript, this);
+        this.setStage = __bind(this.setStage, this);
+        this.runScript = __bind(this.runScript, this);
+        this.runCode = __bind(this.runCode, this);
+        this.resetWorld = __bind(this.resetWorld, this);
+        this.runSimulation = __bind(this.runSimulation, this);        this.canvas = canvas;
+        this.context = canvas[0].getContext("2d");
         this.scale = scale;
         this.code = code;
+        this.script = this.code.find(".script");
+        this.stage = this.code.find(".stage");
         this.world = new b2d.Dynamics.b2World(new b2d.Common.Math.b2Vec2(0, 10), true);
       }
 
@@ -61,6 +67,57 @@
         return requestAnimFrame(update);
       };
 
+      Peanutty.prototype.resetWorld = function() {
+        var b, body;
+        body = this.world.m_bodyList;
+        while (body != null) {
+          b = body;
+          body = body.m_next;
+          this.world.DestroyBody(b);
+        }
+        return this.world.ClearForces();
+      };
+
+      Peanutty.prototype.runCode = function(code) {
+        var active, indent, parsed, sanitized, segment, segments, time, _i, _len;
+        parsed = [];
+        sanitized = code.replace(/\<\/p\>/ig, "").replace(/\n*(\s*)\<br\>\n/ig, "$1\n");
+        segments = sanitized.split(/\<p\>/);
+        active = [];
+        indent = "";
+        for (_i = 0, _len = segments.length; _i < _len; _i++) {
+          segment = segments[_i];
+          if (segment.indexOf("peanutty.wait") > -1) {
+            parsed.push(active.join(""));
+            active = [];
+            time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, "")) * 1000;
+            parsed.push(indent + ("$.timeout " + time + ", () =>\n"));
+            indent += "    ";
+          } else {
+            active.push(indent + segment.replace(/\n/ig, "\n" + indent).replace(/\s*$/, "\n"));
+          }
+        }
+        parsed.push(active.join(""));
+        console.log(parsed.join(""));
+        return CoffeeScript.run(parsed.join(""));
+      };
+
+      Peanutty.prototype.runScript = function() {
+        return this.runCode(this.script.html());
+      };
+
+      Peanutty.prototype.setStage = function() {
+        return this.runCode(this.stage.html());
+      };
+
+      Peanutty.prototype.addToScript = function(command) {
+        if (this.script.html().length > 0) {
+          this.script.html("" + (this.script.html()) + "\n<p>peanutty.wait(1)</p>");
+        }
+        this.script.html("" + (this.script.html()) + "\n<p>" + (command.replace(/\n/ig, '<br>\n')) + "</p>");
+        return CoffeeScript.run(command);
+      };
+
       Peanutty.prototype.initDraw = function() {
         this.debugDraw = new b2d.Dynamics.b2DebugDraw();
         this.debugDraw.SetSprite(this.context);
@@ -71,19 +128,25 @@
         return this.world.SetDebugDraw(this.debugDraw);
       };
 
-      Peanutty.prototype.createGround = function() {
+      Peanutty.prototype.createGround = function(options) {
         var bodyDef, fixDef;
+        if (options == null) options = {};
         fixDef = fixDef = this.createFixture();
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody;
-        bodyDef.position.x = canvas.width / 2 / this.scale;
-        bodyDef.position.y = canvas.height / this.scale;
+        bodyDef.position.x = options.x / this.scale;
+        bodyDef.position.y = options.y / this.scale;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        fixDef.shape.SetAsBox((600 / this.scale) / 2, (10 / this.scale) / 2);
+        fixDef.shape.SetAsBox((options.width / this.scale) / 2, (options.height / this.scale) / 2);
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
-      Peanutty.prototype.createLetter = function(letter, x, y) {
+      Peanutty.prototype.createLetter = function(options) {
+        var letter, x, y;
+        if (options == null) options = {};
+        x = options.x;
+        y = options.y;
+        letter = options.letter;
         switch (letter) {
           case "H":
             this.createBox({
@@ -381,19 +444,6 @@
         return _results;
       };
 
-      Peanutty.prototype.createHelloWorld = function() {
-        this.createLetter("H", 150 + 20, 475);
-        this.createLetter("E", 195 + 20, 490);
-        this.createLetter("L", 250 + 20, 490);
-        this.createLetter("L", 295 + 20, 490);
-        this.createLetter("O", 355 + 20, 490);
-        this.createLetter("W", 450 + 40, 490);
-        this.createLetter("O", 500 + 40, 490);
-        this.createLetter("R", 545 + 40, 490);
-        this.createLetter("L", 575 + 40, 490);
-        return this.createLetter("D", 635 + 40, 490);
-      };
-
       Peanutty.currentShape = null;
 
       Peanutty.prototype.redrawCurrentShape = function() {
@@ -474,14 +524,6 @@
         this.context.stroke();
       };
 
-      Peanutty.prototype.addToScript = function(command) {
-        if (this.code.html().length > 0) {
-          this.code.html("" + (this.code.html()) + "<p>peanutty.wait(1)</p>");
-        }
-        this.code.html("" + (this.code.html()) + "<p>" + (command.replace(/\n/ig, '<br/>')) + "</p>");
-        return CoffeeScript.run(command);
-      };
-
       return Peanutty;
 
     })();
@@ -494,83 +536,93 @@
       }
 
       Home.prototype.prepare = function() {
-        return this.template = this._requireTemplate('templates/home.html');
+        return this.templates = {
+          main: this._requireTemplate('templates/home.html'),
+          script: this._requireTemplate('templates/hello_world_script.html'),
+          stage: this._requireTemplate('templates/hello_world_stage.html')
+        };
       };
 
       Home.prototype.renderView = function() {
-        var canvasElm, code, context, initiateBall, initiateBox, initiateFree, scale, unbindMouseEvents;
+        var canvas, code, initiateBall, initiateBox, initiateFree, scale, unbindMouseEvents;
         var _this = this;
-        this.el.html(this.template.render());
+        this.el.html(this.templates.main.render());
+        this.$('#codes .script').html(this.templates.script.render());
+        this.$('#codes .stage').html(this.templates.stage.render());
         unbindMouseEvents = function() {
-          canvasElm.unbind('mousedown');
-          canvasElm.unbind('mouseup');
-          canvasElm.unbind('mousemove');
-          return canvasElm.unbind('click');
+          canvas.unbind('mousedown');
+          canvas.unbind('mouseup');
+          canvas.unbind('mousemove');
+          return canvas.unbind('click');
         };
         initiateFree = function() {
           unbindMouseEvents();
           _this.mousedown = false;
-          canvasElm.bind('mousedown', function(e) {
+          canvas.bind('mousedown', function(e) {
             _this.mousedown = true;
             _this.peanutty.initFreeformShape(e.offsetX, e.offsetY);
           });
-          canvasElm.bind('mouseup', function(e) {
+          canvas.bind('mouseup', function(e) {
             _this.mousedown = false;
             _this.peanutty.endFreeformShape(_this.static);
           });
-          return canvasElm.bind('mousemove', function(e) {
+          return canvas.bind('mousemove', function(e) {
             if (!_this.mousedown) return;
             _this.peanutty.continueFreeformShape(e.offsetX, e.offsetY);
           });
         };
         initiateBox = function() {
           unbindMouseEvents();
-          return canvasElm.bind('click', function(e) {
+          return canvas.bind('click', function(e) {
             return peanutty.addToScript("peanutty.createBox\n    x: " + (e.offsetX - 10) + " \n    y: " + (e.offsetY - 10) + "\n    width: 20\n    height: 20\n    static: " + _this.static);
           });
         };
         initiateBall = function() {
           unbindMouseEvents();
-          return canvasElm.bind('click', function(e) {
+          return canvas.bind('click', function(e) {
             return peanutty.addToScript("peanutty.createBall\n    x: " + e.offsetX + " \n    y: " + e.offsetY + "\n    radius: 20\n    static: " + _this.static);
           });
         };
-        this.static = true;
+        this.static = false;
         scale = 30;
-        canvasElm = $("#canvas");
-        context = canvasElm[0].getContext("2d");
-        code = $('#code');
-        window.peanutty = this.peanutty = new Peanutty(context, 30, code);
-        this.peanutty.initDraw();
-        this.peanutty.createGround();
-        this.peanutty.createHelloWorld();
+        canvas = $("#canvas");
+        code = $('#codes');
+        window.peanutty = this.peanutty = new Peanutty(canvas, 30, code);
+        this.peanutty.runScript();
         initiateBall();
-        $('#tools #free').bind('click', function() {
+        this.$('#tools #free').bind('click', function() {
           $('#tools .tool').removeClass('selected');
           $('#tools #free').addClass('selected');
           return initiateFree();
         });
-        $('#tools #box').bind('click', function() {
+        this.$('#tools #box').bind('click', function() {
           $('#tools .tool').removeClass('selected');
           $('#tools #box').addClass('selected');
           return initiateBox();
         });
-        $('#tools #ball').bind('click', function() {
+        this.$('#tools #ball').bind('click', function() {
           $('#tools .tool').removeClass('selected');
           $('#tools #ball').addClass('selected');
           return initiateBall();
         });
-        $('#tools #static').bind('click', function() {
+        this.$('#tools #static').bind('click', function() {
           $('#tools .setting').removeClass('selected');
           $('#tools #static').addClass('selected');
           return _this.static = true;
         });
-        $('#tools #dynamic').bind('click', function() {
+        this.$('#tools #dynamic').bind('click', function() {
           $('#tools .setting').removeClass('selected');
           $('#tools #dynamic').addClass('selected');
           return _this.static = false;
         });
-        return this.peanutty.runSimulation();
+        return this.$('#tabs .tab').bind('click', function(e) {
+          var tab;
+          $('#tabs .tab').removeClass('selected');
+          tab = $(e.currentTarget);
+          tab.addClass('selected');
+          $('#codes .code').removeClass('selected');
+          return _this.$("#codes ." + (tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, ''))).addClass('selected');
+        });
       };
 
       return Home;

@@ -10,7 +10,6 @@
     width: 45px;
     float: left;
     text-align: center;
-    border-left: 1px solid @header-background;
     border-top: 1px solid @header-background;
     .tool, .setting, .tool_spacer {
         line-height: 45px;
@@ -18,6 +17,7 @@
         border-bottom: 1px solid @header-background;
     }
     .tool, .setting {
+        border-left: 1px solid @header-background;
         cursor: pointer;
         &.selected {
             background-color: @header-background;
@@ -32,27 +32,39 @@
     
     #tabs {
         overflow: hidden;
-        a {
+        .tab {
             float: left;
             display: block;
             width: 90px;
             padding: 6px 0;
-            border: 1px solid @header-background;
+            border-top: 1px solid @header-background;
+            border-left: 1px solid @header-background;
+            border-right: 1px solid @header-background;
             text-align: center;
             margin-left: 12px;
+            &.selected {
+                background-color: @header-background;
+                color: white;
+            }
         }
     }
     
-    #code {
+    #codes {
         border-top: 1px solid @header-background;
         border-right: 1px solid @header-background;
         background-color: white;
         padding: 12px 12px 12px 36px;
-        height: 480px;
+        height: 450px;
         overflow: auto;
-        .inner-shadow(10,10)
-        p {
-            text-indent: -24px;
+        .code {
+            display: none;
+            .inner-shadow(10,10)
+            p {
+                text-indent: -24px;
+            }
+            &.selected {
+                display: block;
+            }
         }
     }
 }
