@@ -34,6 +34,8 @@
         this.createBox = __bind(this.createBox, this);
         this.createLetter = __bind(this.createLetter, this);
         this.createGround = __bind(this.createGround, this);
+        this.handleContentEditableKey = __bind(this.handleContentEditableKey, this);
+        this.initCode = __bind(this.initCode, this);
         this.initDraw = __bind(this.initDraw, this);
         this.addToScript = __bind(this.addToScript, this);
         this.setStage = __bind(this.setStage, this);
@@ -47,6 +49,8 @@
         this.script = this.code.find(".script");
         this.stage = this.code.find(".stage");
         this.world = new b2d.Dynamics.b2World(new b2d.Common.Math.b2Vec2(0, 10), true);
+        this.initDraw();
+        this.initCode();
       }
 
       Peanutty.prototype.runSimulation = function() {
@@ -68,23 +72,36 @@
       };
 
       Peanutty.prototype.resetWorld = function() {
-        var b, body;
+        var b, body, _results;
         body = this.world.m_bodyList;
+        _results = [];
         while (body != null) {
           b = body;
           body = body.m_next;
-          this.world.DestroyBody(b);
+          _results.push(this.world.DestroyBody(b));
         }
-        return this.world.ClearForces();
+        return _results;
       };
 
       Peanutty.prototype.runCode = function(code) {
-        var active, indent, parsed, sanitized, segment, segments, time, _i, _len;
+        var active, child, indent, parsed, segment, segments, tab, time, _i, _len;
         parsed = [];
-        sanitized = code.replace(/\<\/p\>/ig, "").replace(/\n*(\s*)\<br\>\n/ig, "$1\n");
-        segments = sanitized.split(/\<p\>/);
         active = [];
+        tab = "    ";
         indent = "";
+        while (code.children().first().html().startsWith("<p")) {
+          code = code.children().first();
+        }
+        segments = (function() {
+          var _i, _len, _ref, _results;
+          _ref = code.children();
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            child = _ref[_i];
+            _results.push($(child).html());
+          }
+          return _results;
+        })();
         for (_i = 0, _len = segments.length; _i < _len; _i++) {
           segment = segments[_i];
           if (segment.indexOf("peanutty.wait") > -1) {
@@ -92,22 +109,22 @@
             active = [];
             time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, "")) * 1000;
             parsed.push(indent + ("$.timeout " + time + ", () =>\n"));
-            indent += "    ";
+            indent += tab;
           } else {
-            active.push(indent + segment.replace(/\n/ig, "\n" + indent).replace(/\s*$/, "\n"));
+            segment = segment.replace("&nbsp;", "").replace(/\n*\s*\<br\>\n*/ig, "\n").replace(/^\n/, "").replace(/^/, indent).replace(/\n\s*/ig, "\n" + indent + tab).replace(/\s*$/, "\n");
+            active.push(segment);
           }
         }
         parsed.push(active.join(""));
-        console.log(parsed.join(""));
         return CoffeeScript.run(parsed.join(""));
       };
 
       Peanutty.prototype.runScript = function() {
-        return this.runCode(this.script.html());
+        return this.runCode(this.script);
       };
 
       Peanutty.prototype.setStage = function() {
-        return this.runCode(this.stage.html());
+        return this.runCode(this.stage);
       };
 
       Peanutty.prototype.addToScript = function(command) {
@@ -126,6 +143,45 @@
         this.debugDraw.SetLineThickness(1.0);
         this.debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit);
         return this.world.SetDebugDraw(this.debugDraw);
+      };
+
+      Peanutty.prototype.initCode = function() {
+        var contentEditable, _i, _len, _ref, _results;
+        var _this = this;
+        _ref = this.code.find('.code');
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          contentEditable = _ref[_i];
+          _results.push((function(contentEditable) {
+            $(contentEditable).bind('keydown', _this.handleContentEditableKey);
+            $(contentEditable).bind('keyup', _this.handleContentEditableKey);
+            return $(contentEditable).bind('keypress', _this.handleContentEditableKey);
+          })(contentEditable));
+        }
+        return _results;
+      };
+
+      Peanutty.prototype.handleContentEditableKey = function(e) {
+        var node, range, sel;
+        switch (e.keyCode) {
+          case 13:
+            if ((this.enterHit != null) && new Date() - this.enterHit > 50) {
+              return true;
+            }
+            this.enterHit = new Date();
+            e.preventDefault();
+            sel = window.getSelection();
+            range = sel.getRangeAt(0);
+            node = document.createElement("BR");
+            range.insertNode(node);
+            range.setStartAfter(node);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            return false;
+          default:
+            this.enterHit = null;
+            return true;
+        }
       };
 
       Peanutty.prototype.createGround = function(options) {
@@ -615,13 +671,17 @@
           $('#tools #dynamic').addClass('selected');
           return _this.static = false;
         });
-        return this.$('#tabs .tab').bind('click', function(e) {
+        this.$('#tabs .tab').bind('click', function(e) {
           var tab;
           $('#tabs .tab').removeClass('selected');
           tab = $(e.currentTarget);
           tab.addClass('selected');
           $('#codes .code').removeClass('selected');
           return _this.$("#codes ." + (tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, ''))).addClass('selected');
+        });
+        return this.$('#execute .run_script').bind('click', function(e) {
+          _this.peanutty.resetWorld();
+          return _this.peanutty.runScript();
         });
       };
 

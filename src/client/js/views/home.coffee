@@ -22,6 +22,8 @@
                   new b2d.Common.Math.b2Vec2(0, 10),    #gravity
                   true                                  #allow sleep
             )
+            @initDraw()
+            @initCode()
             
         runSimulation: () =>
             window.requestAnimFrame = (() =>
@@ -53,30 +55,37 @@
                 b = body
                 body = body.m_next
                 @world.DestroyBody(b)
-            @world.ClearForces()   
             
         runCode: (code) =>
             parsed = []
-            sanitized = code.replace(/\<\/p\>/ig, "").replace(/\n*(\s*)\<br\>\n/ig, "$1\n")
-            segments = sanitized.split(/\<p\>/)
             active = []
+            tab = "    "
             indent = ""
+            
+            code = code.children().first() while code.children().first().html().startsWith("<p")
+            segments = ($(child).html() for child in code.children())
             for segment in segments
                 if segment.indexOf("peanutty.wait") > -1
                     parsed.push(active.join(""))
                     active = []
                     time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, "")) * 1000
                     parsed.push(indent + "$.timeout #{time}, () =>\n")
-                    indent += "    "
+                    indent += tab
                 else
-                    active.push(indent + segment.replace(/\n/ig, "\n" + indent).replace(/\s*$/, "\n"))
+                    segment = segment.replace("&nbsp;", "")
+                                     .replace(/\n*\s*\<br\>\n*/ig, "\n")
+                                     .replace(/^\n/, "")
+                                     .replace(/^/, indent)
+                                     .replace(/\n\s*/ig, "\n" + indent + tab)
+                                     .replace(/\s*$/, "\n")
+                    active.push(segment)
+                    
             parsed.push(active.join(""))
-            console.log(parsed.join(""))
             CoffeeScript.run(parsed.join(""))
                     
-        runScript: () => @runCode(@script.html())    
+        runScript: () => @runCode(@script)    
         
-        setStage: () => @runCode(@stage.html())
+        setStage: () => @runCode(@stage)
 
         addToScript: (command) =>  
             @script.html("#{@script.html()}\n<p>peanutty.wait(1)</p>") if @script.html().length > 0
@@ -92,6 +101,35 @@
             @debugDraw.SetLineThickness(1.0)
             @debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit)
             @world.SetDebugDraw(@debugDraw)
+            
+        initCode: () =>
+            for contentEditable in @code.find('.code')
+                do (contentEditable) =>
+                    $(contentEditable).bind 'keydown', @handleContentEditableKey                    
+                    $(contentEditable).bind 'keyup', @handleContentEditableKey                    
+                    $(contentEditable).bind 'keypress', @handleContentEditableKey    
+
+        handleContentEditableKey: (e) =>
+            switch e.keyCode
+                when 13
+                    return true if @enterHit? && new Date() - @enterHit > 50
+                    @enterHit = new Date()
+                    
+                    e.preventDefault()
+                    
+                    sel = window.getSelection()
+                    range = sel.getRangeAt(0)
+                    node = document.createElement("BR")
+                    range.insertNode(node)
+                    range.setStartAfter(node)
+                    sel.removeAllRanges()
+                    sel.addRange(range)
+                    
+                    return false
+                else
+                    @enterHit = null
+                    return true
+            
             
         createGround: (options={}) =>
             fixDef = fixDef = @createFixture()
@@ -410,6 +448,10 @@
                 tab.addClass('selected')
                 $('#codes .code').removeClass('selected')
                 @$("#codes .#{tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '')}").addClass('selected')
+   
+            @$('#execute .run_script').bind 'click', (e) =>
+                @peanutty.resetWorld()
+                @peanutty.runScript()
                         
     $.route.add
         '': () ->

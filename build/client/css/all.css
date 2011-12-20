@@ -261,6 +261,20 @@ img {
 #content {
   padding: 12px;
 }
+#top_area {
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+#top_area #message {
+  float: left;
+  width: 800px;
+  text-align: center;
+}
+#top_area #execute {
+  float: right;
+  text-align: center;
+  width: 300px;
+}
 #canvas {
   background-color: #eee;
   border: 1px solid #4f3526;
