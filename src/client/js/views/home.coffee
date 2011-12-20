@@ -228,7 +228,8 @@
             fixDef = @createFixture()
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
             
-            path = options.path.reverse() if @counterClockWise(options.path)
+            path = options.path
+            path = path.reverse() if @counterClockWise(path)
             
             scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@scale, point.y/@scale) for point in path)
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
@@ -357,8 +358,10 @@
     
         renderView: () ->
             @el.html(@templates.main.render())
-            @$('#codes .script').html(@templates.script.render())
-            @$('#codes .stage').html(@templates.stage.render())
+            
+            loadCode = () =>
+                @$('#codes .script').html(@templates.script.render())
+                @$('#codes .stage').html(@templates.stage.render())
             
             unbindMouseEvents = () =>
                 canvas.unbind 'mousedown'
@@ -411,6 +414,9 @@
                         """
                     )                
                 
+                
+            loadCode()
+                
             @static = false
             scale = 30
             canvas = $("#canvas")     
@@ -452,7 +458,11 @@
             @$('#execute .run_script').bind 'click', (e) =>
                 @peanutty.resetWorld()
                 @peanutty.runScript()
-                        
+            @$('#execute .reset_script').bind 'click', (e) =>
+                @peanutty.resetWorld()
+                loadCode()
+                @peanutty.runScript()
+                    
     $.route.add
         '': () ->
             $('#content').view

@@ -272,8 +272,7 @@ img {
 }
 #top_area #execute {
   float: right;
-  text-align: center;
-  width: 300px;
+  margin-right: 30px;
 }
 #canvas {
   background-color: #eee;

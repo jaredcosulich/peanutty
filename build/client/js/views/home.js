@@ -428,7 +428,8 @@
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
         fixDef = this.createFixture();
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        if (this.counterClockWise(options.path)) path = options.path.reverse();
+        path = options.path;
+        if (this.counterClockWise(path)) path = path.reverse();
         scaledPath = (function() {
           var _i, _len, _results;
           _results = [];
@@ -600,11 +601,13 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvas, code, initiateBall, initiateBox, initiateFree, scale, unbindMouseEvents;
+        var canvas, code, initiateBall, initiateBox, initiateFree, loadCode, scale, unbindMouseEvents;
         var _this = this;
         this.el.html(this.templates.main.render());
-        this.$('#codes .script').html(this.templates.script.render());
-        this.$('#codes .stage').html(this.templates.stage.render());
+        loadCode = function() {
+          _this.$('#codes .script').html(_this.templates.script.render());
+          return _this.$('#codes .stage').html(_this.templates.stage.render());
+        };
         unbindMouseEvents = function() {
           canvas.unbind('mousedown');
           canvas.unbind('mouseup');
@@ -639,6 +642,7 @@
             return peanutty.addToScript("peanutty.createBall\n    x: " + e.offsetX + " \n    y: " + e.offsetY + "\n    radius: 20\n    static: " + _this.static);
           });
         };
+        loadCode();
         this.static = false;
         scale = 30;
         canvas = $("#canvas");
@@ -679,8 +683,13 @@
           $('#codes .code').removeClass('selected');
           return _this.$("#codes ." + (tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, ''))).addClass('selected');
         });
-        return this.$('#execute .run_script').bind('click', function(e) {
+        this.$('#execute .run_script').bind('click', function(e) {
           _this.peanutty.resetWorld();
+          return _this.peanutty.runScript();
+        });
+        return this.$('#execute .reset_script').bind('click', function(e) {
+          _this.peanutty.resetWorld();
+          loadCode();
           return _this.peanutty.runScript();
         });
       };
