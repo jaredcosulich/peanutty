@@ -293,20 +293,31 @@
                 bodyDef.position.y = Math.random() * 10
                 @world.CreateBody(bodyDef).CreateFixture(fixDef)
             
-        @currentShape: null
+        currentShape: null
+        tempPoint: null
         redrawCurrentShape: () =>
-            return unless @currentShape? && @currentShape.path.length > 1
+            return unless @currentShape? && (@currentShape.path.length > 0 || @tempPoint?)
             @startFreeformShape(@currentShape.start.x, @currentShape.start.y)
             for point in @currentShape.path
-                @drawFreeformShape(point.x, point.y)   
+                @drawFreeformShape(point.x, point.y)
+            @drawFreeformShape(@tempPoint.x, @tempPoint.y) if @tempPoint?
             return
+            
+        addToFreeformShape: (x,y) =>
+            if @currentShape?
+                @continueFreeformShape(x,y)
+            else
+                @initFreeformShape(x,y)
+            
+        addTempToFreeformShape: (x,y) =>
+            @tempPoint = {x:x, y:y}
 
         drawFreeformShape: (x, y) =>
             @context.lineTo(x,y)
             @context.stroke()
 
         initFreeformShape: (x, y) =>
-            @currentShape = {start: {x:x, y:y}, path: []}
+            @currentShape = {start: {x:x, y:y}, path: [{x:x, y:y}]}
             @startFreeformShape(x,y)
 
         startFreeformShape: (x, y) =>
@@ -326,6 +337,7 @@
 
         continueFreeformShape: (x, y) =>
             return unless @currentShape?
+            @tempPoint = null
             @currentShape.path.push({x: x, y: y})
             return
 
@@ -343,7 +355,11 @@
             @currentShape.path.push(firstPoint)
             @drawFreeformShape(firstPoint.x, firstPoint.y)
             @endShape()
+            @tempPoint = null
             @currentShape = null
+            
+        getFreeformShape: () =>
+            return if @currentShape? then @currentShape.path else [] 
 
         endShape: (context) =>
             @context.fill()
@@ -375,22 +391,23 @@
             
             initiateFree = () =>
                 unbindMouseEvents()
-                @mousedown = false  
-                canvas.bind 'mousedown', (e) => 
-                    @mousedown = true
-                    @peanutty.initFreeformShape(e.offsetX, e.offsetY)
-                    return
-                           
-                canvas.bind 'mouseup', (e) => 
-                    @mousedown = false                
-                    @peanutty.endFreeformShape
-                        static: @static
-                        time: getTimeDiff()                        
-                    return
+                canvas.bind 'click', (e) => 
+                    x = e.offsetX
+                    y = e.offsetY
                     
+                    firstPoint = if @peanutty.currentShape? then @peanutty.currentShape.path[0] else null
+                    if firstPoint? && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5
+                        @peanutty.endFreeformShape
+                            static: @static
+                            time: getTimeDiff()
+                        return
+                        
+                    @peanutty.addToFreeformShape(x, y)
+                        
+                    return
+                                           
                 canvas.bind 'mousemove', (e) =>
-                    return unless @mousedown
-                    @peanutty.continueFreeformShape(e.offsetX, e.offsetY)
+                    @peanutty.addTempToFreeformShape(e.offsetX, e.offsetY)
                     return
             
             initiateBox = () =>

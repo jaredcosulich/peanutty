@@ -18,12 +18,15 @@
 
       function Peanutty(canvas, scale, code) {
         this.endShape = __bind(this.endShape, this);
+        this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
         this.continueFreeformShape = __bind(this.continueFreeformShape, this);
         this.startShape = __bind(this.startShape, this);
         this.startFreeformShape = __bind(this.startFreeformShape, this);
         this.initFreeformShape = __bind(this.initFreeformShape, this);
         this.drawFreeformShape = __bind(this.drawFreeformShape, this);
+        this.addTempToFreeformShape = __bind(this.addTempToFreeformShape, this);
+        this.addToFreeformShape = __bind(this.addToFreeformShape, this);
         this.redrawCurrentShape = __bind(this.redrawCurrentShape, this);
         this.createRandomObjects = __bind(this.createRandomObjects, this);
         this.createFixture = __bind(this.createFixture, this);
@@ -505,11 +508,13 @@
         return _results;
       };
 
-      Peanutty.currentShape = null;
+      Peanutty.prototype.currentShape = null;
+
+      Peanutty.prototype.tempPoint = null;
 
       Peanutty.prototype.redrawCurrentShape = function() {
         var point, _i, _len, _ref;
-        if (!((this.currentShape != null) && this.currentShape.path.length > 1)) {
+        if (!((this.currentShape != null) && (this.currentShape.path.length > 0 || (this.tempPoint != null)))) {
           return;
         }
         this.startFreeformShape(this.currentShape.start.x, this.currentShape.start.y);
@@ -518,6 +523,24 @@
           point = _ref[_i];
           this.drawFreeformShape(point.x, point.y);
         }
+        if (this.tempPoint != null) {
+          this.drawFreeformShape(this.tempPoint.x, this.tempPoint.y);
+        }
+      };
+
+      Peanutty.prototype.addToFreeformShape = function(x, y) {
+        if (this.currentShape != null) {
+          return this.continueFreeformShape(x, y);
+        } else {
+          return this.initFreeformShape(x, y);
+        }
+      };
+
+      Peanutty.prototype.addTempToFreeformShape = function(x, y) {
+        return this.tempPoint = {
+          x: x,
+          y: y
+        };
       };
 
       Peanutty.prototype.drawFreeformShape = function(x, y) {
@@ -531,7 +554,12 @@
             x: x,
             y: y
           },
-          path: []
+          path: [
+            {
+              x: x,
+              y: y
+            }
+          ]
         };
         return this.startFreeformShape(x, y);
       };
@@ -555,6 +583,7 @@
 
       Peanutty.prototype.continueFreeformShape = function(x, y) {
         if (this.currentShape == null) return;
+        this.tempPoint = null;
         this.currentShape.path.push({
           x: x,
           y: y
@@ -581,7 +610,16 @@
         this.currentShape.path.push(firstPoint);
         this.drawFreeformShape(firstPoint.x, firstPoint.y);
         this.endShape();
+        this.tempPoint = null;
         return this.currentShape = null;
+      };
+
+      Peanutty.prototype.getFreeformShape = function() {
+        if (this.currentShape != null) {
+          return this.currentShape.path;
+        } else {
+          return [];
+        }
       };
 
       Peanutty.prototype.endShape = function(context) {
@@ -624,21 +662,22 @@
         };
         initiateFree = function() {
           unbindMouseEvents();
-          _this.mousedown = false;
-          canvas.bind('mousedown', function(e) {
-            _this.mousedown = true;
-            _this.peanutty.initFreeformShape(e.offsetX, e.offsetY);
-          });
-          canvas.bind('mouseup', function(e) {
-            _this.mousedown = false;
-            _this.peanutty.endFreeformShape({
-              static: _this.static,
-              time: getTimeDiff()
-            });
+          canvas.bind('click', function(e) {
+            var firstPoint, x, y;
+            x = e.offsetX;
+            y = e.offsetY;
+            firstPoint = _this.peanutty.currentShape != null ? _this.peanutty.currentShape.path[0] : null;
+            if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5) {
+              _this.peanutty.endFreeformShape({
+                static: _this.static,
+                time: getTimeDiff()
+              });
+              return;
+            }
+            _this.peanutty.addToFreeformShape(x, y);
           });
           return canvas.bind('mousemove', function(e) {
-            if (!_this.mousedown) return;
-            _this.peanutty.continueFreeformShape(e.offsetX, e.offsetY);
+            _this.peanutty.addTempToFreeformShape(e.offsetX, e.offsetY);
           });
         };
         initiateBox = function() {
