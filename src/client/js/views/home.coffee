@@ -68,7 +68,7 @@
                 if segment.indexOf("peanutty.wait") > -1
                     parsed.push(active.join(""))
                     active = []
-                    time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, "")) * 1000
+                    time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""))
                     parsed.push(indent + "$.timeout #{time}, () =>\n")
                     indent += tab
                 else
@@ -87,8 +87,10 @@
         
         setStage: () => @runCode(@stage)
 
-        addToScript: (command) =>  
-            @script.html("#{@script.html()}\n<p>peanutty.wait(1)</p>") if @script.html().length > 0
+        addToScript: (options={}) =>  
+            command = options.command
+            time = options.time
+            @script.html("#{@script.html()}\n<p>peanutty.wait(#{parseInt(time)})</p>") if @script.html().length > 0 && time > 0
             @script.html("#{@script.html()}\n<p>#{command.replace(/\n/ig, '<br>\n')}</p>")
             CoffeeScript.run(command)             
             
@@ -327,14 +329,16 @@
             @currentShape.path.push({x: x, y: y})
             return
 
-        endFreeformShape: (static) =>
-            @addToScript(
-                """
-                peanutty.createPoly
-                    path: [#{"{x: #{point.x}, y: #{point.y}}" for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10)}]
-                    static: #{static}
-                """
-            )
+        endFreeformShape: (options={}) =>
+            @addToScript
+                command:
+                    """
+                    peanutty.createPoly
+                        path: [#{"{x: #{point.x}, y: #{point.y}}" for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10)}]
+                        static: #{options.static}
+                    """
+                time: options.time
+                
             firstPoint = @currentShape.path[0]
             @currentShape.path.push(firstPoint)
             @drawFreeformShape(firstPoint.x, firstPoint.y)
@@ -379,7 +383,9 @@
                            
                 canvas.bind 'mouseup', (e) => 
                     @mousedown = false                
-                    @peanutty.endFreeformShape(@static)
+                    @peanutty.endFreeformShape
+                        static: @static
+                        time: getTimeDiff()                        
                     return
                     
                 canvas.bind 'mousemove', (e) =>
@@ -389,32 +395,40 @@
             
             initiateBox = () =>
                 unbindMouseEvents()
-                canvas.bind 'click', (e) => 
-                    peanutty.addToScript(
-                        """
-                        peanutty.createBox
-                            x: #{e.offsetX - 10} 
-                            y: #{e.offsetY - 10}
-                            width: 20
-                            height: 20
-                            static: #{@static}
-                        """
-                    )
+                canvas.bind 'click', (e) =>
+                    peanutty.addToScript
+                        command:
+                            """
+                            peanutty.createBox
+                                x: #{e.offsetX - 10} 
+                                y: #{e.offsetY - 10}
+                                width: 20
+                                height: 20
+                                static: #{@static}
+                            """
+                        time: getTimeDiff()
                 
             initiateBall = () =>
                 unbindMouseEvents()
                 canvas.bind 'click', (e) =>     
-                    peanutty.addToScript(
-                        """
-                        peanutty.createBall
-                            x: #{e.offsetX} 
-                            y: #{e.offsetY}
-                            radius: 20
-                            static: #{@static}
-                        """
-                    )                
+                    peanutty.addToScript
+                        command: 
+                            """
+                            peanutty.createBall
+                                x: #{e.offsetX} 
+                                y: #{e.offsetY}
+                                radius: 20
+                                static: #{@static}
+                            """
+                        time: getTimeDiff()
+                        
+            
+            getTimeDiff = () =>
+                timeDiff = if @time? then new Date() - @time else 0
+                @time = new Date() 
+                return timeDiff
                 
-                
+            
             loadCode()
                 
             @static = false

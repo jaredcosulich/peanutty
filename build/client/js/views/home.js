@@ -107,7 +107,7 @@
           if (segment.indexOf("peanutty.wait") > -1) {
             parsed.push(active.join(""));
             active = [];
-            time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, "")) * 1000;
+            time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""));
             parsed.push(indent + ("$.timeout " + time + ", () =>\n"));
             indent += tab;
           } else {
@@ -127,9 +127,13 @@
         return this.runCode(this.stage);
       };
 
-      Peanutty.prototype.addToScript = function(command) {
-        if (this.script.html().length > 0) {
-          this.script.html("" + (this.script.html()) + "\n<p>peanutty.wait(1)</p>");
+      Peanutty.prototype.addToScript = function(options) {
+        var command, time;
+        if (options == null) options = {};
+        command = options.command;
+        time = options.time;
+        if (this.script.html().length > 0 && time > 0) {
+          this.script.html("" + (this.script.html()) + "\n<p>peanutty.wait(" + (parseInt(time)) + ")</p>");
         }
         this.script.html("" + (this.script.html()) + "\n<p>" + (command.replace(/\n/ig, '<br>\n')) + "</p>");
         return CoffeeScript.run(command);
@@ -557,18 +561,22 @@
         });
       };
 
-      Peanutty.prototype.endFreeformShape = function(static) {
+      Peanutty.prototype.endFreeformShape = function(options) {
         var firstPoint, point;
-        this.addToScript("peanutty.createPoly\n    path: [" + ((function() {
-          var _i, _len, _ref, _results, _step;
-          _ref = this.currentShape.path;
-          _results = [];
-          for (_i = 0, _len = _ref.length, _step = Math.ceil(this.currentShape.path.length / 10); _i < _len; _i += _step) {
-            point = _ref[_i];
-            _results.push("{x: " + point.x + ", y: " + point.y + "}");
-          }
-          return _results;
-        }).call(this)) + "]\n    static: " + static);
+        if (options == null) options = {};
+        this.addToScript({
+          command: "peanutty.createPoly\n    path: [" + ((function() {
+            var _i, _len, _ref, _results, _step;
+            _ref = this.currentShape.path;
+            _results = [];
+            for (_i = 0, _len = _ref.length, _step = Math.ceil(this.currentShape.path.length / 10); _i < _len; _i += _step) {
+              point = _ref[_i];
+              _results.push("{x: " + point.x + ", y: " + point.y + "}");
+            }
+            return _results;
+          }).call(this)) + "]\n    static: " + options.static,
+          time: options.time
+        });
         firstPoint = this.currentShape.path[0];
         this.currentShape.path.push(firstPoint);
         this.drawFreeformShape(firstPoint.x, firstPoint.y);
@@ -601,7 +609,7 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvas, code, initiateBall, initiateBox, initiateFree, loadCode, scale, unbindMouseEvents;
+        var canvas, code, getTimeDiff, initiateBall, initiateBox, initiateFree, loadCode, scale, unbindMouseEvents;
         var _this = this;
         this.el.html(this.templates.main.render());
         loadCode = function() {
@@ -623,7 +631,10 @@
           });
           canvas.bind('mouseup', function(e) {
             _this.mousedown = false;
-            _this.peanutty.endFreeformShape(_this.static);
+            _this.peanutty.endFreeformShape({
+              static: _this.static,
+              time: getTimeDiff()
+            });
           });
           return canvas.bind('mousemove', function(e) {
             if (!_this.mousedown) return;
@@ -633,14 +644,26 @@
         initiateBox = function() {
           unbindMouseEvents();
           return canvas.bind('click', function(e) {
-            return peanutty.addToScript("peanutty.createBox\n    x: " + (e.offsetX - 10) + " \n    y: " + (e.offsetY - 10) + "\n    width: 20\n    height: 20\n    static: " + _this.static);
+            return peanutty.addToScript({
+              command: "peanutty.createBox\n    x: " + (e.offsetX - 10) + " \n    y: " + (e.offsetY - 10) + "\n    width: 20\n    height: 20\n    static: " + _this.static,
+              time: getTimeDiff()
+            });
           });
         };
         initiateBall = function() {
           unbindMouseEvents();
           return canvas.bind('click', function(e) {
-            return peanutty.addToScript("peanutty.createBall\n    x: " + e.offsetX + " \n    y: " + e.offsetY + "\n    radius: 20\n    static: " + _this.static);
+            return peanutty.addToScript({
+              command: "peanutty.createBall\n    x: " + e.offsetX + " \n    y: " + e.offsetY + "\n    radius: 20\n    static: " + _this.static,
+              time: getTimeDiff()
+            });
           });
+        };
+        getTimeDiff = function() {
+          var timeDiff;
+          timeDiff = _this.time != null ? new Date() - _this.time : 0;
+          _this.time = new Date();
+          return timeDiff;
         };
         loadCode();
         this.static = false;
