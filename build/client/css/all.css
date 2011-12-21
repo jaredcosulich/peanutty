@@ -267,8 +267,13 @@ img {
 }
 #top_area #message {
   float: left;
-  width: 800px;
-  text-align: center;
+  width: 786px;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 6px;
+  height: 36px;
+  overflow: hidden;
+  margin-left: 45px;
 }
 #top_area #execute {
   float: right;
@@ -326,16 +331,17 @@ img {
   border-top: 1px solid #4f3526;
   border-right: 1px solid #4f3526;
   background-color: white;
-  padding: 12px 12px 12px 36px;
+  padding: 12px;
   height: 450px;
   overflow: auto;
 }
 #console #codes .code {
   display: none;
 }
-#console #codes .code p {
-  text-indent: -24px;
-}
 #console #codes .code.selected {
   display: block;
+}
+#console #codes .code p {
+  margin: 0;
+  padding: 0 0 12px 0;
 }

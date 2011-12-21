@@ -3,8 +3,13 @@
     margin-bottom: 12px;
     #message {
         float: left;
-        width: 800px;
-        text-align: center;
+        width: 786px;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 6px;
+        height: 36px;
+        overflow: hidden;
+        margin-left: 45px;
     }
 
     #execute {
@@ -68,17 +73,18 @@
         border-top: 1px solid @header-background;
         border-right: 1px solid @header-background;
         background-color: white;
-        padding: 12px 12px 12px 36px;
+        padding: 12px;
         height: 450px;
         overflow: auto;
         .code {
             display: none;
             .inner-shadow(10,10)
-            p {
-                text-indent: -24px;
-            }
             &.selected {
                 display: block;
+            }
+            p {
+                margin: 0;
+                padding: 0 0 12px 0;
             }
         }
     }

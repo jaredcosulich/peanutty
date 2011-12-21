@@ -11,13 +11,14 @@
         Function(CoffeeScript.compile code, options)()  
         
     class Peanutty
-        constructor: (canvas, scale, code) ->
+        constructor: (canvas, scale, code, message) ->
             @canvas = canvas
             @context = canvas[0].getContext("2d")
             @scale = scale
             @code = code
             @script = @code.find(".script")
             @stage = @code.find(".stage")
+            @message = message
             @world = new b2d.Dynamics.b2World(
                   new b2d.Common.Math.b2Vec2(0, 10),    #gravity
                   true                                  #allow sleep
@@ -72,12 +73,14 @@
                     parsed.push(indent + "$.timeout #{time}, () =>\n")
                     indent += tab
                 else
-                    segment = segment.replace("&nbsp;", "")
-                                     .replace(/\n*\s*\<br\>\n*/ig, "\n")
+                    segment = segment.replace(/&nbsp;/g, ' ')
+                                     .replace(/\n*\s*\<br\>\n*/g, "\n")
                                      .replace(/^\n/, "")
                                      .replace(/^/, indent)
-                                     .replace(/\n\s*/ig, "\n" + indent + tab)
+                                     .replace(/\n/g, "\n" + indent)                                     
                                      .replace(/\s*$/, "\n")
+                                     .replace(/&gt;/g, '>')
+                                     .replace(/&lt;/g, '<')
                     active.push(segment)
                     
             parsed.push(active.join(""))
@@ -91,8 +94,8 @@
             command = options.command
             time = options.time
             @script.html("#{@script.html()}\n<p>peanutty.wait(#{parseInt(time)})</p>") if @script.html().length > 0 && time > 0
-            @script.html("#{@script.html()}\n<p>#{command.replace(/\n/ig, '<br>\n')}</p>")
-            CoffeeScript.run(command)             
+            @script.html("#{@script.html()}\n#{Peanutty.htmlifyCode(command)}")
+            CoffeeScript.run(command)
             
         initDraw: () =>
             #setup debug draw
@@ -128,10 +131,23 @@
                     sel.addRange(range)
                     
                     return false
+                when 9
+                    e.preventDefault()
+                    return false if e.type == "keyup"
+                    sel = window.getSelection()
+                    range = sel.getRangeAt(0)
+                    node = document.createTextNode('\u00a0\u00a0\u00a0\u00a0')
+                    range.insertNode(node)
+                    range.setStartAfter(node)
+                    sel.removeAllRanges()
+                    sel.addRange(range)
+                    return false
                 else
                     @enterHit = null
                     return true
             
+        sendMessage: ({message}) =>
+            @message.html(message)
             
         createGround: (options={}) =>
             fixDef = fixDef = @createFixture()
@@ -196,6 +212,11 @@
                 
 
         createBox: (options={}) =>
+            options.x or= 0
+            options.y or= 0
+            options.width or= 20
+            options.height or= 20
+            
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
             
@@ -210,6 +231,10 @@
 
 
         createBall: (options={}) =>
+            options.x or= 0
+            options.y or= 0
+            options.radius or= 20
+            
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
 
@@ -365,9 +390,18 @@
             @context.fill()
             @context.stroke()
             return                  
-    
 
-
+    Peanutty.htmlifyCode = (code) ->
+        code.replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/\n(\s+)/g, '<br>$1')
+            .replace(/\n/g, '</p><p>')
+            .replace(/^/, '<p>')
+            .replace(/$/, '</p>')
+            .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+            .replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+        
+        
     class views.Home extends views.BaseView
         prepare: () ->
             @templates = {
@@ -380,8 +414,8 @@
             @el.html(@templates.main.render())
             
             loadCode = () =>
-                @$('#codes .script').html(@templates.script.render())
-                @$('#codes .stage').html(@templates.stage.render())
+                @$('#codes .script').html(Peanutty.htmlifyCode(@templates.script.render()))
+                @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
             
             unbindMouseEvents = () =>
                 canvas.unbind 'mousedown'
@@ -452,8 +486,9 @@
             scale = 30
             canvas = $("#canvas")     
             code = $('#codes')
+            message = $('#message')
             
-            window.peanutty = @peanutty = new Peanutty(canvas, 30, code)
+            window.peanutty = @peanutty = new Peanutty(canvas, 30, code, message)
             @peanutty.runScript()
             initiateBall()
             

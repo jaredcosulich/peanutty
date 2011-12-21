@@ -16,7 +16,7 @@
     };
     Peanutty = (function() {
 
-      function Peanutty(canvas, scale, code) {
+      function Peanutty(canvas, scale, code, message) {
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -37,6 +37,7 @@
         this.createBox = __bind(this.createBox, this);
         this.createLetter = __bind(this.createLetter, this);
         this.createGround = __bind(this.createGround, this);
+        this.sendMessage = __bind(this.sendMessage, this);
         this.handleContentEditableKey = __bind(this.handleContentEditableKey, this);
         this.initCode = __bind(this.initCode, this);
         this.initDraw = __bind(this.initDraw, this);
@@ -51,6 +52,7 @@
         this.code = code;
         this.script = this.code.find(".script");
         this.stage = this.code.find(".stage");
+        this.message = message;
         this.world = new b2d.Dynamics.b2World(new b2d.Common.Math.b2Vec2(0, 10), true);
         this.initDraw();
         this.initCode();
@@ -114,7 +116,7 @@
             parsed.push(indent + ("$.timeout " + time + ", () =>\n"));
             indent += tab;
           } else {
-            segment = segment.replace("&nbsp;", "").replace(/\n*\s*\<br\>\n*/ig, "\n").replace(/^\n/, "").replace(/^/, indent).replace(/\n\s*/ig, "\n" + indent + tab).replace(/\s*$/, "\n");
+            segment = segment.replace(/&nbsp;/g, ' ').replace(/\n*\s*\<br\>\n*/g, "\n").replace(/^\n/, "").replace(/^/, indent).replace(/\n/g, "\n" + indent).replace(/\s*$/, "\n").replace(/&gt;/g, '>').replace(/&lt;/g, '<');
             active.push(segment);
           }
         }
@@ -138,7 +140,7 @@
         if (this.script.html().length > 0 && time > 0) {
           this.script.html("" + (this.script.html()) + "\n<p>peanutty.wait(" + (parseInt(time)) + ")</p>");
         }
-        this.script.html("" + (this.script.html()) + "\n<p>" + (command.replace(/\n/ig, '<br>\n')) + "</p>");
+        this.script.html("" + (this.script.html()) + "\n" + (Peanutty.htmlifyCode(command)));
         return CoffeeScript.run(command);
       };
 
@@ -185,10 +187,27 @@
             sel.removeAllRanges();
             sel.addRange(range);
             return false;
+          case 9:
+            e.preventDefault();
+            if (e.type === "keyup") return false;
+            sel = window.getSelection();
+            range = sel.getRangeAt(0);
+            node = document.createTextNode('\u00a0\u00a0\u00a0\u00a0');
+            range.insertNode(node);
+            range.setStartAfter(node);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            return false;
           default:
             this.enterHit = null;
             return true;
         }
+      };
+
+      Peanutty.prototype.sendMessage = function(_arg) {
+        var message;
+        message = _arg.message;
+        return this.message.html(message);
       };
 
       Peanutty.prototype.createGround = function(options) {
@@ -405,6 +424,10 @@
       Peanutty.prototype.createBox = function(options) {
         var bodyDef, fixDef;
         if (options == null) options = {};
+        options.x || (options.x = 0);
+        options.y || (options.y = 0);
+        options.width || (options.width = 20);
+        options.height || (options.height = 20);
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
         fixDef = this.createFixture(options);
@@ -418,6 +441,9 @@
       Peanutty.prototype.createBall = function(options) {
         var bodyDef, fixDef;
         if (options == null) options = {};
+        options.x || (options.x = 0);
+        options.y || (options.y = 0);
+        options.radius || (options.radius = 20);
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
         fixDef = this.createFixture(options);
@@ -630,6 +656,9 @@
       return Peanutty;
 
     })();
+    Peanutty.htmlifyCode = function(code) {
+      return code.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace(/\n\n/g, '</p><p>').replace(/\n(\s+)/g, '<br>$1').replace(/\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+    };
     views.Home = (function() {
 
       __extends(Home, views.BaseView);
@@ -647,12 +676,12 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvas, code, getTimeDiff, initiateBall, initiateBox, initiateFree, loadCode, scale, unbindMouseEvents;
+        var canvas, code, getTimeDiff, initiateBall, initiateBox, initiateFree, loadCode, message, scale, unbindMouseEvents;
         var _this = this;
         this.el.html(this.templates.main.render());
         loadCode = function() {
-          _this.$('#codes .script').html(_this.templates.script.render());
-          return _this.$('#codes .stage').html(_this.templates.stage.render());
+          _this.$('#codes .script').html(Peanutty.htmlifyCode(_this.templates.script.render()));
+          return _this.$('#codes .stage').html(Peanutty.htmlifyCode(_this.templates.stage.render()));
         };
         unbindMouseEvents = function() {
           canvas.unbind('mousedown');
@@ -709,7 +738,8 @@
         scale = 30;
         canvas = $("#canvas");
         code = $('#codes');
-        window.peanutty = this.peanutty = new Peanutty(canvas, 30, code);
+        message = $('#message');
+        window.peanutty = this.peanutty = new Peanutty(canvas, 30, code, message);
         this.peanutty.runScript();
         initiateBall();
         this.$('#tools #free').bind('click', function() {
