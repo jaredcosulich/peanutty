@@ -360,14 +360,15 @@
             return                  
 
     Peanutty.htmlifyCode = (code) ->
-        code.replace(/&amp;/g, '&').replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
+        code.replace(/^\s*/g, '')
+            .replace(/&amp;/g, '&').replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
             .replace(/\n\n/g, '</p><p>')
             .replace(/\n(\s+)/g, '<br>$1')
             .replace(/\n/g, '</p><p>')
             .replace(/^/, '<p>')
             .replace(/$/, '</p>')
             .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-            .replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+            .replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;')            
             
     Peanutty.runCode = (code) =>
         parsed = []

@@ -611,7 +611,7 @@
 
     })();
     Peanutty.htmlifyCode = function(code) {
-      return code.replace(/&amp;/g, '&').replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace(/\n\n/g, '</p><p>').replace(/\n(\s+)/g, '<br>$1').replace(/\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+      return code.replace(/^\s*/g, '').replace(/&amp;/g, '&').replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace(/\n\n/g, '</p><p>').replace(/\n(\s+)/g, '<br>$1').replace(/\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
     };
     Peanutty.runCode = function(code) {
       var active, child, indent, parsed, segment, segments, tab, time, _i, _len;
