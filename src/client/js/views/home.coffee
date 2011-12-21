@@ -413,74 +413,7 @@
         renderView: () ->
             @el.html(@templates.main.render())
             
-            loadCode = () =>
-                @$('#codes .script').html(Peanutty.htmlifyCode(@templates.script.render()))
-                @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
-            
-            unbindMouseEvents = () =>
-                canvas.unbind 'mousedown'
-                canvas.unbind 'mouseup'
-                canvas.unbind 'mousemove'
-                canvas.unbind 'click'
-            
-            initiateFree = () =>
-                unbindMouseEvents()
-                canvas.bind 'click', (e) => 
-                    x = e.offsetX
-                    y = e.offsetY
-                    
-                    firstPoint = if @peanutty.currentShape? then @peanutty.currentShape.path[0] else null
-                    if firstPoint? && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5
-                        @peanutty.endFreeformShape
-                            static: @static
-                            time: getTimeDiff()
-                        return
-                        
-                    @peanutty.addToFreeformShape(x, y)
-                        
-                    return
-                                           
-                canvas.bind 'mousemove', (e) =>
-                    @peanutty.addTempToFreeformShape(e.offsetX, e.offsetY)
-                    return
-            
-            initiateBox = () =>
-                unbindMouseEvents()
-                canvas.bind 'click', (e) =>
-                    peanutty.addToScript
-                        command:
-                            """
-                            peanutty.createBox
-                                x: #{e.offsetX - 10} 
-                                y: #{e.offsetY - 10}
-                                width: 20
-                                height: 20
-                                static: #{@static}
-                            """
-                        time: getTimeDiff()
-                
-            initiateBall = () =>
-                unbindMouseEvents()
-                canvas.bind 'click', (e) =>     
-                    peanutty.addToScript
-                        command: 
-                            """
-                            peanutty.createBall
-                                x: #{e.offsetX} 
-                                y: #{e.offsetY}
-                                radius: 20
-                                static: #{@static}
-                            """
-                        time: getTimeDiff()
-                        
-            
-            getTimeDiff = () =>
-                timeDiff = if @time? then new Date() - @time else 0
-                @time = new Date() 
-                return timeDiff
-                
-            
-            loadCode()
+            @loadCode()
                 
             @static = false
             scale = 30
@@ -490,20 +423,20 @@
             
             window.peanutty = @peanutty = new Peanutty(canvas, 30, code, message)
             @peanutty.runScript()
-            initiateBall()
+            @initiateBall(canvas)
             
             @$('#tools #free').bind 'click', () => 
                 $('#tools .tool').removeClass('selected')
                 $('#tools #free').addClass('selected')
-                initiateFree()
+                @initiateFree(canvas)
             @$('#tools #box').bind 'click', () => 
                 $('#tools .tool').removeClass('selected')
                 $('#tools #box').addClass('selected')
-                initiateBox()
+                @initiateBox(canvas)
             @$('#tools #ball').bind 'click', () => 
                 $('#tools .tool').removeClass('selected')
                 $('#tools #ball').addClass('selected')
-                initiateBall()
+                @initiateBall(canvas)
             @$('#tools #static').bind 'click', () => 
                 $('#tools .setting').removeClass('selected')
                 $('#tools #static').addClass('selected')
@@ -526,9 +459,78 @@
                 @peanutty.runScript()
             @$('#execute .reset_script').bind 'click', (e) =>
                 @peanutty.resetWorld()
-                loadCode()
+                @loadCode()
                 @peanutty.runScript()
-                    
+            
+            window.view = @
+            
+        loadCode: () =>
+            @$('#codes .script').html(Peanutty.htmlifyCode(@templates.script.render()))
+            @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
+
+        unbindMouseEvents: (canvas) =>
+            canvas.unbind 'mousedown'
+            canvas.unbind 'mouseup'
+            canvas.unbind 'mousemove'
+            canvas.unbind 'click'
+
+        initiateFree: (canvas) =>
+            @unbindMouseEvents(canvas)
+            canvas.bind 'click', (e) => 
+                x = e.offsetX
+                y = e.offsetY
+        
+                firstPoint = if @peanutty.currentShape? then @peanutty.currentShape.path[0] else null
+                if firstPoint? && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5
+                    @peanutty.endFreeformShape
+                        static: @static
+                        time: @getTimeDiff()
+                    return
+            
+                @peanutty.addToFreeformShape(x, y)
+            
+                return
+                               
+            canvas.bind 'mousemove', (e) =>
+                @peanutty.addTempToFreeformShape(e.offsetX, e.offsetY)
+                return
+
+        initiateBox: (canvas) =>
+            @unbindMouseEvents(canvas)
+            canvas.bind 'click', (e) =>
+                @peanutty.addToScript
+                    command:
+                        """
+                        peanutty.createBox
+                            x: #{e.offsetX - 10} 
+                            y: #{e.offsetY - 10}
+                            width: 20
+                            height: 20
+                            static: #{@static}
+                        """
+                    time: @getTimeDiff()
+    
+        initiateBall: (canvas) =>
+            @unbindMouseEvents(canvas)
+            canvas.bind 'click', (e) =>     
+                @peanutty.addToScript
+                    command: 
+                        """
+                        peanutty.createBall
+                            x: #{e.offsetX} 
+                            y: #{e.offsetY}
+                            radius: 20
+                            static: #{@static}
+                        """
+                    time: @getTimeDiff()
+            
+
+        getTimeDiff: () =>
+            timeDiff = if @time? then new Date() - @time else 0
+            @time = new Date() 
+            return timeDiff
+
+                   
     $.route.add
         '': () ->
             $('#content').view

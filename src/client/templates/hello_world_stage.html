@@ -2,7 +2,10 @@ peanutty.sendMessage
     message: 
         """
         <h4>Welcome to Peanutty!</h4>
-        <p>To get started, try solving this puzzle: Knock over all of the letters with just one object. Use a box, a ball, or a freeform shape.</p>
+        <p>
+            To get started, try to knock over all the letters with one object. Use a box, a ball, or a freeform shape.
+            <a href='javascript:void(0)' onclick='peanutty.resetWorld(); view.loadCode(); peanutty.runScript()'>Reset and try again</a>
+        </p>
         """
 
 peanutty.createGround

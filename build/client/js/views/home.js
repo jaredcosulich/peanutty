@@ -664,6 +664,12 @@
       __extends(Home, views.BaseView);
 
       function Home() {
+        this.getTimeDiff = __bind(this.getTimeDiff, this);
+        this.initiateBall = __bind(this.initiateBall, this);
+        this.initiateBox = __bind(this.initiateBox, this);
+        this.initiateFree = __bind(this.initiateFree, this);
+        this.unbindMouseEvents = __bind(this.unbindMouseEvents, this);
+        this.loadCode = __bind(this.loadCode, this);
         Home.__super__.constructor.apply(this, arguments);
       }
 
@@ -676,64 +682,10 @@
       };
 
       Home.prototype.renderView = function() {
-        var canvas, code, getTimeDiff, initiateBall, initiateBox, initiateFree, loadCode, message, scale, unbindMouseEvents;
+        var canvas, code, message, scale;
         var _this = this;
         this.el.html(this.templates.main.render());
-        loadCode = function() {
-          _this.$('#codes .script').html(Peanutty.htmlifyCode(_this.templates.script.render()));
-          return _this.$('#codes .stage').html(Peanutty.htmlifyCode(_this.templates.stage.render()));
-        };
-        unbindMouseEvents = function() {
-          canvas.unbind('mousedown');
-          canvas.unbind('mouseup');
-          canvas.unbind('mousemove');
-          return canvas.unbind('click');
-        };
-        initiateFree = function() {
-          unbindMouseEvents();
-          canvas.bind('click', function(e) {
-            var firstPoint, x, y;
-            x = e.offsetX;
-            y = e.offsetY;
-            firstPoint = _this.peanutty.currentShape != null ? _this.peanutty.currentShape.path[0] : null;
-            if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5) {
-              _this.peanutty.endFreeformShape({
-                static: _this.static,
-                time: getTimeDiff()
-              });
-              return;
-            }
-            _this.peanutty.addToFreeformShape(x, y);
-          });
-          return canvas.bind('mousemove', function(e) {
-            _this.peanutty.addTempToFreeformShape(e.offsetX, e.offsetY);
-          });
-        };
-        initiateBox = function() {
-          unbindMouseEvents();
-          return canvas.bind('click', function(e) {
-            return peanutty.addToScript({
-              command: "peanutty.createBox\n    x: " + (e.offsetX - 10) + " \n    y: " + (e.offsetY - 10) + "\n    width: 20\n    height: 20\n    static: " + _this.static,
-              time: getTimeDiff()
-            });
-          });
-        };
-        initiateBall = function() {
-          unbindMouseEvents();
-          return canvas.bind('click', function(e) {
-            return peanutty.addToScript({
-              command: "peanutty.createBall\n    x: " + e.offsetX + " \n    y: " + e.offsetY + "\n    radius: 20\n    static: " + _this.static,
-              time: getTimeDiff()
-            });
-          });
-        };
-        getTimeDiff = function() {
-          var timeDiff;
-          timeDiff = _this.time != null ? new Date() - _this.time : 0;
-          _this.time = new Date();
-          return timeDiff;
-        };
-        loadCode();
+        this.loadCode();
         this.static = false;
         scale = 30;
         canvas = $("#canvas");
@@ -741,21 +693,21 @@
         message = $('#message');
         window.peanutty = this.peanutty = new Peanutty(canvas, 30, code, message);
         this.peanutty.runScript();
-        initiateBall();
+        this.initiateBall(canvas);
         this.$('#tools #free').bind('click', function() {
           $('#tools .tool').removeClass('selected');
           $('#tools #free').addClass('selected');
-          return initiateFree();
+          return _this.initiateFree(canvas);
         });
         this.$('#tools #box').bind('click', function() {
           $('#tools .tool').removeClass('selected');
           $('#tools #box').addClass('selected');
-          return initiateBox();
+          return _this.initiateBox(canvas);
         });
         this.$('#tools #ball').bind('click', function() {
           $('#tools .tool').removeClass('selected');
           $('#tools #ball').addClass('selected');
-          return initiateBall();
+          return _this.initiateBall(canvas);
         });
         this.$('#tools #static').bind('click', function() {
           $('#tools .setting').removeClass('selected');
@@ -779,11 +731,75 @@
           _this.peanutty.resetWorld();
           return _this.peanutty.runScript();
         });
-        return this.$('#execute .reset_script').bind('click', function(e) {
+        this.$('#execute .reset_script').bind('click', function(e) {
           _this.peanutty.resetWorld();
-          loadCode();
+          _this.loadCode();
           return _this.peanutty.runScript();
         });
+        return window.view = this;
+      };
+
+      Home.prototype.loadCode = function() {
+        this.$('#codes .script').html(Peanutty.htmlifyCode(this.templates.script.render()));
+        return this.$('#codes .stage').html(Peanutty.htmlifyCode(this.templates.stage.render()));
+      };
+
+      Home.prototype.unbindMouseEvents = function(canvas) {
+        canvas.unbind('mousedown');
+        canvas.unbind('mouseup');
+        canvas.unbind('mousemove');
+        return canvas.unbind('click');
+      };
+
+      Home.prototype.initiateFree = function(canvas) {
+        var _this = this;
+        this.unbindMouseEvents(canvas);
+        canvas.bind('click', function(e) {
+          var firstPoint, x, y;
+          x = e.offsetX;
+          y = e.offsetY;
+          firstPoint = _this.peanutty.currentShape != null ? _this.peanutty.currentShape.path[0] : null;
+          if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5) {
+            _this.peanutty.endFreeformShape({
+              static: _this.static,
+              time: _this.getTimeDiff()
+            });
+            return;
+          }
+          _this.peanutty.addToFreeformShape(x, y);
+        });
+        return canvas.bind('mousemove', function(e) {
+          _this.peanutty.addTempToFreeformShape(e.offsetX, e.offsetY);
+        });
+      };
+
+      Home.prototype.initiateBox = function(canvas) {
+        var _this = this;
+        this.unbindMouseEvents(canvas);
+        return canvas.bind('click', function(e) {
+          return _this.peanutty.addToScript({
+            command: "peanutty.createBox\n    x: " + (e.offsetX - 10) + " \n    y: " + (e.offsetY - 10) + "\n    width: 20\n    height: 20\n    static: " + _this.static,
+            time: _this.getTimeDiff()
+          });
+        });
+      };
+
+      Home.prototype.initiateBall = function(canvas) {
+        var _this = this;
+        this.unbindMouseEvents(canvas);
+        return canvas.bind('click', function(e) {
+          return _this.peanutty.addToScript({
+            command: "peanutty.createBall\n    x: " + e.offsetX + " \n    y: " + e.offsetY + "\n    radius: 20\n    static: " + _this.static,
+            time: _this.getTimeDiff()
+          });
+        });
+      };
+
+      Home.prototype.getTimeDiff = function() {
+        var timeDiff;
+        timeDiff = this.time != null ? new Date() - this.time : 0;
+        this.time = new Date();
+        return timeDiff;
       };
 
       return Home;
