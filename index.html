@@ -6,51 +6,6 @@
     <title>Peanutty</title>
     <link rel="stylesheet" href="build/client/css/all.css" type="text/css" />
     
-    <style type="text/css">
-        @font-face {
-          font-family: 'Mingl Icons';
-          src: url('src/client/css/fonts/icons-webfont.eot');
-          src: url('src/client/css/fonts/icons-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/icons-webfont.woff') format('woff'), url('src/client/css/fonts/icons-webfont.ttf') format('truetype'), url('src/client/css/fonts/icons-webfont.svg#MinglIcons') format('svg');
-          font-weight: normal;
-          font-style: normal;
-        }
-        /* Museo: A font by Jos Buivenga (exljbris) -> www.exljbris.com */@font-face {
-          font-family: 'Museo';
-          src: url('src/client/css/fonts/museo500-regular-webfont.eot');
-          src: url('src/client/css/fonts/museo500-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo500-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo500-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo500-regular-webfont.svg#webfontnuwysBIH') format('svg');
-          font-weight: normal;
-          font-style: normal;
-        }
-        @font-face {
-          font-family: 'Museo';
-          src: url('src/client/css/fonts/museo300-regular-webfont.eot');
-          src: url('src/client/css/fonts/museo300-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo300-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo300-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo300-regular-webfont.svg#webfontMmwAEq4Z') format('svg');
-          font-weight: lighter;
-          font-style: normal;
-        }
-        @font-face {
-          font-family: 'Museo';
-          src: url('src/client/css/fonts/museo700-regular-webfont.eot');
-          src: url('src/client/css/fonts/museo700-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo700-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo700-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo700-regular-webfont.svg#webfonthvYIakly') format('svg');
-          font-weight: bold;
-          font-style: normal;
-        }
-        @font-face {
-          font-family: 'Museo Sans';
-          src: url('src/client/css/fonts/museosans500-webfont.eot');
-          src: url('src/client/css/fonts/museosans500-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500-webfont.svg#webfont1H1968T3') format('svg');
-          font-weight: normal;
-          font-style: normal;
-        }
-        @font-face {
-          font-family: 'Museo Sans';
-          src: url('src/client/css/fonts/museosans500_italic-webfont.eot');
-          src: url('src/client/css/fonts/museosans500-italic-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500_italic-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500_italic-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500_italic-webfont.svg#webfontq2OnKNVm') format('svg');
-          font-weight: normal;
-          font-style: italic;
-        }
-        
-    </style>
     
     <script type="text/javascript" src="http://github.com/jashkenas/coffee-script/raw/master/extras/coffee-script.js"> </script>
     <script src="src/client/js/lib/ender.js" type="text/javascript" charset="utf-8"></script>
@@ -59,6 +14,272 @@
     <script src="build/client/js/views/main.js" type="text/javascript" charset="utf-8"></script>
     <script src="build/client/js/init.js" type="text/javascript" charset="utf-8"></script>
     <script src="build/client/js/util.js" type="text/javascript" charset="utf-8"></script>
+    
+    <style type="text/css">
+        @font-face {
+  font-family: 'Mingl Icons';
+  src: url('src/client/css/fonts/icons-webfont.eot');
+  src: url('src/client/css/fonts/icons-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/icons-webfont.woff') format('woff'), url('src/client/css/fonts/icons-webfont.ttf') format('truetype'), url('src/client/css/fonts/icons-webfont.svg#MinglIcons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Museo: A font by Jos Buivenga (exljbris) -&gt; www.exljbris.com */@font-face {
+  font-family: 'Museo';
+  src: url('src/client/css/fonts/museo500-regular-webfont.eot');
+  src: url('src/client/css/fonts/museo500-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo500-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo500-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo500-regular-webfont.svg#webfontnuwysBIH') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo';
+  src: url('src/client/css/fonts/museo300-regular-webfont.eot');
+  src: url('src/client/css/fonts/museo300-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo300-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo300-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo300-regular-webfont.svg#webfontMmwAEq4Z') format('svg');
+  font-weight: lighter;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo';
+  src: url('src/client/css/fonts/museo700-regular-webfont.eot');
+  src: url('src/client/css/fonts/museo700-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo700-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo700-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo700-regular-webfont.svg#webfonthvYIakly') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('src/client/css/fonts/museosans500-webfont.eot');
+  src: url('src/client/css/fonts/museosans500-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500-webfont.svg#webfont1H1968T3') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('src/client/css/fonts/museosans500_italic-webfont.eot');
+  src: url('src/client/css/fonts/museosans500-italic-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500_italic-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500_italic-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500_italic-webfont.svg#webfontq2OnKNVm') format('svg');
+  font-weight: normal;
+  font-style: italic;
+}
+    </style>
+    <script data-src="templates/basic_environment.html" type="text/html" charset="utf-8">
+        scale = 30
+canvas = $('#canvas')     
+code = $('#codes')
+message = $('#message')
+
+window.peanutty = new Peanutty(canvas, code, message, scale, new b2d.Common.Math.b2Vec2(0, 10))
+
+static = false
+unbindMouseEvents = (canvas) =>
+    canvas.unbind 'mousedown'
+    canvas.unbind 'mouseup'
+    canvas.unbind 'mousemove'
+    canvas.unbind 'click'
+
+initiateFree = (canvas) =>
+    unbindMouseEvents(canvas)
+    canvas.bind 'click', (e) => 
+        x = e.offsetX
+        y = e.offsetY
+
+        firstPoint = if peanutty.currentShape? then peanutty.currentShape.path[0] else null
+        if firstPoint? && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5
+            peanutty.endFreeformShape
+                static: static
+                time: getTimeDiff()
+            return
+            
+        peanutty.addToFreeformShape(x, y)    
+        return
+                               
+    canvas.bind 'mousemove', (e) =>
+        peanutty.addTempToFreeformShape(e.offsetX, e.offsetY)
+        return
+
+initiateBox = (canvas) =>
+    unbindMouseEvents(canvas)
+    canvas.bind 'click', (e) =>
+        peanutty.addToScript
+            command:
+                """
+                peanutty.createBox
+                    x: #{{e.offsetX - 10}}
+                    y: #{{e.offsetY - 10}}
+                    width: 20
+                    height: 20
+                    static: #{{static}}
+                """
+            time: getTimeDiff()
+
+initiateBall = (canvas) =>
+    unbindMouseEvents(canvas)
+    canvas.bind 'click', (e) =>     
+        peanutty.addToScript
+            command: 
+                """
+                peanutty.createBall
+                    x: #{{e.offsetX}}
+                    y: #{{e.offsetY}}
+                    radius: 20
+                    static: #{{static}}
+                """
+            time: getTimeDiff()
+    
+getTimeDiff = () =>
+    timeDiff = if view.time? then new Date() - view.time else 0
+    view.time = new Date() 
+    return timeDiff
+
+view.$('#tools #free').bind 'click', () => 
+    $('#tools .tool').removeClass('selected')
+    $('#tools #free').addClass('selected')
+    initiateFree(canvas)
+view.$('#tools #box').bind 'click', () => 
+    $('#tools .tool').removeClass('selected')
+    $('#tools #box').addClass('selected')
+    initiateBox(canvas)
+view.$('#tools #ball').bind 'click', () => 
+    $('#tools .tool').removeClass('selected')
+    $('#tools #ball').addClass('selected')
+    initiateBall(canvas)
+view.$('#tools #static').bind 'click', () => 
+    $('#tools .setting').removeClass('selected')
+    $('#tools #static').addClass('selected')
+    static = true
+view.$('#tools #dynamic').bind 'click', () => 
+    $('#tools .setting').removeClass('selected')
+    $('#tools #dynamic').addClass('selected')
+    static = false
+
+initiateBall(canvas)
+    </script>
+    <script data-src="templates/basic_script.html" type="text/html" charset="utf-8">
+        Peanutty.setStage()
+peanutty.wait(1000)
+    </script>
+    <script data-src="templates/hello_world_stage.html" type="text/html" charset="utf-8">
+        Peanutty.loadEnvironment()
+
+peanutty.sendMessage
+    message: 
+        """
+        <h4>Welcome to Peanutty!</h4>
+        <p>
+            To get started, try to knock over all the letters with one object. Use a box, a ball, or a freeform shape.
+            <a href='javascript:void(0)' onclick='peanutty.resetWorld(); view.loadCode(); peanutty.runScript()'>Reset and try again</a>
+        </p>
+        """
+
+peanutty.createGround
+    x: peanutty.canvas.width() / 2
+    y: peanutty.canvas.height()
+    width: 600
+    height: 10
+
+x = 170
+y = 490
+
+peanutty.createLetter
+    letter: "H"
+    x: x
+    y: y - 15
+
+peanutty.createLetter
+    letter: "E"
+    x: x + 45
+    y: y
+
+peanutty.createLetter
+    letter: "L"
+    x: x + 100
+    y: y
+
+peanutty.createLetter
+    letter: "L"
+    x: x + 145
+    y: y
+
+peanutty.createLetter
+    letter: "O"
+    x: x + 205
+    y: y
+
+peanutty.createLetter
+    letter: "W"
+    x: x + 320
+    y: y
+
+peanutty.createLetter
+    letter: "O"
+    x: x + 370
+    y: y
+
+peanutty.createLetter
+    letter: "R"
+    x: x + 415
+    y: y
+
+peanutty.createLetter
+    letter: "L"
+    x: x + 445
+    y: y
+
+peanutty.createLetter
+    letter: "D"
+    x: x + 505
+    y: y
+
+peanutty.runSimulation()
+
+    </script>
+    <script data-src="templates/home.html" type="text/html" charset="utf-8">
+        <div id='top_area'>
+    <div id='message'></div>
+    <div id='execute'>
+        <a class='run_script'>Rerun Script</a>
+        &nbsp;
+        <a class='reset_script'>Reset Script</a>
+    </div>
+</div>
+
+<div id='tools'>
+    <div id='free' class='tool'>
+        Free
+    </div>
+    <div id='box' class='tool'>
+        Box
+    </div>
+    <div id='ball' class='tool selected'>
+        Ball
+    </div>
+    <div class='tool_spacer'></div>
+    <div id='static' class='setting'>
+        Static
+    </div>
+    <div id='dynamic' class='setting selected'>
+        Falling
+    </div>
+</div>
+<canvas id="canvas" width="800" height="500"></canvas>
+<div id='console'>
+    <div id='tabs'>
+        <a class='tab script selected'>Script</a>
+        <a class='tab stage'>Stage</a>
+        <a class='tab environment'>Environment</a>
+    </div>
+    <div id='codes'>
+        <div class='code script selected' contenteditable=true></div>
+        <div class='code stage' contenteditable=true></div>
+        <div class='code environment' contenteditable=true></div>        
+    </div>
+</div>
+
+    </script>
+    <script data-src="templates/main.html" type="text/html" charset="utf-8">
+            <div id='header'>
+        <h1>Peanutty! (0.0.1)</h1>
+    </div>
+    <div id='content'></div>
+
+    </script>    
 </head>
 <body>
 </body>

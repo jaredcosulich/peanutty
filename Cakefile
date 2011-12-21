@@ -1,6 +1,69 @@
 fs = require('fs')
 {spawn, exec} = require('child_process')
 
+task 'build:index', 'Build the static index page', ->
+    client = './src/client'
+    
+    wings = require("#{client}/js/lib/node_modules/wings/lib/wings.js")
+    
+    templates = ({
+            src: "templates/#{name}",
+            text: fs.readFileSync("#{client}/templates/#{name}")
+        } for name in fs.readdirSync("#{client}/templates") when name != 'base.html' and /\.html$/.test(name))
+
+    overwriteFonts =
+        """
+        @font-face {
+          font-family: 'Mingl Icons';
+          src: url('src/client/css/fonts/icons-webfont.eot');
+          src: url('src/client/css/fonts/icons-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/icons-webfont.woff') format('woff'), url('src/client/css/fonts/icons-webfont.ttf') format('truetype'), url('src/client/css/fonts/icons-webfont.svg#MinglIcons') format('svg');
+          font-weight: normal;
+          font-style: normal;
+        }
+        /* Museo: A font by Jos Buivenga (exljbris) -> www.exljbris.com */@font-face {
+          font-family: 'Museo';
+          src: url('src/client/css/fonts/museo500-regular-webfont.eot');
+          src: url('src/client/css/fonts/museo500-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo500-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo500-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo500-regular-webfont.svg#webfontnuwysBIH') format('svg');
+          font-weight: normal;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'Museo';
+          src: url('src/client/css/fonts/museo300-regular-webfont.eot');
+          src: url('src/client/css/fonts/museo300-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo300-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo300-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo300-regular-webfont.svg#webfontMmwAEq4Z') format('svg');
+          font-weight: lighter;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'Museo';
+          src: url('src/client/css/fonts/museo700-regular-webfont.eot');
+          src: url('src/client/css/fonts/museo700-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo700-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo700-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo700-regular-webfont.svg#webfonthvYIakly') format('svg');
+          font-weight: bold;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          src: url('src/client/css/fonts/museosans500-webfont.eot');
+          src: url('src/client/css/fonts/museosans500-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500-webfont.svg#webfont1H1968T3') format('svg');
+          font-weight: normal;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          src: url('src/client/css/fonts/museosans500_italic-webfont.eot');
+          src: url('src/client/css/fonts/museosans500-italic-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500_italic-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500_italic-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500_italic-webfont.svg#webfontq2OnKNVm') format('svg');
+          font-weight: normal;
+          font-style: italic;
+        }
+        """
+
+    base = wings.renderTemplate(fs.readFileSync("index_template.html", 'utf-8'), {
+        templates: templates
+        overwriteFonts: overwriteFonts
+    })
+    
+    fs.writeFileSync("index.html", base)
+    
 
 task 'build:client', 'Build the development environment', ->
     source = './src/client'
