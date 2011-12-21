@@ -149,11 +149,15 @@ view.$('#tools #dynamic').bind 'click', () =>
     $('#tools #dynamic').addClass('selected')
     static = false
 
-initiateBall(canvas)
+view.$('#tools #ball').click()
+view.$('#tools #dynamic').click()
     </script>
     <script data-src="templates/basic_script.html" type="text/html" charset="utf-8">
         Peanutty.setStage()
 peanutty.wait(1000)
+    </script>
+    <script data-src="templates/chrome_only.html" type="text/html" charset="utf-8">
+        <h2>Peanutty only works in <a href='https://www.google.com/chrome' target='_blank' style='text-decoration: underline;'>Google Chrome</a> right now.</h2>
     </script>
     <script data-src="templates/hello_world_stage.html" type="text/html" charset="utf-8">
         Peanutty.loadEnvironment()
@@ -168,14 +172,15 @@ peanutty.sendMessage
         </p>
         """
 
+
 peanutty.createGround
     x: peanutty.canvas.width() / 2
-    y: peanutty.canvas.height()
+    y: peanutty.canvas.height() - 50
     width: 600
     height: 10
 
 x = 170
-y = 490
+y = 490 - 50
 
 peanutty.createLetter
     letter: "H"

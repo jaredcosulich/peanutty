@@ -183,7 +183,44 @@
         x = options.x;
         y = options.y;
         letter = options.letter;
-        switch (letter) {
+        switch (letter.toUpperCase()) {
+          case "A":
+            this.createPoly({
+              path: [
+                {
+                  x: x - 48,
+                  y: y
+                }, {
+                  x: x - 45,
+                  y: y - 80
+                }, {
+                  x: x182,
+                  y: y - 80
+                }, {
+                  x: x - 35,
+                  y: y
+                }
+              ],
+              static: false
+            });
+            return this.createPoly({
+              path: [
+                {
+                  x: x,
+                  y: y - 80
+                }, {
+                  x: x - 6,
+                  y: y - 63
+                }, {
+                  x: x + 16,
+                  y: y
+                }, {
+                  x: x + 30,
+                  y: y
+                }
+              ],
+              static: false
+            });
           case "H":
             this.createBox({
               x: x - 40,
@@ -247,9 +284,9 @@
               height: 5
             });
             return this.createBox({
-              x: x - 30,
+              x: x - 28,
               y: y - 69,
-              width: 6,
+              width: 8,
               height: 2,
               density: 10
             });
@@ -413,7 +450,7 @@
         if (options == null) options = {};
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
-        fixDef = this.createFixture();
+        fixDef = this.createFixture(options);
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
         path = options.path;
         if (this.counterClockWise(path)) path = path.reverse();
@@ -680,6 +717,10 @@
 
       Home.prototype.renderView = function() {
         var _this = this;
+        if (navigator.userAgent.indexOf("Chrome") === -1) {
+          this.el.html(this._requireTemplate('templates/chrome_only.html').render());
+          return;
+        }
         this.el.html(this.templates.main.render());
         this.$('#tabs .tab').bind('click', function(e) {
           var tab;

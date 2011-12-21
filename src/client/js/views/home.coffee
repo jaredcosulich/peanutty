@@ -139,7 +139,14 @@
             y = options.y
             letter = options.letter
             
-            switch letter
+            switch letter.toUpperCase()
+                when "A"
+                    @createPoly
+                        path: [{x: x-48, y: y},{x: x-45, y: y-80},{x: x182, y: y-80},{x: x-35, y: y}]
+                        static: false
+                    @createPoly
+                        path: [{x: x, y: y-80},{x: x-6, y: y-63},{x: x+16, y: y},{x: x+30, y: y}]
+                        static: false
                 when "H"
                     @createBox(x: x-40, y: y, width: 10, height: 20)
                     @createBox(x: x, y: y, width: 10, height: 20)
@@ -152,7 +159,7 @@
                     @createBox(x: x-10, y: y-30, width: 20, height: 5)
                     @createBox(x: x-20, y: y-45, width: 10, height: 10)
                     @createBox(x: x, y: y-60, width: 30, height: 5)
-                    @createBox(x: x-30, y: y-69, width: 6, height: 2, density: 10)
+                    @createBox(x: x-28, y: y-69, width: 8, height: 2, density: 10)
                 when "L"
                     @createBox(x: x, y: y, width: 20, height: 5)
                     @createBox(x: x-15, y: y-35, width: 5, height: 30)
@@ -220,7 +227,7 @@
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
             
-            fixDef = @createFixture()
+            fixDef = @createFixture(options)
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
             
             path = options.path
@@ -417,8 +424,12 @@
             }
     
         renderView: () ->
+            if navigator.userAgent.indexOf("Chrome") == -1
+                @el.html(@_requireTemplate('templates/chrome_only.html').render())
+                return
+                
             @el.html(@templates.main.render())
-
+            
             @$('#tabs .tab').bind 'click', (e) =>
                 $('#tabs .tab').removeClass('selected')
                 tab = $(e.currentTarget)
