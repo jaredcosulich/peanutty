@@ -11,7 +11,7 @@
         Function(CoffeeScript.compile code, options)()  
         
     class Peanutty
-        constructor: (canvas, scale, code, message) ->
+        constructor: (canvas, code, message, scale, gravity) ->
             @canvas = canvas
             @context = canvas[0].getContext("2d")
             @scale = scale
@@ -20,8 +20,8 @@
             @stage = @code.find(".stage")
             @message = message
             @world = new b2d.Dynamics.b2World(
-                  new b2d.Common.Math.b2Vec2(0, 10),    #gravity
-                  true                                  #allow sleep
+                  gravity,    #gravity
+                  true        #allow sleep
             )
             @initDraw()
             @initCode()
@@ -50,53 +50,13 @@
             
             requestAnimFrame(update)
             
-        resetWorld: () =>
+        destroyWorld: () =>
             body = @world.m_bodyList
             while body?
                 b = body
                 body = body.m_next
                 @world.DestroyBody(b)
-            
-        runCode: (code) =>
-            parsed = []
-            active = []
-            tab = "    "
-            indent = ""
-            
-            code = code.children().first() while code.children().first().html().startsWith("<p")
-            segments = ($(child).html() for child in code.children())
-            for segment in segments
-                if segment.indexOf("peanutty.wait") > -1
-                    parsed.push(active.join(""))
-                    active = []
-                    time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""))
-                    parsed.push(indent + "$.timeout #{time}, () =>\n")
-                    indent += tab
-                else
-                    segment = segment.replace(/&nbsp;/g, ' ')
-                                     .replace(/\n*\s*\<br\>\n*/g, "\n")
-                                     .replace(/^\n/, "")
-                                     .replace(/^/, indent)
-                                     .replace(/\n/g, "\n" + indent)                                     
-                                     .replace(/\s*$/, "\n")
-                                     .replace(/&gt;/g, '>')
-                                     .replace(/&lt;/g, '<')
-                    active.push(segment)
-                    
-            parsed.push(active.join(""))
-            CoffeeScript.run(parsed.join(""))
-                    
-        runScript: () => @runCode(@script)    
-        
-        setStage: () => @runCode(@stage)
-
-        addToScript: (options={}) =>  
-            command = options.command
-            time = options.time
-            @script.html("#{@script.html()}\n<p>peanutty.wait(#{parseInt(time)})</p>") if @script.html().length > 0 && time > 0
-            @script.html("#{@script.html()}\n#{Peanutty.htmlifyCode(command)}")
-            CoffeeScript.run(command)
-            
+                        
         initDraw: () =>
             #setup debug draw
             @debugDraw = new b2d.Dynamics.b2DebugDraw()
@@ -145,6 +105,14 @@
                 else
                     @enterHit = null
                     return true
+                    
+        addToScript: (options={}) =>  
+            command = options.command
+            time = options.time
+            @script.html("#{@script.html()}\n<p>peanutty.wait(#{parseInt(time)})</p>") if @script.html().length > 0 && time > 0
+            @script.html("#{@script.html()}\n#{Peanutty.htmlifyCode(command)}")
+            CoffeeScript.run(command)
+            
             
         sendMessage: ({message}) =>
             @message.html(message)
@@ -392,7 +360,7 @@
             return                  
 
     Peanutty.htmlifyCode = (code) ->
-        code.replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
+        code.replace(/&amp;/g, '&').replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
             .replace(/\n\n/g, '</p><p>')
             .replace(/\n(\s+)/g, '<br>$1')
             .replace(/\n/g, '</p><p>')
@@ -400,52 +368,55 @@
             .replace(/$/, '</p>')
             .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
             .replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+            
+    Peanutty.runCode = (code) =>
+        parsed = []
+        active = []
+        tab = "    "
+        indent = ""
+
+        code = code.children().first() while code.children().first().html().startsWith("<p")
+        segments = ($(child).html() for child in code.children())
+        for segment in segments
+            if segment.indexOf("peanutty.wait") > -1
+                parsed.push(active.join(""))
+                active = []
+                time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""))
+                parsed.push(indent + "$.timeout #{time}, () =>\n")
+                indent += tab
+            else
+                segment = segment.replace(/&nbsp;/g, ' ')
+                                 .replace(/\n*\s*\<br\>\n*/g, "\n")
+                                 .replace(/^\n/, "")
+                                 .replace(/^/, indent)
+                                 .replace(/\n/g, "\n" + indent)                                     
+                                 .replace(/\s*$/, "\n")
+                                 .replace(/&gt;/g, '>')
+                                 .replace(/&lt;/g, '<')
+                                 .replace(/&amp;/g, '&')
+                active.push(segment)
+
+        parsed.push(active.join(""))
+        CoffeeScript.run(parsed.join(""))
+
+    Peanutty.runScript = (script = view.$('#codes .script')) => Peanutty.runCode(script)    
+
+    Peanutty.setStage = (stage = view.$('#codes .stage')) => Peanutty.runCode(stage)
+
+    Peanutty.loadEnvironment = (environment = view.$('#codes .environment')) => Peanutty.runCode(environment)
         
-        
+            
     class views.Home extends views.BaseView
         prepare: () ->
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
-                script: @_requireTemplate('templates/hello_world_script.html'),
+                script: @_requireTemplate('templates/basic_script.html'),
                 stage: @_requireTemplate('templates/hello_world_stage.html'),
+                environment: @_requireTemplate('templates/basic_environment.html')
             }
     
         renderView: () ->
             @el.html(@templates.main.render())
-            
-            @loadCode()
-                
-            @static = false
-            scale = 30
-            canvas = $("#canvas")     
-            code = $('#codes')
-            message = $('#message')
-            
-            window.peanutty = @peanutty = new Peanutty(canvas, 30, code, message)
-            @peanutty.runScript()
-            @initiateBall(canvas)
-            
-            @$('#tools #free').bind 'click', () => 
-                $('#tools .tool').removeClass('selected')
-                $('#tools #free').addClass('selected')
-                @initiateFree(canvas)
-            @$('#tools #box').bind 'click', () => 
-                $('#tools .tool').removeClass('selected')
-                $('#tools #box').addClass('selected')
-                @initiateBox(canvas)
-            @$('#tools #ball').bind 'click', () => 
-                $('#tools .tool').removeClass('selected')
-                $('#tools #ball').addClass('selected')
-                @initiateBall(canvas)
-            @$('#tools #static').bind 'click', () => 
-                $('#tools .setting').removeClass('selected')
-                $('#tools #static').addClass('selected')
-                @static = true
-            @$('#tools #dynamic').bind 'click', () => 
-                $('#tools .setting').removeClass('selected')
-                $('#tools #dynamic').addClass('selected')
-                @static = false
-                
 
             @$('#tabs .tab').bind 'click', (e) =>
                 $('#tabs .tab').removeClass('selected')
@@ -455,80 +426,25 @@
                 @$("#codes .#{tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '')}").addClass('selected')
    
             @$('#execute .run_script').bind 'click', (e) =>
-                @peanutty.resetWorld()
-                @peanutty.runScript()
+                peanutty.destroyWorld()
+                Peanutty.runScript()
             @$('#execute .reset_script').bind 'click', (e) =>
-                @peanutty.resetWorld()
+                peanutty.destroyWorld()
                 @loadCode()
-                @peanutty.runScript()
+                Peanutty.runScript()
             
+            window.Peanutty = Peanutty
+            window.b2d = b2d
             window.view = @
-            
+
+            @loadCode()
+                        
+            Peanutty.runScript()
+
         loadCode: () =>
             @$('#codes .script').html(Peanutty.htmlifyCode(@templates.script.render()))
             @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
-
-        unbindMouseEvents: (canvas) =>
-            canvas.unbind 'mousedown'
-            canvas.unbind 'mouseup'
-            canvas.unbind 'mousemove'
-            canvas.unbind 'click'
-
-        initiateFree: (canvas) =>
-            @unbindMouseEvents(canvas)
-            canvas.bind 'click', (e) => 
-                x = e.offsetX
-                y = e.offsetY
-        
-                firstPoint = if @peanutty.currentShape? then @peanutty.currentShape.path[0] else null
-                if firstPoint? && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5
-                    @peanutty.endFreeformShape
-                        static: @static
-                        time: @getTimeDiff()
-                    return
-            
-                @peanutty.addToFreeformShape(x, y)
-            
-                return
-                               
-            canvas.bind 'mousemove', (e) =>
-                @peanutty.addTempToFreeformShape(e.offsetX, e.offsetY)
-                return
-
-        initiateBox: (canvas) =>
-            @unbindMouseEvents(canvas)
-            canvas.bind 'click', (e) =>
-                @peanutty.addToScript
-                    command:
-                        """
-                        peanutty.createBox
-                            x: #{e.offsetX - 10} 
-                            y: #{e.offsetY - 10}
-                            width: 20
-                            height: 20
-                            static: #{@static}
-                        """
-                    time: @getTimeDiff()
-    
-        initiateBall: (canvas) =>
-            @unbindMouseEvents(canvas)
-            canvas.bind 'click', (e) =>     
-                @peanutty.addToScript
-                    command: 
-                        """
-                        peanutty.createBall
-                            x: #{e.offsetX} 
-                            y: #{e.offsetY}
-                            radius: 20
-                            static: #{@static}
-                        """
-                    time: @getTimeDiff()
-            
-
-        getTimeDiff: () =>
-            timeDiff = if @time? then new Date() - @time else 0
-            @time = new Date() 
-            return timeDiff
+            @$('#codes .environment').html(Peanutty.htmlifyCode(@templates.environment.render()))
 
                    
     $.route.add
