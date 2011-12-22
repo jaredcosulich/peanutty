@@ -34,6 +34,7 @@
         this.direction = __bind(this.direction, this);
         this.counterClockWise = __bind(this.counterClockWise, this);
         this.createPoly = __bind(this.createPoly, this);
+        this.polyFixtureDef = __bind(this.polyFixtureDef, this);
         this.createBall = __bind(this.createBall, this);
         this.createBox = __bind(this.createBox, this);
         this.createLetter = __bind(this.createLetter, this);
@@ -183,41 +184,81 @@
         x = options.x;
         y = options.y;
         letter = options.letter;
-        switch (letter.toUpperCase()) {
+        switch (letter) {
           case "A":
             this.createPoly({
-              path: [
-                {
-                  x: x - 48,
-                  y: y
-                }, {
-                  x: x - 45,
-                  y: y - 80
-                }, {
-                  x: x182,
-                  y: y - 80
-                }, {
-                  x: x - 35,
-                  y: y
-                }
+              fixtureDefs: [
+                this.polyFixtureDef({
+                  path: [
+                    {
+                      x: x - 48,
+                      y: y
+                    }, {
+                      x: x - 15,
+                      y: y - 90
+                    }, {
+                      x: x,
+                      y: y - 90
+                    }, {
+                      x: x - 35,
+                      y: y
+                    }
+                  ]
+                }), this.polyFixtureDef({
+                  path: [
+                    {
+                      x: x - 22,
+                      y: y - 32
+                    }, {
+                      x: x - 26,
+                      y: y - 20
+                    }, {
+                      x: x - 6,
+                      y: y - 20
+                    }, {
+                      x: x - 6,
+                      y: y - 32
+                    }
+                  ]
+                })
               ],
               static: false
             });
             return this.createPoly({
-              path: [
-                {
-                  x: x,
-                  y: y - 80
-                }, {
-                  x: x - 6,
-                  y: y - 63
-                }, {
-                  x: x + 16,
-                  y: y
-                }, {
-                  x: x + 30,
-                  y: y
-                }
+              fixtureDefs: [
+                this.polyFixtureDef({
+                  path: [
+                    {
+                      x: x,
+                      y: y - 90
+                    }, {
+                      x: x - 6,
+                      y: y - 73
+                    }, {
+                      x: x + 16,
+                      y: y
+                    }, {
+                      x: x + 30,
+                      y: y
+                    }
+                  ]
+                }), this.polyFixtureDef({
+                  path: [
+                    {
+                      x: x - 6,
+                      y: y - 32
+                    }, {
+                      x: x - 6,
+                      y: y - 20
+                    }, {
+                      x: x + 9,
+                      y: y - 20
+                    }, {
+                      x: x + 6,
+                      y: y - 32
+                    }
+                  ]
+                })
               ],
               static: false
             });
@@ -252,7 +293,7 @@
               width: 10,
               height: 20
             });
-          case "E":
+          case "e":
             this.createBox({
               x: x,
               y: y,
@@ -290,7 +331,7 @@
               height: 2,
               density: 10
             });
-          case "L":
+          case "l":
             this.createBox({
               x: x,
               y: y,
@@ -303,7 +344,7 @@
               width: 5,
               height: 30
             });
-          case "O":
+          case "o":
             this.createBox({
               x: x - 15,
               y: y,
@@ -353,7 +394,7 @@
               width: 5,
               height: 15
             });
-          case "R":
+          case "r":
             this.createBox({
               x: x - 30,
               y: y - 15,
@@ -384,7 +425,7 @@
               width: 20,
               height: 5
             });
-          case "D":
+          case "d":
             this.createBox({
               x: x - 15,
               y: y,
@@ -445,14 +486,11 @@
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
-      Peanutty.prototype.createPoly = function(options) {
-        var body, bodyDef, fixDef, path, point, scaledPath;
-        if (options == null) options = {};
-        bodyDef = new b2d.Dynamics.b2BodyDef;
-        bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
-        fixDef = this.createFixture(options);
+      Peanutty.prototype.polyFixtureDef = function(_arg) {
+        var fixDef, path, point, scaledPath;
+        path = _arg.path;
+        fixDef = this.createFixture(_arg);
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        path = options.path;
         if (this.counterClockWise(path)) path = path.reverse();
         scaledPath = (function() {
           var _i, _len, _results;
@@ -464,8 +502,26 @@
           return _results;
         }).call(this);
         fixDef.shape.SetAsArray(scaledPath, scaledPath.length);
+        return fixDef;
+      };
+
+      Peanutty.prototype.createPoly = function(_arg) {
+        var body, bodyDef, fixtureDef, fixtureDefs, path, static, _i, _len;
+        fixtureDefs = _arg.fixtureDefs, static = _arg.static, path = _arg.path;
+        if (path != null) {
+          fixtureDefs = [
+            this.polyFixtureDef({
+              path: path
+            })
+          ];
+        }
+        bodyDef = new b2d.Dynamics.b2BodyDef;
+        bodyDef.type = b2d.Dynamics.b2Body[static ? "b2_staticBody" : "b2_dynamicBody"];
         body = this.world.CreateBody(bodyDef);
-        body.CreateFixture(fixDef);
+        for (_i = 0, _len = fixtureDefs.length; _i < _len; _i++) {
+          fixtureDef = fixtureDefs[_i];
+          body.CreateFixture(fixtureDef);
+        }
         bodyDef.position.x = body.GetWorldCenter().x;
         return bodyDef.position.y = body.GetWorldCenter().y;
       };

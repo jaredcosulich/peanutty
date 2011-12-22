@@ -139,13 +139,20 @@
             y = options.y
             letter = options.letter
             
-            switch letter.toUpperCase()
+            switch letter
                 when "A"
                     @createPoly
-                        path: [{x: x-48, y: y},{x: x-45, y: y-80},{x: x182, y: y-80},{x: x-35, y: y}]
+                        fixtureDefs: [
+                            @polyFixtureDef(path: [{x: x-48, y: y},{x: x-15, y: y-90},{x: x, y: y-90},{x: x-35, y: y}]),
+                            @polyFixtureDef(path: [{x: x-22, y: y-32},{x: x-26, y: y-20},{x: x-6, y: y-20},{x: x-6, y: y-32}])
+                        ]
                         static: false
+
                     @createPoly
-                        path: [{x: x, y: y-80},{x: x-6, y: y-63},{x: x+16, y: y},{x: x+30, y: y}]
+                        fixtureDefs: [
+                            @polyFixtureDef(path: [{x: x, y: y-90},{x: x-6, y: y-73},{x: x+16, y: y},{x: x+30, y: y}]),
+                            @polyFixtureDef(path: [{x: x-6, y: y-32},{x: x-6, y: y-20},{x: x+9, y: y-20},{x: x+6, y: y-32}])
+                        ]
                         static: false
                 when "H"
                     @createBox(x: x-40, y: y, width: 10, height: 20)
@@ -153,17 +160,17 @@
                     @createBox(x: x-20, y: y-25, width: 30, height: 5)
                     @createBox(x: x-40, y: y-50, width: 10, height: 20)
                     @createBox(x: x, y: y-50, width: 10, height: 20)
-                when "E"
+                when "e"
                     @createBox(x: x, y: y, width: 30, height: 5)
                     @createBox(x: x-20, y: y-15, width: 10, height: 10)
                     @createBox(x: x-10, y: y-30, width: 20, height: 5)
                     @createBox(x: x-20, y: y-45, width: 10, height: 10)
                     @createBox(x: x, y: y-60, width: 30, height: 5)
                     @createBox(x: x-28, y: y-69, width: 8, height: 2, density: 10)
-                when "L"
+                when "l"
                     @createBox(x: x, y: y, width: 20, height: 5)
                     @createBox(x: x-15, y: y-35, width: 5, height: 30)
-                when "O"
+                when "o"
                     @createBox(x: x-15, y: y, width: 20, height: 5)
                     @createBox(x: x-30, y: y-30, width: 5, height: 25)
                     @createBox(x: x, y: y-30, width: 5, height: 25)
@@ -173,13 +180,13 @@
                     @createBox(x: x-60, y: y-45, width: 10, height: 40)
                     @createBox(x: x, y: y-45, width: 10, height: 40)
                     @createBox(x: x-30, y: y-20, width: 5, height: 15)
-                when "R"       
+                when "r"       
                     @createBox(x: x-30, y: y-15, width: 5, height: 30)
                     @createBox(x: x-7, y: y, width: 5, height: 15)
                     @createBox(x: x-10, y: y-20, width: 15, height: 5)
                     @createBox(x: x, y: y-35, width: 5, height: 10)
                     @createBox(x: x-15, y: y-50, width: 20, height: 5)
-                when "D"                      
+                when "d"                      
                     @createBox(x: x-15, y: y, width: 20, height: 5)
                     @createBox(x: x-30, y: y-30, width: 5, height: 25)
                     @createBox(x: x, y: y-30, width: 5, height: 25)
@@ -222,22 +229,25 @@
 
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
-            
-        createPoly: (options={}) =>
-            bodyDef = new b2d.Dynamics.b2BodyDef
-            bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
-            
-            fixDef = @createFixture(options)
+        polyFixtureDef: ({path}) =>
+            fixDef = @createFixture(_arg)
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
             
-            path = options.path
             path = path.reverse() if @counterClockWise(path)
             
             scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@scale, point.y/@scale) for point in path)
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
+            return fixDef
+                
+        createPoly: ({fixtureDefs, static, path}) =>
+            fixtureDefs = [@polyFixtureDef(path: path)] if path?
+            
+            bodyDef = new b2d.Dynamics.b2BodyDef
+            bodyDef.type = b2d.Dynamics.b2Body[if static then "b2_staticBody" else "b2_dynamicBody"]
 
             body = @world.CreateBody(bodyDef)
-            body.CreateFixture(fixDef)
+            body.CreateFixture(fixtureDef) for fixtureDef in fixtureDefs
+            
             bodyDef.position.x = body.GetWorldCenter().x
             bodyDef.position.y = body.GetWorldCenter().y
             
@@ -427,7 +437,7 @@
             if navigator.userAgent.indexOf("Chrome") == -1
                 @el.html(@_requireTemplate('templates/chrome_only.html').render())
                 return
-                
+            
             @el.html(@templates.main.render())
             
             @$('#tabs .tab').bind 'click', (e) =>
