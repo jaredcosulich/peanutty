@@ -77,9 +77,9 @@ unbindMouseEvents = (canvas) =>
 initiateFree = (canvas) =>
     unbindMouseEvents(canvas)
     canvas.bind 'click', (e) => 
-        x = e.offsetX
-        y = e.offsetY
-
+        x = e.offsetX * (peanutty.defaultScale/peanutty.scale)
+        y = e.offsetY * (peanutty.defaultScale/peanutty.scale)
+        
         firstPoint = if peanutty.currentShape? then peanutty.currentShape.path[0] else null
         if firstPoint? && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5
             peanutty.endFreeformShape
@@ -87,11 +87,14 @@ initiateFree = (canvas) =>
                 time: getTimeDiff()
             return
             
-        peanutty.addToFreeformShape(x, y)    
+        peanutty.addToFreeformShape(x: x, y: y) 
+            
         return
                                
     canvas.bind 'mousemove', (e) =>
-        peanutty.addTempToFreeformShape(e.offsetX, e.offsetY)
+        peanutty.addTempToFreeformShape
+            x: e.offsetX * (peanutty.defaultScale/peanutty.scale)
+            y: e.offsetY * (peanutty.defaultScale/peanutty.scale)
         return
 
 initiateBox = (canvas) =>
@@ -101,8 +104,8 @@ initiateBox = (canvas) =>
             command:
                 """
                 peanutty.createBox
-                    x: #{{e.offsetX - 10}}
-                    y: #{{e.offsetY - 10}}
+                    x: #{{e.offsetX * (peanutty.defaultScale/peanutty.scale)}}
+                    y: #{{e.offsetY * (peanutty.defaultScale/peanutty.scale)}}
                     width: 20
                     height: 20
                     static: #{{static}}
@@ -116,8 +119,8 @@ initiateBall = (canvas) =>
             command: 
                 """
                 peanutty.createBall
-                    x: #{{e.offsetX}}
-                    y: #{{e.offsetY}}
+                    x: #{{e.offsetX * (peanutty.defaultScale/peanutty.scale)}}
+                    y: #{{e.offsetY * (peanutty.defaultScale/peanutty.scale)}}
                     radius: 20
                     static: #{{static}}
                 """
