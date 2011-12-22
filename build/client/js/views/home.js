@@ -18,6 +18,8 @@
     Peanutty = (function() {
 
       function Peanutty(canvas, code, message, scale, gravity) {
+        if (scale == null) scale = 30;
+        if (gravity == null) gravity = new b2d.Common.Math.b2Vec2(0, 10);
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -44,8 +46,10 @@
         this.initCode = __bind(this.initCode, this);
         this.initDraw = __bind(this.initDraw, this);
         this.destroyWorld = __bind(this.destroyWorld, this);
-        this.runSimulation = __bind(this.runSimulation, this);        this.canvas = canvas;
+        this.runSimulation = __bind(this.runSimulation, this);
+        this.canvas = canvas;
         this.context = canvas[0].getContext("2d");
+        this.defaultScale = 30;
         this.scale = scale;
         this.code = code;
         this.script = this.code.find(".script");
@@ -170,10 +174,10 @@
         fixDef = fixDef = this.createFixture();
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody;
-        bodyDef.position.x = options.x / this.scale;
-        bodyDef.position.y = options.y / this.scale;
+        bodyDef.position.x = options.x / this.defaultScale;
+        bodyDef.position.y = options.y / this.defaultScale;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        fixDef.shape.SetAsBox((options.width / this.scale) / 2, (options.height / this.scale) / 2);
+        fixDef.shape.SetAsBox((options.width / this.defaultScale) / 2, (options.height / this.defaultScale) / 2);
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
@@ -188,9 +192,9 @@
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
         fixDef = this.createFixture(options);
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        fixDef.shape.SetAsBox(options.width / this.scale, options.height / this.scale);
-        bodyDef.position.x = options.x / this.scale;
-        bodyDef.position.y = options.y / this.scale;
+        fixDef.shape.SetAsBox(options.width / this.defaultScale, options.height / this.defaultScale);
+        bodyDef.position.x = options.x / this.defaultScale;
+        bodyDef.position.y = options.y / this.defaultScale;
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
@@ -204,9 +208,9 @@
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
         fixDef = this.createFixture(options);
         fixDef.shape = new b2d.Collision.Shapes.b2CircleShape;
-        fixDef.shape.SetRadius(options.radius / this.scale);
-        bodyDef.position.x = options.x / this.scale;
-        bodyDef.position.y = options.y / this.scale;
+        fixDef.shape.SetRadius(options.radius / this.defaultScale);
+        bodyDef.position.x = options.x / this.defaultScale;
+        bodyDef.position.y = options.y / this.defaultScale;
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
@@ -221,7 +225,7 @@
           _results = [];
           for (_i = 0, _len = path.length; _i < _len; _i++) {
             point = path[_i];
-            _results.push(new b2d.Common.Math.b2Vec2(point.x / this.scale, point.y / this.scale));
+            _results.push(new b2d.Common.Math.b2Vec2(point.x / this.defaultScale, point.y / this.defaultScale));
           }
           return _results;
         }).call(this);
@@ -314,38 +318,44 @@
         if (!((this.currentShape != null) && (this.currentShape.path.length > 0 || (this.tempPoint != null)))) {
           return;
         }
-        this.startFreeformShape(this.currentShape.start.x, this.currentShape.start.y);
+        this.startFreeformShape(this.currentShape.start);
         _ref = this.currentShape.path;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           point = _ref[_i];
-          this.drawFreeformShape(point.x, point.y);
+          this.drawFreeformShape(point);
         }
-        if (this.tempPoint != null) {
-          this.drawFreeformShape(this.tempPoint.x, this.tempPoint.y);
-        }
+        if (this.tempPoint != null) this.drawFreeformShape(this.tempPoint);
       };
 
-      Peanutty.prototype.addToFreeformShape = function(x, y) {
+      Peanutty.prototype.addToFreeformShape = function(_arg) {
+        var x, y;
+        x = _arg.x, y = _arg.y;
         if (this.currentShape != null) {
-          return this.continueFreeformShape(x, y);
+          return this.continueFreeformShape(_arg);
         } else {
-          return this.initFreeformShape(x, y);
+          return this.initFreeformShape(_arg);
         }
       };
 
-      Peanutty.prototype.addTempToFreeformShape = function(x, y) {
+      Peanutty.prototype.addTempToFreeformShape = function(_arg) {
+        var x, y;
+        x = _arg.x, y = _arg.y;
         return this.tempPoint = {
           x: x,
           y: y
         };
       };
 
-      Peanutty.prototype.drawFreeformShape = function(x, y) {
+      Peanutty.prototype.drawFreeformShape = function(_arg) {
+        var x, y;
+        x = _arg.x, y = _arg.y;
         this.context.lineTo(x, y);
         return this.context.stroke();
       };
 
-      Peanutty.prototype.initFreeformShape = function(x, y) {
+      Peanutty.prototype.initFreeformShape = function(_arg) {
+        var x, y;
+        x = _arg.x, y = _arg.y;
         this.currentShape = {
           start: {
             x: x,
@@ -358,27 +368,26 @@
             }
           ]
         };
-        return this.startFreeformShape(x, y);
+        return this.startFreeformShape(_arg);
       };
 
-      Peanutty.prototype.startFreeformShape = function(x, y) {
-        this.startShape(this.context);
+      Peanutty.prototype.startFreeformShape = function(_arg) {
+        var x, y;
+        x = _arg.x, y = _arg.y;
+        this.startShape();
         this.context.strokeStyle = '#000000';
         return this.context.moveTo(x, y);
       };
 
-      Peanutty.prototype.startShape = function(density) {
-        if (density == null) density = null;
+      Peanutty.prototype.startShape = function() {
         this.context.strokeStyle = '#ffffff';
-        if (density === 1.0) {
-          this.context.fillStyle = "red";
-        } else {
-          this.context.fillStyle = "black";
-        }
+        this.context.fillStyle = "black";
         this.context.beginPath();
       };
 
-      Peanutty.prototype.continueFreeformShape = function(x, y) {
+      Peanutty.prototype.continueFreeformShape = function(_arg) {
+        var x, y;
+        x = _arg.x, y = _arg.y;
         if (this.currentShape == null) return;
         this.tempPoint = null;
         this.currentShape.path.push({

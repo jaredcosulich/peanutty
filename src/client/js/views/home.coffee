@@ -11,9 +11,10 @@
         Function(CoffeeScript.compile code, options)()  
         
     class Peanutty
-        constructor: (canvas, code, message, scale, gravity) ->
+        constructor: (canvas, code, message, scale=30, gravity=new b2d.Common.Math.b2Vec2(0, 10)) ->
             @canvas = canvas
             @context = canvas[0].getContext("2d")
+            @defaultScale = 30
             @scale = scale
             @code = code
             @script = @code.find(".script")
@@ -125,13 +126,13 @@
             bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody
 
             # positions the center of the object (not upper left!)
-            bodyDef.position.x = options.x / @scale
-            bodyDef.position.y = options.y / @scale
+            bodyDef.position.x = options.x / @defaultScale
+            bodyDef.position.y = options.y / @defaultScale
 
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
 
             # half width, half height. eg actual height here is 1 unit
-            fixDef.shape.SetAsBox((options.width / @scale) / 2, (options.height / @scale) / 2)
+            fixDef.shape.SetAsBox((options.width / @defaultScale) / 2, (options.height / @defaultScale) / 2)
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
         createBox: (options={}) =>
@@ -146,9 +147,9 @@
             fixDef = @createFixture(options)
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
             
-            fixDef.shape.SetAsBox(((options.width)/@scale), ((options.height)/@scale))
-            bodyDef.position.x = (options.x/@scale)
-            bodyDef.position.y = (options.y/@scale)
+            fixDef.shape.SetAsBox(((options.width)/@defaultScale), ((options.height)/@defaultScale))
+            bodyDef.position.x = (options.x/@defaultScale)
+            bodyDef.position.y = (options.y/@defaultScale)
             
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
@@ -164,9 +165,9 @@
             fixDef = @createFixture(options)
             fixDef.shape = new b2d.Collision.Shapes.b2CircleShape
 
-            fixDef.shape.SetRadius(options.radius/@scale)
-            bodyDef.position.x = (options.x/@scale)
-            bodyDef.position.y = (options.y/@scale)
+            fixDef.shape.SetRadius(options.radius/@defaultScale)
+            bodyDef.position.x = (options.x/@defaultScale)
+            bodyDef.position.y = (options.y/@defaultScale)
 
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
@@ -176,7 +177,7 @@
             
             path = path.reverse() if @counterClockWise(path)
             
-            scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@scale, point.y/@scale) for point in path)
+            scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@defaultScale, point.y/@defaultScale) for point in path)
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
             return fixDef
                 
@@ -248,45 +249,41 @@
         tempPoint: null
         redrawCurrentShape: () =>
             return unless @currentShape? && (@currentShape.path.length > 0 || @tempPoint?)
-            @startFreeformShape(@currentShape.start.x, @currentShape.start.y)
+            @startFreeformShape(@currentShape.start)
             for point in @currentShape.path
-                @drawFreeformShape(point.x, point.y)
-            @drawFreeformShape(@tempPoint.x, @tempPoint.y) if @tempPoint?
+                @drawFreeformShape(point)
+            @drawFreeformShape(@tempPoint) if @tempPoint?
             return
             
-        addToFreeformShape: (x,y) =>
+        addToFreeformShape: ({x,y}) =>
             if @currentShape?
-                @continueFreeformShape(x,y)
+                @continueFreeformShape(_arg)
             else
-                @initFreeformShape(x,y)
+                @initFreeformShape(_arg)
             
-        addTempToFreeformShape: (x,y) =>
+        addTempToFreeformShape: ({x,y}) =>
             @tempPoint = {x:x, y:y}
 
-        drawFreeformShape: (x, y) =>
-            @context.lineTo(x,y)
+        drawFreeformShape: ({x, y}) =>
+            @context.lineTo(x, y)
             @context.stroke()
 
-        initFreeformShape: (x, y) =>
+        initFreeformShape: ({x, y}) =>
             @currentShape = {start: {x:x, y:y}, path: [{x:x, y:y}]}
-            @startFreeformShape(x,y)
+            @startFreeformShape(_arg)
 
-        startFreeformShape: (x, y) =>
-            @startShape(@context)
+        startFreeformShape: ({x, y}) =>
+            @startShape()
             @context.strokeStyle = '#000000'
             @context.moveTo(x, y)
 
-        startShape: (density=null) =>
+        startShape: () =>
             @context.strokeStyle = '#ffffff'
-            if density == 1.0
-                @context.fillStyle = "red"
-            else
-                @context.fillStyle = "black"
-
+            @context.fillStyle = "black"
             @context.beginPath()
             return
 
-        continueFreeformShape: (x, y) =>
+        continueFreeformShape: ({x, y}) =>
             return unless @currentShape?
             @tempPoint = null
             @currentShape.path.push({x: x, y: y})
