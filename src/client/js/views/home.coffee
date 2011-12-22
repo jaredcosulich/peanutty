@@ -133,65 +133,6 @@
             # half width, half height. eg actual height here is 1 unit
             fixDef.shape.SetAsBox((options.width / @scale) / 2, (options.height / @scale) / 2)
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
-            
-        createLetter: (options={}) =>
-            x = options.x
-            y = options.y
-            letter = options.letter
-            
-            switch letter
-                when "A"
-                    @createPoly
-                        fixtureDefs: [
-                            @polyFixtureDef(path: [{x: x-48, y: y},{x: x-15, y: y-90},{x: x, y: y-90},{x: x-35, y: y}]),
-                            @polyFixtureDef(path: [{x: x-22, y: y-32},{x: x-26, y: y-20},{x: x-6, y: y-20},{x: x-6, y: y-32}])
-                        ]
-                        static: false
-
-                    @createPoly
-                        fixtureDefs: [
-                            @polyFixtureDef(path: [{x: x, y: y-90},{x: x-6, y: y-73},{x: x+16, y: y},{x: x+30, y: y}]),
-                            @polyFixtureDef(path: [{x: x-6, y: y-32},{x: x-6, y: y-20},{x: x+9, y: y-20},{x: x+6, y: y-32}])
-                        ]
-                        static: false
-                when "H"
-                    @createBox(x: x-40, y: y, width: 10, height: 20)
-                    @createBox(x: x, y: y, width: 10, height: 20)
-                    @createBox(x: x-20, y: y-25, width: 30, height: 5)
-                    @createBox(x: x-40, y: y-50, width: 10, height: 20)
-                    @createBox(x: x, y: y-50, width: 10, height: 20)
-                when "e"
-                    @createBox(x: x, y: y, width: 30, height: 5)
-                    @createBox(x: x-20, y: y-15, width: 10, height: 10)
-                    @createBox(x: x-10, y: y-30, width: 20, height: 5)
-                    @createBox(x: x-20, y: y-45, width: 10, height: 10)
-                    @createBox(x: x, y: y-60, width: 30, height: 5)
-                    @createBox(x: x-28, y: y-69, width: 8, height: 2, density: 10)
-                when "l"
-                    @createBox(x: x, y: y, width: 20, height: 5)
-                    @createBox(x: x-15, y: y-35, width: 5, height: 30)
-                when "o"
-                    @createBox(x: x-15, y: y, width: 20, height: 5)
-                    @createBox(x: x-30, y: y-30, width: 5, height: 25)
-                    @createBox(x: x, y: y-30, width: 5, height: 25)
-                    @createBox(x: x-15, y: y-60, width: 20, height: 5)
-                when "W"       
-                    @createBox(x: x-30, y: y, width: 40, height: 5)
-                    @createBox(x: x-60, y: y-45, width: 10, height: 40)
-                    @createBox(x: x, y: y-45, width: 10, height: 40)
-                    @createBox(x: x-30, y: y-20, width: 5, height: 15)
-                when "r"       
-                    @createBox(x: x-30, y: y-15, width: 5, height: 30)
-                    @createBox(x: x-7, y: y, width: 5, height: 15)
-                    @createBox(x: x-10, y: y-20, width: 15, height: 5)
-                    @createBox(x: x, y: y-35, width: 5, height: 10)
-                    @createBox(x: x-15, y: y-50, width: 20, height: 5)
-                when "d"                      
-                    @createBox(x: x-15, y: y, width: 20, height: 5)
-                    @createBox(x: x-30, y: y-30, width: 5, height: 25)
-                    @createBox(x: x, y: y-30, width: 5, height: 25)
-                    @createBox(x: x-15, y: y-60, width: 20, height: 5)
-                
 
         createBox: (options={}) =>
             options.x or= 0

@@ -333,9 +333,11 @@ img {
   background-color: white;
   padding: 12px;
   height: 450px;
+  width: 360px;
   overflow: auto;
 }
 #console #codes .code {
+  width: 500px;
   display: none;
 }
 #console #codes .code.selected {
