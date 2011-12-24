@@ -79,6 +79,45 @@ article,
 aside {
   display: block;
 }
+.green {
+  color: #88cc66;
+}
+.bg-green {
+  background-color: #88cc66;
+}
+.blue {
+  color: #6ca3e8;
+}
+.bg-blue {
+  background-color: #6ca3e8;
+}
+.red {
+  color: #ff8866;
+}
+.bg-red {
+  background-color: #ff8866;
+}
+.orange {
+  color: #f04227;
+}
+.bg-orange {
+  background-color: #f04227;
+}
+.lighter-gray {
+  color: #aaaaaa;
+}
+.light-gray {
+  color: #999999;
+}
+.gray {
+  color: #888888;
+}
+.dark-gray {
+  color: #777777;
+}
+.darker-gray {
+  color: #666666;
+}
 .icon-font {
   font-family: 'Mingl Icons';
   -webkit-font-smoothing: antialiased;
@@ -113,6 +152,205 @@ aside {
   width: 100%;
   height: 100%;
   z-index: 1;
+}
+.progress {
+  position: relative;
+  overflow: hidden;
+  height: 16px;
+  width: 178px;
+  margin: 20px auto;
+  background-color: #ddd;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.24);
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.24);
+  -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.24);
+}
+.progress:after {
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  content: ' ';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  box-shadow: inset 0 1px 6px rgba(255, 255, 255, 0.24);
+  -webkit-box-shadow: inset 0 1px 6px rgba(255, 255, 255, 0.24);
+  -moz-box-shadow: inset 0 1px 6px rgba(255, 255, 255, 0.24);
+}
+.progress .progress-bar {
+  float: left;
+  height: 100%;
+}
+.progress .progress-bar:first-child {
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border-top-left-radius: 3px;
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  margin-left: -1px;
+}
+.progress .progress-bar:last-child {
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border-top-right-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border-bottom-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border-right: 1px solid rgba(0, 0, 0, 0.24);
+}
+.progress .progress-bar.working {
+  width: 100%;
+  margin-left: 0 !important;
+  border-right-width: 0 !important;
+  background: url(images/stripes.gif) repeat;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+.progress .progress-bar .blend {
+  margin: -1px;
+  width: 1px;
+}
+.button {
+  display: block;
+  width: 90px;
+  margin: auto;
+  position: relative;
+  cursor: pointer;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.5);
+  -webkit-box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.5);
+  -moz-box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.5);
+}
+.button:after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 50%;
+  z-index: 0;
+  background-color: rgba(255, 255, 255, 0.16);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+.button:hover {
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+}
+.button label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+  margin: 4px 6px;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+.button.big {
+  width: 120px;
+}
+.button.big label {
+  font-size: 18px;
+  line-height: 22px;
+}
+.badge {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  background-color: #f04227;
+  border: 2px solid #fff;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.badge .badge-text {
+  position: relative;
+  text-align: center;
+  margin: 2px 4px;
+  font-size: 13px;
+  line-height: 12px;
+  color: #fff;
+}
+.answer {
+  position: relative;
+}
+.answer blockquote {
+  margin: 20px;
+  font-size: 18px;
+}
+.answer blockquote a {
+  color: #333333;
+}
+.answer .quote-mark {
+  position: absolute;
+  font-size: 60px;
+  line-height: 60px;
+  font-weight: bold;
+  font-family: georgia, serif;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.answer .quote-mark.left {
+  top: 24px;
+  left: 0;
+}
+.answer .quote-mark.right {
+  bottom: -24px;
+  right: 0;
 }
 @font-face {
   font-family: 'Mingl Icons';
@@ -277,7 +515,11 @@ img {
 }
 #top_area #execute {
   float: right;
-  margin-right: 30px;
+  padding-right: 60px;
+}
+#top_area #execute .button {
+  float: right;
+  margin: 10px 30px 0 0;
 }
 #canvas_container {
   margin-bottom: 60px;
@@ -309,7 +551,7 @@ img {
   color: white;
 }
 #console {
-  width: 390px;
+  width: 420px;
   float: left;
 }
 #console #tabs {
@@ -336,7 +578,7 @@ img {
   background-color: white;
   padding: 12px;
   height: 450px;
-  width: 360px;
+  width: 390px;
   overflow: auto;
 }
 #console #codes .code {

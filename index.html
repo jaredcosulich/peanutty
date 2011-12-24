@@ -399,7 +399,7 @@ peanutty.sendMessage
         """
         <h4>Welcome to Peanutty!</h4>
         <p>
-            To get started, try to knock over all the letters with one object. Use a box, a ball, or a freeform shape.
+            To get started, type your name in and then destroy it with boxes, balls, or freeform shapes.
             <a href='javascript:void(0)' onclick='peanutty.resetWorld(); view.loadCode(); peanutty.runScript()'>Reset and try again</a>
         </p>
         """
@@ -420,6 +420,7 @@ peanutty.createGround
 #    ]
 
 instructions = $(document.createElement("DIV"))
+instructions.addClass('stage_element')
 instructions.css
     height: '30px'
     width: '300px'
@@ -431,7 +432,8 @@ instructions.css
 instructions.html("Type your name:")
 view.$('#canvas_container').append(instructions)
 
-nameInput = $(document.createElement('INPUT'))
+window.nameInput = $(document.createElement('INPUT'))
+nameInput.addClass('stage_element')
 nameInput.css
     width: '300px'
     height: '30px'
@@ -448,12 +450,29 @@ nameInput.bind 'keyup', (e) ->
     peanutty.addToScript
         command:
             """
+            nameInput.val("#{{letters}}") if nameInput.val() != "#{{letters}}"
             peanutty.createLetters
                 x: peanutty.canvas.width() / 2
                 y: peanutty.canvas.height() - 55
                 letters: "#{{letters}}"
             """
         time: 0
+    window.lastNameInputKey = new Date()    
+    $.timeout 2000, () =>
+        return if new Date() - window.lastNameInputKey < 2000
+        destroyInstructions = $(document.createElement("DIV"))
+        destroyInstructions.addClass('stage_element')
+        destroyInstructions.css
+            height: '30px'
+            width: '300px'
+            textAlign: 'center'
+            fontSize: '12pt'
+            position: 'absolute'
+            top: '90px'
+            left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
+        destroyInstructions.html("Now destroy your name!<br/>(click anywhere above your name)")
+        view.$('#canvas_container').append(destroyInstructions)
+        
     
 
 view.$('#canvas_container').append(nameInput)
@@ -468,9 +487,15 @@ peanutty.runSimulation()
         <div id='top_area'>
     <div id='message'></div>
     <div id='execute'>
-        <a class='run_script'>Rerun Script</a>
-        &nbsp;
-        <a class='reset_script'>Reset Script</a>
+        <a class="reset_script submit button bg-green">
+            <label>Reset&nbsp;Script</label>
+        </a>
+        <a class="load_script submit button bg-green">
+            <label>Load&nbsp;Script</label>
+        </a>
+        <a class="run_script submit button bg-green">
+            <label>Run&nbsp;Script</label>
+        </a>
     </div>
 </div>
 

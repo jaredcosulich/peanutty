@@ -406,6 +406,7 @@
                 Peanutty.runScript()
             @$('#execute .reset_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
+                @$('.stage_element').remove()
                 @loadCode()
                 Peanutty.runScript()
             
