@@ -403,6 +403,7 @@
    
             @$('#execute .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
+                @$('.stage_element').remove()
                 Peanutty.runScript()
             @$('#execute .reset_script').bind 'click', (e) =>
                 peanutty.destroyWorld()

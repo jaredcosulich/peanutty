@@ -559,6 +559,7 @@
         });
         this.$('#execute .run_script').bind('click', function(e) {
           peanutty.destroyWorld();
+          _this.$('.stage_element').remove();
           return Peanutty.runScript();
         });
         this.$('#execute .reset_script').bind('click', function(e) {
