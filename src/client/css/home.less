@@ -18,12 +18,15 @@
     }
 }
 
-#canvas {
-    background-color: #eee;
-    border: 1px solid @header-background;
+#canvas_container {
     margin-bottom: 60px;
     float: left;
-    cursor: pointer;
+    position: relative;
+    #canvas {
+        background-color: #eee;
+        border: 1px solid @header-background;
+        cursor: pointer;
+    }
 }
 
 #tools {

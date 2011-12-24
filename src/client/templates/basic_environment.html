@@ -5,6 +5,8 @@ message = $('#message')
 
 window.peanutty = new Peanutty(canvas, code, message, scale, new b2d.Common.Math.b2Vec2(0, 10))
 
+# TOOLS
+
 static = false
 unbindMouseEvents = (canvas) =>
     canvas.unbind 'mousedown'
@@ -69,6 +71,7 @@ getTimeDiff = () =>
     view.time = new Date() 
     return timeDiff
 
+
 view.$('#tools #free').bind 'click', () => 
     $('#tools .tool').removeClass('selected')
     $('#tools #free').addClass('selected')
@@ -96,132 +99,224 @@ view.$('#tools #dynamic').click()
 
 # LETTERS
 
-Peanutty::createLetter = (options={{}}) ->
-    x = options.x
-    y = options.y
-    letter = options.letter
+Peanutty::createLetters = ({{x, y, letters}}) ->
+    width = @getLettersWidth letters: letters
+    start = x - (width / 2) - (4 * ((letters.length - 1) / 2))
+    for letter in letters
+        letterWidth = @getLettersWidth(letters: letter)
+        @createLetter(x: start, y: y, letter: letter)
+        start += letterWidth + 4
+        
+Peanutty::getLettersWidth = ({{letters}}) ->
+    totalWidth = 0 
+    for letter in letters
+        if letter == ' '
+            totalWidth += 25
+        else
+            baseWidth = if letter.toLowerCase() == letter then 50 else 60
+            totalWidth += switch letter
+                when 'a' then 70
+                when 'A' then 78
+                when 'd', 'h', 'l', 'o', 'r' then 40
+                when 'W' then 80
+                else baseWidth
+                
+    return totalWidth
     
+Peanutty::createLetter = ({{x, y, letter}}) ->
     switch letter
         when "a"
             @createPoly
                 fixtureDefs: [
-                    @polyFixtureDef(path: [{{x: x-40, y: y}},{{x: x-12, y: y-70}},{{x: x, y: y-70}},{{x: x-27, y: y}}]),
-                    @polyFixtureDef(path: [{{x: x-14, y: y-32}},{{x: x-19, y: y-20}},{{x: x-6, y: y-20}},{{x: x-6, y: y-32}}])
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x+28, y: y-70}},{{x: x+40, y: y-70}},{{x: x+13, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+26, y: y-32}},{{x: x+21, y: y-20}},{{x: x+34, y: y-20}},{{x: x+34, y: y-32}}])
                 ]
             @createPoly
                 fixtureDefs: [
-                    @polyFixtureDef(path: [{{x: x, y: y-70}},{{x: x-6, y: y-54}},{{x: x+16, y: y}},{{x: x+30, y: y}}]),
-                    @polyFixtureDef(path: [{{x: x-6, y: y-32}},{{x: x-6, y: y-20}},{{x: x+7, y: y-20}},{{x: x+3, y: y-32}}])
+                    @polyFixtureDef(path: [{{x: x+40, y: y-70}},{{x: x+34, y: y-54}},{{x: x+56, y: y}},{{x: x+70, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+34, y: y-32}},{{x: x+34, y: y-20}},{{x: x+47, y: y-20}},{{x: x+43, y: y-32}}])
                 ]
         when "A"
             @createPoly
                 fixtureDefs: [
-                    @polyFixtureDef(path: [{{x: x-48, y: y}},{{x: x-15, y: y-90}},{{x: x, y: y-90}},{{x: x-35, y: y}}]),
-                    @polyFixtureDef(path: [{{x: x-22, y: y-32}},{{x: x-26, y: y-20}},{{x: x-6, y: y-20}},{{x: x-6, y: y-32}}])
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x+33, y: y-90}},{{x: x+48, y: y-90}},{{x: x+13, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+26, y: y-32}},{{x: x+22, y: y-20}},{{x: x+42, y: y-20}},{{x: x+42, y: y-32}}])
                 ]
             @createPoly
                 fixtureDefs: [
-                    @polyFixtureDef(path: [{{x: x, y: y-90}},{{x: x-6, y: y-73}},{{x: x+16, y: y}},{{x: x+30, y: y}}]),
-                    @polyFixtureDef(path: [{{x: x-6, y: y-32}},{{x: x-6, y: y-20}},{{x: x+9, y: y-20}},{{x: x+6, y: y-32}}])
+                    @polyFixtureDef(path: [{{x: x+48, y: y-90}},{{x: x+42, y: y-73}},{{x: x+64, y: y}},{{x: x+78, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+42, y: y-32}},{{x: x+42, y: y-20}},{{x: x+57, y: y-20}},{{x: x+54, y: y-32}}])
                 ]
         when "b"
-            @createBox x: x,    y: y-60, width: 25, height: 5 
-            @createBox x: x-20, y: y-30, width: 5,  height: 25
-            @createBox x: x+20, y: y-15, width: 5,  height: 10
-            @createBox x: x+10, y: y-30, width: 10, height: 5 
-            @createBox x: x+20, y: y-45, width: 5,  height: 10
-            @createBox x: x, y: y,       width: 25, height: 5             
+            @createBox x: x+25, y: y-65, width: 25, height: 5    
+            @createBox x: x+5,  y: y-35, width: 5,  height: 25   
+            @createBox x: x+45, y: y-20, width: 5,  height: 10   
+            @createBox x: x+35, y: y-35, width: 10, height: 5    
+            @createBox x: x+45, y: y-50, width: 5,  height: 10   
+            @createBox x: x+25, y: y-5,  width: 25, height: 5             
         when "B"
-            @createBox x: x,    y: y-80, width: 30, height: 5
-            @createBox x: x-20, y: y-40, width: 10, height: 35
-            @createBox x: x+25, y: y-20, width: 5,  height: 15
-            @createBox x: x+10, y: y-40, width: 15, height: 5
-            @createBox x: x+25, y: y-60, width: 5,  height: 15
-            @createBox x: x, y: y,       width: 30, height: 5
+            @createBox x: x+30, y: y-85, width: 30, height: 5
+            @createBox x: x+10, y: y-45, width: 10, height: 35
+            @createBox x: x+55, y: y-25, width: 5,  height: 15
+            @createBox x: x+40, y: y-45, width: 15, height: 5
+            @createBox x: x+55, y: y-65, width: 5,  height: 15
+            @createBox x: x+30, y: y-5,  width: 30, height: 5
         when "c"
-            @createBox x: x, y: y, width: 25, height: 5                   
-            @createBox x: x-15, y: y-30, width: 10, height: 25            
-            @createBox x: x, y: y-60, width: 25, height: 5                
-            @createBox x: x-20, y: y-69, width: 6, height: 2, density: 10 
+            @createBox x: x+25, y: y-5,  width: 25, height: 5              
+            @createBox x: x+10, y: y-35, width: 10, height: 25             
+            @createBox x: x+25, y: y-65, width: 25, height: 5              
+            @createBox x: x+4,  y: y-74, width: 6,  height: 2, density: 10 
         when "C"
-            @createBox x: x,    y: y,    width: 30, height: 5                   
-            @createBox x: x-20, y: y-40, width: 10, height: 35            
-            @createBox x: x,    y: y-80, width: 30, height: 5                
-            @createBox x: x-24, y: y-87, width: 8,  height: 2, density: 10 
+            @createBox x: x+30, y: y-5,  width: 30, height: 5                  
+            @createBox x: x+10, y: y-45, width: 10, height: 35               
+            @createBox x: x+30, y: y-85, width: 30, height: 5                
+            @createBox x: x+6,  y: y-92, width: 8,  height: 2, density: 10   
         when "d"                      
-            @createBox x: x-15, y: y,    width: 20, height: 5
-            @createBox x: x-30, y: y-30, width: 5,  height: 25
-            @createBox x: x,    y: y-30, width: 5,  height: 25
-            @createBox x: x-15, y: y-60, width: 20, height: 5
+            @createBox x: x+20, y: y-5,  width: 20, height: 5
+            @createBox x: x+5,  y: y-35, width: 5,  height: 25
+            @createBox x: x+35, y: y-35, width: 5,  height: 25
+            @createBox x: x+20, y: y-65, width: 20, height: 5
         when "D"                      
-            @createBox x: x-25, y: y,    width: 30, height: 5
-            @createBox x: x-50, y: y-40, width: 5, height: 35
-            @createBox x: x,    y: y-40, width: 5, height: 35
-            @createBox x: x-25, y: y-80, width: 30, height: 5
+            @createBox x: x+30, y: y-5,  width: 30, height: 5
+            @createBox x: x+5,  y: y-45, width: 5, height: 35
+            @createBox x: x+55, y: y-45, width: 5, height: 35
+            @createBox x: x+30, y: y-85, width: 30, height: 5
         when "e"
-            @createBox x: x,    y: y,    width: 25, height: 5
-            @createBox x: x-15, y: y-15, width: 10, height: 10
-            @createBox x: x-5,  y: y-30, width: 20, height: 5
-            @createBox x: x-15, y: y-45, width: 10, height: 10
-            @createBox x: x,    y: y-60, width: 25, height: 5
-            @createBox x: x-20, y: y-69, width: 6,  height: 2, density: 10
+            @createBox x: x+25, y: y-5,  width: 25, height: 5              
+            @createBox x: x+10, y: y-20, width: 10, height: 10             
+            @createBox x: x+20, y: y-35, width: 20, height: 5              
+            @createBox x: x+10, y: y-50, width: 10, height: 10             
+            @createBox x: x+25, y: y-65, width: 25, height: 5              
+            @createBox x: x+4,  y: y-74, width: 6,  height: 2, density: 10 
         when "E"
-            @createBox x: x,    y: y,    width: 30, height: 5               
-            @createBox x: x-20, y: y-20, width: 10, height: 15              
-            @createBox x: x-10, y: y-40, width: 20, height: 5               
-            @createBox x: x-20, y: y-60, width: 10, height: 15              
-            @createBox x: x, y: y-80,    width: 30, height: 5               
-            @createBox x: x-25, y: y-86, width: 6,  height: 2, density: 10  
+            @createBox x: x+30, y: y-5,  width: 30, height: 5               
+            @createBox x: x+10, y: y-25, width: 10, height: 15              
+            @createBox x: x+20, y: y-45, width: 20, height: 5               
+            @createBox x: x+10, y: y-65, width: 10, height: 15              
+            @createBox x: x+30, y: y-85, width: 30, height: 5               
+            @createBox x: x+4,  y: y-91, width: 6,  height: 2, density: 10  
         when "f"
-            @createBox x: x-15, y: y-10, width: 10, height: 15, density: 10 
-            @createBox x: x-5,  y: y-30, width: 20, height: 5                  
-            @createBox x: x-15, y: y-45, width: 10, height: 10                 
-            @createBox x: x,    y: y-60, width: 25, height: 5                  
-            @createBox x: x-20, y: y-69, width: 6,  height: 2,  density: 10    
+            @createBox x: x+10, y: y-15, width: 10, height: 15, density: 10 
+            @createBox x: x+20, y: y-35, width: 20, height: 5                  
+            @createBox x: x+10, y: y-50, width: 10, height: 10                 
+            @createBox x: x+25, y: y-65, width: 25, height: 5                  
+            @createBox x: x+4,  y: y-74, width: 6,  height: 2,  density: 10    
         when "F"
-            @createBox x: x-20, y: y-15, width: 10, height: 20, density: 10              
-            @createBox x: x-10, y: y-40, width: 20, height: 5                
-            @createBox x: x-20, y: y-60, width: 10, height: 15               
-            @createBox x: x, y: y-80,    width: 30, height: 5                
-            @createBox x: x-25, y: y-86, width: 6,  height: 2,  density: 10  
+            @createBox x: x+10, y: y-20, width: 10, height: 20, density: 10              
+            @createBox x: x+20, y: y-45, width: 20, height: 5                
+            @createBox x: x+10, y: y-65, width: 10, height: 15               
+            @createBox x: x+30, y: y-85, width: 30, height: 5                
+            @createBox x: x+4,  y: y-91, width: 6,  height: 2,  density: 10  
         when "g"
-            @createBox x: x,    y: y-60, width: 25, height: 5              
-            @createBox x: x-18, y: y-30, width: 7,  height: 25             
-            @createBox x: x+20, y: y-15, width: 5,  height: 10             
-            @createBox x: x+10, y: y-30, width: 15, height: 5
-            @createBox x: x+20, y: y-35, width: 6,  height: 2, density: 10  
-            @createBox x: x, y: y,       width: 25, height: 5              
-            @createBox x: x-22, y: y-69, width: 8,  height: 2, density: 10 
+            @createBox x: x+25, y: y-65, width: 25, height: 5              
+            @createBox x: x+7,  y: y-35, width: 7,  height: 25             
+            @createBox x: x+45, y: y-20, width: 5,  height: 10             
+            @createBox x: x+35, y: y-35, width: 15, height: 5              
+            @createBox x: x+45, y: y-40, width: 6,  height: 2, density: 10 
+            @createBox x: x+25, y: y-5,  width: 25, height: 5              
+            @createBox x: x+5,  y: y-74, width: 8,  height: 2, density: 10 
         when "G"
-            @createBox x: x,    y: y-80, width: 30, height: 5              
-            @createBox x: x-20, y: y-40, width: 10, height: 35             
-            @createBox x: x+25, y: y-20, width: 5,  height: 15             
-            @createBox x: x+15, y: y-40, width: 15, height: 5              
-            @createBox x: x+25, y: y-47, width: 6,  height: 2, density: 10 
-            @createBox x: x,    y: y,    width: 30, height: 5              
-            @createBox x: x-22, y: y-87, width: 8,  height: 2, density: 10 
+            @createBox x: x+30, y: y-85, width: 30, height: 5              
+            @createBox x: x+10, y: y-45, width: 10, height: 35             
+            @createBox x: x+55, y: y-25, width: 5,  height: 15             
+            @createBox x: x+45, y: y-45, width: 15, height: 5              
+            @createBox x: x+55, y: y-52, width: 6,  height: 2, density: 10 
+            @createBox x: x+30, y: y-5,  width: 30, height: 5              
+            @createBox x: x+5,  y: y-92, width: 8,  height: 2, density: 10 
+        when "h"
+            @createBox x: x+5,  y: y-15, width: 5,  height: 15 
+            @createBox x: x+35, y: y-15, width: 5,  height: 15 
+            @createBox x: x+20, y: y-35, width: 20, height: 5  
+            @createBox x: x+5,  y: y-55, width: 5,  height: 15 
+            @createBox x: x+35, y: y-55, width: 5,  height: 15 
         when "H"
-            @createBox(x: x-40, y: y, width: 10, height: 20)
-            @createBox(x: x, y: y, width: 10, height: 20)
-            @createBox(x: x-20, y: y-25, width: 30, height: 5)
-            @createBox(x: x-40, y: y-50, width: 10, height: 20)
-            @createBox(x: x, y: y-50, width: 10, height: 20)
+            @createBox x: x+10, y: y-20, width: 10, height: 20 
+            @createBox x: x+50, y: y-20, width: 10, height: 20 
+            @createBox x: x+30, y: y-45, width: 30, height: 5  
+            @createBox x: x+10, y: y-70, width: 10, height: 20 
+            @createBox x: x+50, y: y-70, width: 10, height: 20
+        when "i"
+            return
+        when "I"
+            return
+        when "j"
+            return
+        when "J"
+            @createBox x: x+17, y: y-5,  width: 18, height: 5  
+            @createBox x: x+30, y: y-40, width: 5,  height: 30
+            @createBox x: x+30, y: y-80, width: 30, height: 10
+        when "k"
+            return
+        when "K"
+            return
         when "l"
-            @createBox(x: x, y: y, width: 20, height: 5)
-            @createBox(x: x-15, y: y-35, width: 5, height: 30)
+            @createBox x: x+20, y: y-5,  width: 20, height: 5
+            @createBox x: x+5,  y: y-40, width: 5,  height: 30
+        when "L"
+            return
+        when "m"
+            return
+        when "M"
+            return
+        when "n"
+            return
+        when "N"
+            return
         when "o"
-            @createBox(x: x-15, y: y, width: 20, height: 5)
-            @createBox(x: x-30, y: y-30, width: 5, height: 25)
-            @createBox(x: x, y: y-30, width: 5, height: 25)
-            @createBox(x: x-15, y: y-60, width: 20, height: 5)
+            @createBox x: x+20, y: y-5,  width: 20, height: 5
+            @createBox x: x+5,  y: y-35, width: 5, height: 25
+            @createBox x: x+35, y: y-35, width: 5, height: 25
+            @createBox x: x+20, y: y-65, width: 20, height: 5
+        when "p"
+            return
+        when "P"
+            return
+        when "q"
+            return
+        when "Q"
+            return
         when "r"       
-            @createBox(x: x-30, y: y-15, width: 5, height: 30)
-            @createBox(x: x-7, y: y, width: 5, height: 15)
-            @createBox(x: x-10, y: y-20, width: 15, height: 5)
-            @createBox(x: x, y: y-35, width: 5, height: 10)
-            @createBox(x: x-15, y: y-50, width: 20, height: 5)
+            @createBox x: x+5,  y: y-20, width: 5, height: 30 
+            @createBox x: x+28, y: y-5,  width: 5, height: 15 
+            @createBox x: x+25, y: y-25, width: 15, height: 5 
+            @createBox x: x+35, y: y-40, width: 5, height: 10 
+            @createBox x: x+20, y: y-55, width: 20, height: 5 
+        when "R"
+            return
+        when "s"
+            return
+        when "S"
+            return
+        when "t"
+            return
+        when "T"
+            return
+        when "u"
+            return
+        when "U"
+            return
+        when "v"
+            return
+        when "V"
+            return
+        when "w"
+            return
         when "W"       
-            @createBox(x: x-30, y: y, width: 40, height: 5)
-            @createBox(x: x-60, y: y-45, width: 10, height: 40)
-            @createBox(x: x, y: y-45, width: 10, height: 40)
-            @createBox(x: x-30, y: y-20, width: 5, height: 15)
+            @createBox x: x+40, y: y-5,  width: 40, height: 5
+            @createBox x: x+10, y: y-45, width: 10, height: 40
+            @createBox x: x+70, y: y-45, width: 10, height: 40
+            @createBox x: x+40, y: y-20, width: 5,  height: 15
+        when "x"
+            return
+        when "X"
+            return
+        when "y"
+            return
+        when "Y"
+            return
+        when "z"
+            return
+        when "Z"
+            return
+        else 
+            return

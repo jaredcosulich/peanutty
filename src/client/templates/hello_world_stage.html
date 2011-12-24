@@ -15,58 +15,56 @@ peanutty.createGround
     y: peanutty.canvas.height() - 50
     width: 600
     height: 10
+    
+# INPUTS
 
-x = 170
-y = 490 - 50
+#peanutty.tempShapes.push
+#    start: {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 55}}
+#    path: [
+#        {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 55}}, 
+#        {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 155}}
+#    ]
 
-peanutty.createLetter
-    letter: "H"
-    x: x
-    y: y - 15
+instructions = $(document.createElement("DIV"))
+instructions.css
+    height: '30px'
+    width: '300px'
+    textAlign: 'center'
+    fontSize: '20pt'
+    position: 'absolute'
+    top: '20px'
+    left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
+instructions.html("Type your name:")
+view.$('#canvas_container').append(instructions)
 
-peanutty.createLetter
-    letter: "e"
-    x: x + 45
-    y: y
+nameInput = $(document.createElement('INPUT'))
+nameInput.css
+    width: '300px'
+    height: '30px'
+    fontSize: '20pt'
+    position: 'absolute'
+    top: '50px'
+    left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
+    
+nameInput.bind 'keyup', (e) ->
+    letters = $(e.currentTarget).val()
+    return if letters.replace(/\s/g, '').length == 0
+    view.loadScript()
+    peanutty.destroyDynamicObjects()
+    peanutty.addToScript
+        command:
+            """
+            peanutty.createLetters
+                x: peanutty.canvas.width() / 2
+                y: peanutty.canvas.height() - 55
+                letters: "#{{letters}}"
+            """
+        time: 0
+    
 
-peanutty.createLetter
-    letter: "l"
-    x: x + 100
-    y: y
+view.$('#canvas_container').append(nameInput)
+nameInput[0].focus()
 
-peanutty.createLetter
-    letter: "l"
-    x: x + 145
-    y: y
-
-peanutty.createLetter
-    letter: "o"
-    x: x + 205
-    y: y
-
-peanutty.createLetter
-    letter: "W"
-    x: x + 320
-    y: y
-
-peanutty.createLetter
-    letter: "o"
-    x: x + 370
-    y: y
-
-peanutty.createLetter
-    letter: "r"
-    x: x + 415
-    y: y
-
-peanutty.createLetter
-    letter: "l"
-    x: x + 445
-    y: y
-
-peanutty.createLetter
-    letter: "d"
-    x: x + 505
-    y: y
+# RUN SIMULATION
 
 peanutty.runSimulation()

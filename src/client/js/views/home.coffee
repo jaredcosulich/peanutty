@@ -47,7 +47,8 @@
                 @world.DrawDebugData()
                 @world.ClearForces()
                 requestAnimFrame(update)
-                @redrawCurrentShape(@context)
+                @redrawCurrentShape()
+                @redrawTempShapes()
             
             requestAnimFrame(update)
             
@@ -58,6 +59,13 @@
                 body = body.m_next
                 @world.DestroyBody(b)
                         
+        destroyDynamicObjects: () =>
+            body = @world.m_bodyList
+            while body?
+                b = body
+                body = body.m_next
+                @world.DestroyBody(b) if b.m_type == b2d.Dynamics.b2Body.b2_dynamicBody
+
         initDraw: () =>
             #setup debug draw
             @debugDraw = new b2d.Dynamics.b2DebugDraw()
@@ -255,6 +263,14 @@
             @drawFreeformShape(@tempPoint) if @tempPoint?
             return
             
+        tempShapes: []
+        redrawTempShapes: () =>
+            for shape in @tempShapes
+                @startFreeformShape(shape.start)
+                for point in shape.path
+                    @drawFreeformShape(point)
+            return            
+            
         addToFreeformShape: ({x,y}) =>
             if @currentShape?
                 @continueFreeformShape(_arg)
@@ -323,7 +339,7 @@
             .replace(/^/, '<p>')
             .replace(/$/, '</p>')
             .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-            .replace(/\s\s\s\s/g, '&nbsp;&nbsp;&nbsp;&nbsp;')            
+            .replace(/\s/g, '&nbsp;')            
             
     Peanutty.runCode = (code) =>
         parsed = []
@@ -402,9 +418,13 @@
             Peanutty.runScript()
 
         loadCode: () =>
-            @$('#codes .script').html(Peanutty.htmlifyCode(@templates.script.render()))
-            @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
-            @$('#codes .environment').html(Peanutty.htmlifyCode(@templates.environment.render()))
+            @loadScript()
+            @loadStage()
+            @loadEnvironment()
+            
+        loadScript: () => @$('#codes .script').html(Peanutty.htmlifyCode(@templates.script.render()))
+        loadStage: () => @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
+        loadEnvironment: () => @$('#codes .environment').html(Peanutty.htmlifyCode(@templates.environment.render()))
 
                    
     $.route.add
