@@ -412,40 +412,51 @@ peanutty.createGround
     
 # INPUTS
 
-peanutty.tempShapes.push
-    start: {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 55}}
-    path: [
-        {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 55}}, 
-        {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 155}}
-    ]
+#peanutty.tempShapes.push
+#    start: {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 55}}
+#    path: [
+#        {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 55}}, 
+#        {{x: peanutty.canvas.width() / 2, y: peanutty.canvas.height() - 155}}
+#    ]
+
+instructions = $(document.createElement("DIV"))
+instructions.css
+    height: '30px'
+    width: '300px'
+    textAlign: 'center'
+    fontSize: '20pt'
+    position: 'absolute'
+    top: '20px'
+    left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
+instructions.html("Type your name:")
+view.$('#canvas_container').append(instructions)
 
 nameInput = $(document.createElement('INPUT'))
 nameInput.css
     width: '300px'
     height: '30px'
-    fontSize: '24pt'
+    fontSize: '20pt'
     position: 'absolute'
-    top: '10px'
-    left: '10px'
+    top: '50px'
+    left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
     
 nameInput.bind 'keyup', (e) ->
+    letters = $(e.currentTarget).val()
+    return if letters.replace(/\s/g, '').length == 0
     view.loadScript()
     peanutty.destroyDynamicObjects()
     peanutty.addToScript
         command:
             """
-            letters = #{{$(e.currentTarget).val()}}
-            return if letters.replace(/\s/g, '').length == 0
             peanutty.createLetters
                 x: peanutty.canvas.width() / 2
                 y: peanutty.canvas.height() - 55
-                letters: letters
+                letters: "#{{letters}}"
             """
         time: 0
     
 
 view.$('#canvas_container').append(nameInput)
-nameInput.keyup()
 nameInput[0].focus()
 
 # RUN SIMULATION
