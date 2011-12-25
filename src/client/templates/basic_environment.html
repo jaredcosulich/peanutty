@@ -236,32 +236,83 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
             @createBox x: x+10, y: y-70, width: 10, height: 20 
             @createBox x: x+50, y: y-70, width: 10, height: 20
         when "i"
-            return
+            @createBox x: x+25, y: y-5,  width: 25, height: 5  
+            @createBox x: x+25, y: y-35, width: 5,  height: 25 
+            @createBox x: x+25, y: y-65, width: 25, height: 5  
         when "I"
-            return
+            @createBox x: x+30, y: y-5,  width: 30, height: 5  
+            @createBox x: x+30, y: y-45, width: 5,  height: 35 
+            @createBox x: x+30, y: y-85, width: 30, height: 5  
         when "j"
-            return
+            @createBox x: x+15, y: y-5,  width: 15, height: 5  
+            @createBox x: x+4,  y: y-18, width: 5,  height: 8  
+            @createBox x: x+25, y: y-35, width: 5,  height: 25 
+            @createBox x: x+25, y: y-65, width: 25, height: 5  
         when "J"
             @createBox x: x+17, y: y-5,  width: 18, height: 5  
-            @createBox x: x+30, y: y-40, width: 5,  height: 30
-            @createBox x: x+30, y: y-80, width: 30, height: 10
+            @createBox x: x+4,  y: y-18, width: 5,  height: 8  
+            @createBox x: x+30, y: y-40, width: 5,  height: 35 
+            @createBox x: x+30, y: y-85, width: 30, height: 5  
         when "k"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x, y: y-70}},{{x: x+10, y: y-70}},{{x: x+10, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+10, y: y-30}},{{x: x+10, y: y-40}},{{x: x+40, y: y-70}},{{x: x+50, y: y-70}}])
+                ]
+            @createPoly
+                path: [{{x: x+10, y: y-30}},{{x: x+15, y: y-35}},{{x: x+50, y: y}},{{x: x+40, y: y}}]
         when "K"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x, y: y-90}},{{x: x+10, y: y-90}},{{x: x+10, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+10, y: y-40}},{{x: x+10, y: y-50}},{{x: x+50, y: y-90}},{{x: x+60, y: y-90}}])
+                ]
+            @createPoly
+                path: [{{x: x+10, y: y-40}},{{x: x+15, y: y-45}},{{x: x+60, y: y}},{{x: x+50, y: y}}]
         when "l"
             @createBox x: x+20, y: y-5,  width: 20, height: 5
             @createBox x: x+5,  y: y-40, width: 5,  height: 30
         when "L"
-            return
+            @createBox x: x+30, y: y-5,  width: 30, height: 5
+            @createBox x: x+5,  y: y-50, width: 5,  height: 40
         when "m"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x, y: y-70}},{{x: x+10, y: y-70}},{{x: x+10, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+10, y: y-55}},{{x: x+10, y: y-70}},{{x: x+25, y: y-40}},{{x: x+25, y: y-25}}])
+                ]
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x+40, y: y}},{{x: x+40, y: y-70}},{{x: x+50, y: y-70}},{{x: x+50, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+25, y: y-25}},{{x: x+25, y: y-40}},{{x: x+40, y: y-70}},{{x: x+40, y: y-55}}])
+                ]
         when "M"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x, y: y-90}},{{x: x+10, y: y-90}},{{x: x+10, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+10, y: y-75}},{{x: x+10, y: y-90}},{{x: x+30, y: y-60}},{{x: x+30, y: y-45}}])
+                ]
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x+50, y: y}},{{x: x+50, y: y-90}},{{x: x+60, y: y-90}},{{x: x+60, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+30, y: y-45}},{{x: x+30, y: y-60}},{{x: x+50, y: y-90}},{{x: x+50, y: y-75}}])
+                ]
         when "n"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x, y: y-90}},{{x: x+10, y: y-90}},{{x: x+10, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+10, y: y-90}},{{x: x+10, y: y-75}},{{x: x+50, y: y}},{{x: x+50, y: y-15}}])
+                ]
+            @createPoly
+                path: [{{x: x+50, y: y}},{{x: x+50, y: y-90}},{{x: x+60, y: y-90}},{{x: x+60, y: y}}]
         when "N"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}},{{x: x, y: y-90}},{{x: x+10, y: y-90}},{{x: x+10, y: y}}]),
+                    @polyFixtureDef(path: [{{x: x+10, y: y-90}},{{x: x+10, y: y-75}},{{x: x+50, y: y}},{{x: x+50, y: y-15}}])
+                ]
+            @createPoly
+                path: [{{x: x+50, y: y}},{{x: x+50, y: y-90}},{{x: x+60, y: y-90}},{{x: x+60, y: y}}]
         when "o"
             @createBox x: x+20, y: y-5,  width: 20, height: 5
             @createBox x: x+5,  y: y-35, width: 5, height: 25
