@@ -389,7 +389,7 @@
                 script: @_requireTemplate('templates/basic_script.html'),
                 stage: @_requireTemplate('templates/hello_world_stage.html'),
                 environment: @_requireTemplate('templates/basic_environment.html'),
-                stackEm: @_requireTemplate('templates/stack_em_stage.html')
+                stack_em: @_requireTemplate('templates/stack_em_stage.html')
             }
     
         renderView: () ->
@@ -421,8 +421,10 @@
             window.view = @
 
             @loadCode()
-                        
+                                    
             Peanutty.runScript()
+
+            @loadNewStage(@data.stage) if @data.stage?
 
         loadCode: () =>
             @loadScript()
@@ -433,10 +435,20 @@
         loadStage: () => @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
         loadEnvironment: () => @$('#codes .environment').html(Peanutty.htmlifyCode(@templates.environment.render()))
 
+        loadNewStage: (stageName) => 
+            @templates.stage = view.templates[stageName]
+            peanutty.destroyWorld()
+            @$('.stage_element').remove()
+            @loadCode()
+            Peanutty.runScript()
                    
     $.route.add
         '': () ->
             $('#content').view
                 name: 'Home'
                 data: {}  
+        'stage/:name': (name) ->
+            $('#content').view
+                name: 'Home'
+                data: {stage: name}
 )(ender)

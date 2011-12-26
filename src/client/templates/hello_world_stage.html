@@ -79,9 +79,8 @@ nameInput.bind 'keyup', (e) ->
                         <a id='next_challenge'>Load it up ></a>
                     </h3>
                 """
-        view.$('#next_challenge').bind 'click', =>
-            view.templates.stage = view.templates.stackEm
-            view.$('#execute .reset_script').click()
+        view.$('#next_challenge').bind 'click', => view.loadNewStage('stack_em')
+            
         
 
 view.$('#canvas_container').append(nameInput)

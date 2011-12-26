@@ -532,6 +532,7 @@
       __extends(Home, views.BaseView);
 
       function Home() {
+        this.loadNewStage = __bind(this.loadNewStage, this);
         this.loadEnvironment = __bind(this.loadEnvironment, this);
         this.loadStage = __bind(this.loadStage, this);
         this.loadScript = __bind(this.loadScript, this);
@@ -545,7 +546,7 @@
           script: this._requireTemplate('templates/basic_script.html'),
           stage: this._requireTemplate('templates/hello_world_stage.html'),
           environment: this._requireTemplate('templates/basic_environment.html'),
-          stackEm: this._requireTemplate('templates/stack_em_stage.html')
+          stack_em: this._requireTemplate('templates/stack_em_stage.html')
         };
       };
 
@@ -579,7 +580,8 @@
         window.b2d = b2d;
         window.view = this;
         this.loadCode();
-        return Peanutty.runScript();
+        Peanutty.runScript();
+        if (this.data.stage != null) return this.loadNewStage(this.data.stage);
       };
 
       Home.prototype.loadCode = function() {
@@ -600,6 +602,14 @@
         return this.$('#codes .environment').html(Peanutty.htmlifyCode(this.templates.environment.render()));
       };
 
+      Home.prototype.loadNewStage = function(stageName) {
+        this.templates.stage = view.templates[stageName];
+        peanutty.destroyWorld();
+        this.$('.stage_element').remove();
+        this.loadCode();
+        return Peanutty.runScript();
+      };
+
       return Home;
 
     })();
@@ -608,6 +618,14 @@
         return $('#content').view({
           name: 'Home',
           data: {}
+        });
+      },
+      'stage/:name': function(name) {
+        return $('#content').view({
+          name: 'Home',
+          data: {
+            stage: name
+          }
         });
       }
     });
