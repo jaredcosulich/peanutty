@@ -441,6 +441,7 @@
             @$('.stage_element').remove()
             @loadCode()
             Peanutty.runScript()
+            $.route.navigate("stage/#{stageName}", false)
                    
     $.route.add
         '': () ->

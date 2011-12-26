@@ -607,7 +607,8 @@
         peanutty.destroyWorld();
         this.$('.stage_element').remove();
         this.loadCode();
-        return Peanutty.runScript();
+        Peanutty.runScript();
+        return $.route.navigate("stage/" + stageName, false);
       };
 
       return Home;
