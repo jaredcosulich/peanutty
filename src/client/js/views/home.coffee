@@ -76,6 +76,10 @@
             @debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit)
             @world.SetDebugDraw(@debugDraw)
             
+        setScale: (scale) =>
+            @scale = scale
+            @debugDraw.SetDrawScale(@scale)
+            
         initCode: () =>
             for contentEditable in @code.find('.code')
                 do (contentEditable) =>
@@ -384,7 +388,8 @@
                 main: @_requireTemplate('templates/home.html'),
                 script: @_requireTemplate('templates/basic_script.html'),
                 stage: @_requireTemplate('templates/hello_world_stage.html'),
-                environment: @_requireTemplate('templates/basic_environment.html')
+                environment: @_requireTemplate('templates/basic_environment.html'),
+                stackEm: @_requireTemplate('templates/stack_em_stage.html')
             }
     
         renderView: () ->

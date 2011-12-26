@@ -45,6 +45,7 @@
         this.addToScript = __bind(this.addToScript, this);
         this.handleContentEditableKey = __bind(this.handleContentEditableKey, this);
         this.initCode = __bind(this.initCode, this);
+        this.setScale = __bind(this.setScale, this);
         this.initDraw = __bind(this.initDraw, this);
         this.destroyDynamicObjects = __bind(this.destroyDynamicObjects, this);
         this.destroyWorld = __bind(this.destroyWorld, this);
@@ -117,6 +118,11 @@
         this.debugDraw.SetLineThickness(1.0);
         this.debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit);
         return this.world.SetDebugDraw(this.debugDraw);
+      };
+
+      Peanutty.prototype.setScale = function(scale) {
+        this.scale = scale;
+        return this.debugDraw.SetDrawScale(this.scale);
       };
 
       Peanutty.prototype.initCode = function() {
@@ -538,7 +544,8 @@
           main: this._requireTemplate('templates/home.html'),
           script: this._requireTemplate('templates/basic_script.html'),
           stage: this._requireTemplate('templates/hello_world_stage.html'),
-          environment: this._requireTemplate('templates/basic_environment.html')
+          environment: this._requireTemplate('templates/basic_environment.html'),
+          stackEm: this._requireTemplate('templates/stack_em_stage.html')
         };
       };
 
