@@ -65,7 +65,12 @@ canvas = $('#canvas')
 code = $('#codes')
 message = $('#message')
 
-window.peanutty = new Peanutty(canvas, code, message, scale, new b2d.Common.Math.b2Vec2(0, 10))
+window.peanutty = new Peanutty
+    canvas: canvas
+    code: code
+    message: message
+    scale: scale
+    gravity: new b2d.Common.Math.b2Vec2(0, 10)
 
 # TOOLS
 
@@ -132,7 +137,6 @@ getTimeDiff = () =>
     timeDiff = if view.time? then new Date() - view.time else 0
     view.time = new Date() 
     return timeDiff
-
 
 view.$('#tools #free').bind 'click', () => 
     $('#tools .tool').removeClass('selected')
@@ -249,11 +253,22 @@ nameInput.bind 'keyup', (e) ->
                 """
         view.$('#next_challenge').bind 'click', => view.loadNewStage('stack_em')
             
-        
-
 view.$('#canvas_container').append(nameInput)
 nameInput[0].focus()
 
+
+codeChangeMessageShown = false
+view.$('#codes .code').bind 'keypress', () =>
+    return if codeChangeMessageShown
+    codeChangeMessageShown = true
+    peanutty.sendCodeMessage
+        message:
+            """
+            You've changed your script.
+            To see your changes you'll need to rerun your script by clicking "Run Script" above.
+            (<a id='close_code_message'>close this</a>)       
+            """
+    view.$('#close_code_message').bind 'click', () => view.$('#codes .message').removeClass('displayed')
 
 
 # LETTERS
@@ -498,9 +513,11 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
         when "S"
             return
         when "t"
-            return
+            @createBox x: x+25, y: y-30, width: 5,  height: 30 
+            @createBox x: x+25, y: y-60, width: 25, height: 5  
         when "T"
-            return
+            @createBox x: x+30, y: y-40, width: 5,  height: 40 
+            @createBox x: x+30, y: y-80, width: 30, height: 5  
         when "u"
             @createBox x: x+20, y: y-5,  width: 20, height: 5
             @createBox x: x+5,  y: y-40, width: 5,  height: 30
@@ -582,6 +599,7 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
         <a class='tab environment'>Environment</a>
     </div>
     <div id='codes'>
+        <div class='message'></div>
         <div class='code script selected' contenteditable=true></div>
         <div class='code stage' contenteditable=true></div>
         <div class='code environment' contenteditable=true></div>        
@@ -606,12 +624,11 @@ peanutty.sendMessage
         <h4>Stack 'Em Up!</h4>
         <p>
             Can you build a tower to reach the star?
-            <a href='javascript:void(0)' onclick='peanutty.resetWorld(); view.loadCode(); peanutty.runScript()'>Reset and try again.</a>
+            <a href='javascript:void(0)' onclick="view.$('#execute .reset_script').click()">Reset and try again.</a>
         </p>
         """
 
-setUpChallenge = (scale=30) =>
-    console.log(scale)
+window.setUpChallenge = (scale=30) =>
     peanutty.destroyWorld()
     peanutty.setScale(scale)
 
@@ -644,6 +661,7 @@ setUpChallenge = (scale=30) =>
         width: 20
         height: 20
 
+
 setUpChallenge()
     
 instructions = $(document.createElement("DIV"))
@@ -674,7 +692,10 @@ view.$('#canvas_container').append(instructions)
 
 for level in [10,20,30]
     do (level) ->
-        view.$("#level_#{{level}}").bind 'click', () -> setUpChallenge(level)
+        view.$("#level_#{{level}}").bind 'click', () -> 
+            peanutty.addToScript
+                command: "setUpChallenge(#{{level}})"
+                time: 0
 
 view.$('#tools #box').click()
     </script>    
