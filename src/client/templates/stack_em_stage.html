@@ -7,12 +7,11 @@ peanutty.sendMessage
         <h4>Stack 'Em Up!</h4>
         <p>
             Can you build a tower to reach the star?
-            <a href='javascript:void(0)' onclick='peanutty.resetWorld(); view.loadCode(); peanutty.runScript()'>Reset and try again.</a>
+            <a href='javascript:void(0)' onclick="view.$('#execute .reset_script').click()">Reset and try again.</a>
         </p>
         """
 
-setUpChallenge = (scale=30) =>
-    console.log(scale)
+window.setUpChallenge = (scale=30) =>
     peanutty.destroyWorld()
     peanutty.setScale(scale)
 
@@ -45,6 +44,7 @@ setUpChallenge = (scale=30) =>
         width: 20
         height: 20
 
+
 setUpChallenge()
     
 instructions = $(document.createElement("DIV"))
@@ -75,6 +75,9 @@ view.$('#canvas_container').append(instructions)
 
 for level in [10,20,30]
     do (level) ->
-        view.$("#level_#{{level}}").bind 'click', () -> setUpChallenge(level)
+        view.$("#level_#{{level}}").bind 'click', () -> 
+            peanutty.addToScript
+                command: "setUpChallenge(#{{level}})"
+                time: 0
 
 view.$('#tools #box').click()

@@ -3,7 +3,12 @@ canvas = $('#canvas')
 code = $('#codes')
 message = $('#message')
 
-window.peanutty = new Peanutty(canvas, code, message, scale, new b2d.Common.Math.b2Vec2(0, 10))
+window.peanutty = new Peanutty
+    canvas: canvas
+    code: code
+    message: message
+    scale: scale
+    gravity: new b2d.Common.Math.b2Vec2(0, 10)
 
 # TOOLS
 
@@ -70,7 +75,6 @@ getTimeDiff = () =>
     timeDiff = if view.time? then new Date() - view.time else 0
     view.time = new Date() 
     return timeDiff
-
 
 view.$('#tools #free').bind 'click', () => 
     $('#tools .tool').removeClass('selected')

@@ -17,9 +17,9 @@
     };
     Peanutty = (function() {
 
-      function Peanutty(canvas, code, message, scale, gravity) {
-        if (scale == null) scale = 30;
-        if (gravity == null) gravity = new b2d.Common.Math.b2Vec2(0, 10);
+      function Peanutty(_arg) {
+        var gravity;
+        this.canvas = _arg.canvas, this.code = _arg.code, this.message = _arg.message, this.scale = _arg.scale, gravity = _arg.gravity;
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -41,6 +41,7 @@
         this.createBall = __bind(this.createBall, this);
         this.createBox = __bind(this.createBox, this);
         this.createGround = __bind(this.createGround, this);
+        this.sendCodeMessage = __bind(this.sendCodeMessage, this);
         this.sendMessage = __bind(this.sendMessage, this);
         this.addToScript = __bind(this.addToScript, this);
         this.handleContentEditableKey = __bind(this.handleContentEditableKey, this);
@@ -50,15 +51,13 @@
         this.destroyDynamicObjects = __bind(this.destroyDynamicObjects, this);
         this.destroyWorld = __bind(this.destroyWorld, this);
         this.runSimulation = __bind(this.runSimulation, this);
-        this.canvas = canvas;
-        this.context = canvas[0].getContext("2d");
+        this.context = this.canvas[0].getContext("2d");
+        this.scale || (this.scale = 30);
         this.defaultScale = 30;
-        this.scale = scale;
-        this.code = code;
-        this.script = this.code.find(".script");
-        this.stage = this.code.find(".stage");
-        this.message = message;
-        this.world = new b2d.Dynamics.b2World(gravity, true);
+        this.script = this.code.find('.script');
+        this.stage = this.code.find('.stage');
+        this.codeMessage = this.code.find('.message');
+        this.world = new b2d.Dynamics.b2World(gravity || new b2d.Common.Math.b2Vec2(0, 10), true);
         this.initDraw();
         this.initCode();
       }
@@ -175,22 +174,43 @@
         }
       };
 
-      Peanutty.prototype.addToScript = function(options) {
-        var command, time;
-        if (options == null) options = {};
-        command = options.command;
-        time = options.time;
+      Peanutty.prototype.addToScript = function(_arg) {
+        var command, commandContainer, commandElement, time, wait;
+        var _this = this;
+        command = _arg.command, time = _arg.time;
+        CoffeeScript.run(command);
         if (this.script.html().length > 0 && time > 0) {
-          this.script.html("" + (this.script.html()) + "\n<p>peanutty.wait(" + (parseInt(time)) + ")</p>");
+          wait = $(document.createElement("P"));
+          wait.html("peanutty.wait(" + (parseInt(time)) + ")");
+          this.script.append(wait);
         }
-        this.script.html("" + (this.script.html()) + "\n" + (Peanutty.htmlifyCode(command)));
-        return CoffeeScript.run(command);
+        commandContainer = $(document.createElement("DIV"));
+        commandContainer.html(Peanutty.htmlifyCode(command));
+        commandElement = commandContainer.find("p").first();
+        commandElement.addClass('highlight');
+        this.script.append(commandElement);
+        $.timeout(500, function() {
+          return commandElement.removeClass('highlight');
+        });
+        return this.code.scrollTop(commandElement.offset().top);
       };
 
       Peanutty.prototype.sendMessage = function(_arg) {
         var message;
         message = _arg.message;
         return this.message.html(message);
+      };
+
+      Peanutty.prototype.sendCodeMessage = function(_arg) {
+        var message;
+        var _this = this;
+        message = _arg.message;
+        this.codeMessage.html(message);
+        this.codeMessage.addClass('displayed');
+        this.codeMessage.addClass('highlight');
+        return $.timeout(500, function() {
+          return _this.codeMessage.removeClass('highlight');
+        });
       };
 
       Peanutty.prototype.createGround = function(options) {

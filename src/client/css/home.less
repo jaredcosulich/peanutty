@@ -80,20 +80,39 @@
         border-top: 1px solid @header-background;
         border-right: 1px solid @header-background;
         background-color: white;
-        padding: 12px;
         height: 450px;
         width: 390px;
         overflow: auto;
         .code {
+            padding: 6px;
             width: 500px;
             display: none;
-            .inner-shadow(10,10)
             &.selected {
                 display: block;
             }
             p {
                 margin: 0;
-                padding: 0 0 12px 0;
+                padding: 6px;
+                background-color: white;
+                .transition(background-color 1s linear);
+                &.highlight {
+                    background-color: @green;
+                }
+            }
+        }
+        .message {
+            height: 0;
+            overflow: auto;
+            padding: 0 12px;
+            background-color: white;
+            border-bottom: 1px solid @header-background;
+            .transition(all 1s linear);
+            &.displayed {
+                padding: 12px;
+                height: 45px;
+            }
+            &.highlight {
+                background-color: @green;
             }
         }
     }

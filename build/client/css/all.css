@@ -576,12 +576,12 @@ img {
   border-top: 1px solid #4f3526;
   border-right: 1px solid #4f3526;
   background-color: white;
-  padding: 12px;
   height: 450px;
   width: 390px;
   overflow: auto;
 }
 #console #codes .code {
+  padding: 6px;
   width: 500px;
   display: none;
 }
@@ -590,5 +590,29 @@ img {
 }
 #console #codes .code p {
   margin: 0;
-  padding: 0 0 12px 0;
+  padding: 6px;
+  background-color: white;
+  -webkit-transition: background-color 1s linear;
+  -moz-transition: background-color 1s linear;
+  transition: background-color 1s linear;
+}
+#console #codes .code p.highlight {
+  background-color: #88cc66;
+}
+#console #codes .message {
+  height: 0;
+  overflow: auto;
+  padding: 0 12px;
+  background-color: white;
+  border-bottom: 1px solid #4f3526;
+  -webkit-transition: all 1s linear;
+  -moz-transition: all 1s linear;
+  transition: all 1s linear;
+}
+#console #codes .message.displayed {
+  padding: 12px;
+  height: 45px;
+}
+#console #codes .message.highlight {
+  background-color: #88cc66;
 }

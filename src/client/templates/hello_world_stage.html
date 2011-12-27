@@ -81,11 +81,22 @@ nameInput.bind 'keyup', (e) ->
                 """
         view.$('#next_challenge').bind 'click', => view.loadNewStage('stack_em')
             
-        
-
 view.$('#canvas_container').append(nameInput)
 nameInput[0].focus()
 
+
+codeChangeMessageShown = false
+view.$('#codes .code').bind 'keypress', () =>
+    return if codeChangeMessageShown
+    codeChangeMessageShown = true
+    peanutty.sendCodeMessage
+        message:
+            """
+            You've changed your script.
+            To see your changes you'll need to rerun your script by clicking "Run Script" above.
+            (<a id='close_code_message'>close this</a>)       
+            """
+    view.$('#close_code_message').bind 'click', () => view.$('#codes .message').removeClass('displayed')
 
 
 # LETTERS
@@ -330,9 +341,11 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
         when "S"
             return
         when "t"
-            return
+            @createBox x: x+25, y: y-30, width: 5,  height: 30 
+            @createBox x: x+25, y: y-60, width: 25, height: 5  
         when "T"
-            return
+            @createBox x: x+30, y: y-40, width: 5,  height: 40 
+            @createBox x: x+30, y: y-80, width: 30, height: 5  
         when "u"
             @createBox x: x+20, y: y-5,  width: 20, height: 5
             @createBox x: x+5,  y: y-40, width: 5,  height: 30

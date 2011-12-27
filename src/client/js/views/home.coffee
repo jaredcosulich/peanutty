@@ -11,19 +11,18 @@
         Function(CoffeeScript.compile code, options)()  
         
     class Peanutty
-        constructor: (canvas, code, message, scale=30, gravity=new b2d.Common.Math.b2Vec2(0, 10)) ->
-            @canvas = canvas
-            @context = canvas[0].getContext("2d")
+        constructor: ({@canvas, @code, @message, @scale, gravity}) ->
+            @context = @canvas[0].getContext("2d")
+            @scale or= 30
             @defaultScale = 30
-            @scale = scale
-            @code = code
-            @script = @code.find(".script")
-            @stage = @code.find(".stage")
-            @message = message
+            @script = @code.find('.script')
+            @stage = @code.find('.stage')
+            @codeMessage = @code.find('.message')
+            
             @world = new b2d.Dynamics.b2World(
-                  gravity,    #gravity
-                  true        #allow sleep
-            )
+                gravity or new b2d.Common.Math.b2Vec2(0, 10),
+                true
+            )      
             @initDraw()
             @initCode()
             
@@ -119,17 +118,30 @@
                     @enterHit = null
                     return true
                     
-        addToScript: (options={}) =>  
-            command = options.command
-            time = options.time
-            @script.html("#{@script.html()}\n<p>peanutty.wait(#{parseInt(time)})</p>") if @script.html().length > 0 && time > 0
-            @script.html("#{@script.html()}\n#{Peanutty.htmlifyCode(command)}")
+        addToScript: ({command, time}) =>  
             CoffeeScript.run(command)
-            
+            if @script.html().length > 0 && time > 0
+                wait = $(document.createElement("P"))
+                wait.html("peanutty.wait(#{parseInt(time)})")
+                @script.append(wait)
+
+            commandContainer = $(document.createElement("DIV"))
+            commandContainer.html(Peanutty.htmlifyCode(command))
+            commandElement = commandContainer.find("p").first()
+            commandElement.addClass('highlight')
+            @script.append(commandElement)
+            $.timeout 500, () => commandElement.removeClass('highlight')
+            @code.scrollTop(commandElement.offset().top)         
             
         sendMessage: ({message}) =>
             @message.html(message)
-            
+         
+        sendCodeMessage: ({message}) =>
+            @codeMessage.html(message)
+            @codeMessage.addClass('displayed')
+            @codeMessage.addClass('highlight')
+            $.timeout 500, () => @codeMessage.removeClass('highlight')
+                
         createGround: (options={}) =>
             fixDef = fixDef = @createFixture()
             bodyDef = new b2d.Dynamics.b2BodyDef
