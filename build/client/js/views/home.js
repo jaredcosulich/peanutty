@@ -175,7 +175,7 @@
       };
 
       Peanutty.prototype.addToScript = function(_arg) {
-        var command, commandContainer, commandElement, time, wait;
+        var command, commandContainer, commandElements, time, wait;
         var _this = this;
         command = _arg.command, time = _arg.time;
         CoffeeScript.run(command);
@@ -186,13 +186,13 @@
         }
         commandContainer = $(document.createElement("DIV"));
         commandContainer.html(Peanutty.htmlifyCode(command));
-        commandElement = commandContainer.find("p").first();
-        commandElement.addClass('highlight');
-        this.script.append(commandElement);
+        commandElements = commandContainer.find("p");
+        commandElements.addClass('highlight');
+        this.script.append(commandElements);
         $.timeout(500, function() {
-          return commandElement.removeClass('highlight');
+          return commandElements.removeClass('highlight');
         });
-        return this.code.scrollTop(commandElement.offset().top);
+        return this.code.scrollTop(commandElements.offset().top);
       };
 
       Peanutty.prototype.sendMessage = function(_arg) {

@@ -127,11 +127,11 @@
 
             commandContainer = $(document.createElement("DIV"))
             commandContainer.html(Peanutty.htmlifyCode(command))
-            commandElement = commandContainer.find("p").first()
-            commandElement.addClass('highlight')
-            @script.append(commandElement)
-            $.timeout 500, () => commandElement.removeClass('highlight')
-            @code.scrollTop(commandElement.offset().top)         
+            commandElements = commandContainer.find("p")
+            commandElements.addClass('highlight')
+            @script.append(commandElements)
+            $.timeout 500, () => commandElements.removeClass('highlight')
+            @code.scrollTop(commandElements.offset().top)         
             
         sendMessage: ({message}) =>
             @message.html(message)
