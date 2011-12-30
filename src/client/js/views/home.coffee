@@ -194,6 +194,54 @@
             bodyDef.position.y = (options.y/@defaultScale)
 
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
+            
+        createStar: ({x, y, radius, totalPoints, static}) =>
+            radius or= 20
+            points = (totalPoints or 12) / 4
+            fixtureDefs = []
+            for i in [0..points]
+                fixtureDefs.push(
+                    @polyFixtureDef(path: [
+                        {x: x, y: y},
+                        {x: x + (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))}
+                    ])
+                )
+                fixtureDefs.push(
+                    @polyFixtureDef(path: [
+                        {x: x, y: y},
+                        {x: x - (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))}
+                    ])
+                )
+                fixtureDefs.push(
+                    @polyFixtureDef(path: [
+                        {x: x, y: y},
+                        {x: x - (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))}
+                    ])
+                )
+                fixtureDefs.push(
+                    @polyFixtureDef(path: [
+                        {x: x, y: y},
+                        {x: x + (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))}
+                    ])
+                )
+
+                
+            # x - (radius / points)
+            # x + (radius / points)
+            # 
+            # 
+            # 
+            # 
+            # x + (radius / (points / 2))
+            # x + (radius / (points / 3))
+            # 
+            # x + (radius / (points / 3))
+            # x + (radius / (points / 3))
+            
+                
+            @createPoly
+                fixtureDefs: fixtureDefs
+                static: static
 
         polyFixtureDef: ({path}) =>
             fixDef = @createFixture(_arg)

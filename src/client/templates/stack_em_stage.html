@@ -14,6 +14,11 @@ peanutty.sendMessage
 window.setUpChallenge = (scale=30) =>
     peanutty.destroyWorld()
     peanutty.setScale(scale)
+    
+    peanutty.createStar
+        x: (peanutty.canvas.width() * (30/scale)) / 2
+        y: 100 * (30/scale)
+        static: true
 
     peanutty.createGround
         x: (peanutty.canvas.width() * (30/scale)) / 2

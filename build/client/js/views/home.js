@@ -38,6 +38,7 @@
         this.counterClockWise = __bind(this.counterClockWise, this);
         this.createPoly = __bind(this.createPoly, this);
         this.polyFixtureDef = __bind(this.polyFixtureDef, this);
+        this.createStar = __bind(this.createStar, this);
         this.createBall = __bind(this.createBall, this);
         this.createBox = __bind(this.createBox, this);
         this.createGround = __bind(this.createGround, this);
@@ -257,6 +258,64 @@
         bodyDef.position.x = options.x / this.defaultScale;
         bodyDef.position.y = options.y / this.defaultScale;
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+      };
+
+      Peanutty.prototype.createStar = function(_arg) {
+        var fixtureDefs, i, points, radius, static, totalPoints, x, y;
+        x = _arg.x, y = _arg.y, radius = _arg.radius, totalPoints = _arg.totalPoints, static = _arg.static;
+        radius || (radius = 20);
+        points = (totalPoints || 12) / 4;
+        fixtureDefs = [];
+        for (i = 0; 0 <= points ? i <= points : i >= points; 0 <= points ? i++ : i--) {
+          fixtureDefs.push(this.polyFixtureDef({
+            path: [
+              {
+                x: x,
+                y: y
+              }, {
+                x: x + (radius * Math.pow(i / points, 0.6)),
+                y: y - (radius * Math.pow((points - i) / points, 0.6))
+              }
+            ]
+          }));
+          fixtureDefs.push(this.polyFixtureDef({
+            path: [
+              {
+                x: x,
+                y: y
+              }, {
+                x: x - (radius * Math.pow(i / points, 0.6)),
+                y: y - (radius * Math.pow((points - i) / points, 0.6))
+              }
+            ]
+          }));
+          fixtureDefs.push(this.polyFixtureDef({
+            path: [
+              {
+                x: x,
+                y: y
+              }, {
+                x: x - (radius * Math.pow(i / points, 0.6)),
+                y: y + (radius * Math.pow((points - i) / points, 0.6))
+              }
+            ]
+          }));
+          fixtureDefs.push(this.polyFixtureDef({
+            path: [
+              {
+                x: x,
+                y: y
+              }, {
+                x: x + (radius * Math.pow(i / points, 0.6)),
+                y: y + (radius * Math.pow((points - i) / points, 0.6))
+              }
+            ]
+          }));
+        }
+        return this.createPoly({
+          fixtureDefs: fixtureDefs,
+          static: static
+        });
       };
 
       Peanutty.prototype.polyFixtureDef = function(_arg) {
