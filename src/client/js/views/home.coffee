@@ -425,9 +425,9 @@
             @loadStage()
             @loadEnvironment()
             
-        loadScript: () => @scriptEditor.getSession().setValue(@templates.script.render())
-        loadStage: () => @stageEditor.getSession().setValue(@templates.stage.render())
-        loadEnvironment: () => @environmentEditor.getSession().setValue(@templates.environment.render())
+        loadScript: () => @scriptEditor.getSession().setValue(@templates.script.render().replace(/^\n*/, ''))
+        loadStage: () => @stageEditor.getSession().setValue(@templates.stage.render().replace(/^\n*/, ''))
+        loadEnvironment: () => @environmentEditor.getSession().setValue(@templates.environment.render().replace(/^\n*/, ''))
 
         loadNewStage: (stageName) => 
             @templates.stage = view.templates[stageName]

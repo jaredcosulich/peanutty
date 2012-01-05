@@ -613,15 +613,15 @@
       };
 
       Home.prototype.loadScript = function() {
-        return this.scriptEditor.getSession().setValue(this.templates.script.render());
+        return this.scriptEditor.getSession().setValue(this.templates.script.render().replace(/^\n*/, ''));
       };
 
       Home.prototype.loadStage = function() {
-        return this.stageEditor.getSession().setValue(this.templates.stage.render());
+        return this.stageEditor.getSession().setValue(this.templates.stage.render().replace(/^\n*/, ''));
       };
 
       Home.prototype.loadEnvironment = function() {
-        return this.environmentEditor.getSession().setValue(this.templates.environment.render());
+        return this.environmentEditor.getSession().setValue(this.templates.environment.render().replace(/^\n*/, ''));
       };
 
       Home.prototype.loadNewStage = function(stageName) {
