@@ -271,6 +271,9 @@ buildClientHTML = (source, target, callback) ->
 
     scripts = ("js/#{script}" for script in [
         'lib/ender.js',
+        'lib/ace/ace-uncompressed-noconflict.js',
+        'lib/ace/mode-coffee-uncompressed-noconflict.js',
+        'lib/coffee-script.js',
         
         views...,
         

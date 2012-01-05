@@ -635,10 +635,11 @@ window.setUpChallenge = (scale=30) =>
     peanutty.destroyWorld()
     peanutty.setScale(scale)
     
-    peanutty.createStar
-        x: (peanutty.canvas.width() * (30/scale)) / 2
-        y: 100 * (30/scale)
-        static: true
+    peanutty.createAchievementStar
+        x: peanutty.canvas.width() / 2
+        y: 100
+        totalPoints: if (12 * scale / 30) > 8 then (12 * scale / 30) else 8 
+        radius: 16 * scale / 30
 
     peanutty.createGround
         x: (peanutty.canvas.width() * (30/scale)) / 2

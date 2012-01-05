@@ -11,20 +11,16 @@
         Function(CoffeeScript.compile code, options)()  
         
     class Peanutty
-        constructor: ({@canvas, @code, @message, @scale, gravity}) ->
+        constructor: ({@canvas, @scriptEditor, @stageEditor, @environmentEditor, @message, @codeMessage, @scale, gravity}) ->
             @context = @canvas[0].getContext("2d")
             @scale or= 30
             @defaultScale = 30
-            @script = @code.find('.script')
-            @stage = @code.find('.stage')
-            @codeMessage = @code.find('.message')
             
             @world = new b2d.Dynamics.b2World(
                 gravity or new b2d.Common.Math.b2Vec2(0, 10),
                 true
             )      
             @initDraw()
-            @initCode()
             
         runSimulation: () =>
             window.requestAnimFrame = (() =>
@@ -57,6 +53,8 @@
                 b = body
                 body = body.m_next
                 @world.DestroyBody(b)
+            
+            @tempShapes = []
                         
         destroyDynamicObjects: () =>
             body = @world.m_bodyList
@@ -64,6 +62,7 @@
                 b = body
                 body = body.m_next
                 @world.DestroyBody(b) if b.m_type == b2d.Dynamics.b2Body.b2_dynamicBody
+            @tempShapes = []
 
         initDraw: () =>
             #setup debug draw
@@ -79,60 +78,21 @@
             @scale = scale
             @debugDraw.SetDrawScale(@scale)
             
-        initCode: () =>
-            for contentEditable in @code.find('.code')
-                do (contentEditable) =>
-                    $(contentEditable).bind 'keydown', @handleContentEditableKey                    
-                    $(contentEditable).bind 'keyup', @handleContentEditableKey                    
-                    $(contentEditable).bind 'keypress', @handleContentEditableKey    
-
-        handleContentEditableKey: (e) =>
-            switch e.keyCode
-                when 13
-                    return true if @enterHit? && new Date() - @enterHit > 50
-                    @enterHit = new Date()
-                    
-                    e.preventDefault()
-                    
-                    sel = window.getSelection()
-                    range = sel.getRangeAt(0)
-                    node = document.createElement("BR")
-                    range.insertNode(node)
-                    range.setStartAfter(node)
-                    sel.removeAllRanges()
-                    sel.addRange(range)
-                    
-                    return false
-                when 9
-                    e.preventDefault()
-                    return false if e.type == "keyup"
-                    sel = window.getSelection()
-                    range = sel.getRangeAt(0)
-                    node = document.createTextNode('\u00a0\u00a0\u00a0\u00a0')
-                    range.insertNode(node)
-                    range.setStartAfter(node)
-                    sel.removeAllRanges()
-                    sel.addRange(range)
-                    return false
-                else
-                    @enterHit = null
-                    return true
-                    
         addToScript: ({command, time}) =>  
             CoffeeScript.run(command)
-            if @script.html().length > 0 && time > 0
-                wait = $(document.createElement("P"))
-                wait.html("peanutty.wait(#{parseInt(time)})")
-                @script.append(wait)
+            endLine = @scriptEditor.getSession().getValue().split("\n").length + 1
+            @scriptEditor.gotoLine(endLine)
+            if @scriptEditor.getSession().getValue().length > 0 && time > 0
+                @scriptEditor.insert("\npeanutty.wait(#{parseInt(time)})")
 
-            commandContainer = $(document.createElement("DIV"))
-            commandContainer.html(Peanutty.htmlifyCode(command))
-            commandElements = commandContainer.find("p")
-            commandElements.addClass('highlight')
-            @script.append(commandElements)
-            $.timeout 500, () => commandElements.removeClass('highlight')
-            @code.scrollTop(commandElements.offset().top)         
-            
+            @scriptEditor.insert("\n#{command}\n")
+            $.timeout 10, () =>
+                commandLength = command.split("\n").length
+                lines = $(@scriptEditor.container).find(".ace_line")
+                commandElements = $(lines[lines.length - commandLength - 1...lines.length - 1])
+                commandElements.addClass('highlight')
+                $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
+                
         sendMessage: ({message}) =>
             @message.html(message)
          
@@ -195,54 +155,6 @@
 
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
             
-        createStar: ({x, y, radius, totalPoints, static}) =>
-            radius or= 20
-            points = (totalPoints or 12) / 4
-            fixtureDefs = []
-            for i in [0..points]
-                fixtureDefs.push(
-                    @polyFixtureDef(path: [
-                        {x: x, y: y},
-                        {x: x + (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))}
-                    ])
-                )
-                fixtureDefs.push(
-                    @polyFixtureDef(path: [
-                        {x: x, y: y},
-                        {x: x - (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))}
-                    ])
-                )
-                fixtureDefs.push(
-                    @polyFixtureDef(path: [
-                        {x: x, y: y},
-                        {x: x - (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))}
-                    ])
-                )
-                fixtureDefs.push(
-                    @polyFixtureDef(path: [
-                        {x: x, y: y},
-                        {x: x + (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))}
-                    ])
-                )
-
-                
-            # x - (radius / points)
-            # x + (radius / points)
-            # 
-            # 
-            # 
-            # 
-            # x + (radius / (points / 2))
-            # x + (radius / (points / 3))
-            # 
-            # x + (radius / (points / 3))
-            # x + (radius / (points / 3))
-            
-                
-            @createPoly
-                fixtureDefs: fixtureDefs
-                static: static
-
         polyFixtureDef: ({path}) =>
             fixDef = @createFixture(_arg)
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
@@ -331,10 +243,38 @@
         redrawTempShapes: () =>
             for shape in @tempShapes
                 @startFreeformShape(shape.start)
-                for point in shape.path
+                for point, index in shape.path
                     @drawFreeformShape(point)
+                    # if shape.achievement
+                        
             return            
+        
+        testAchievementReached: (aabb) =>
+            body = @world.m_bodyList
+            console.log(body)
+            while body?
+                b2Collision.CollidePolygons()
+                body = body.m_next        
             
+        createAchievementStar: ({x, y, radius, totalPoints, static}) =>
+            radius or= 20
+            points = (totalPoints or 16) / 4
+            path = []
+            for i in [0..points] 
+                path.push({x: x, y: y})
+                path.push({x: x + (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))})
+                path.push({x: x, y: y})
+                path.push({x: x - (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))})
+                path.push({x: x, y: y})
+                path.push({x: x - (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))})
+                path.push({x: x, y: y})
+                path.push({x: x + (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))})
+                
+            @tempShapes.push
+                start: {x: x, y: y}
+                achievement: true
+                path: path
+                  
         addToFreeformShape: ({x,y}) =>
             if @currentShape?
                 @continueFreeformShape(_arg)
@@ -345,6 +285,7 @@
             @tempPoint = {x:x, y:y}
 
         drawFreeformShape: ({x, y}) =>
+            @context.lineWidth = 0.25
             @context.lineTo(x, y)
             @context.stroke()
 
@@ -389,57 +330,40 @@
         getFreeformShape: () =>
             return if @currentShape? then @currentShape.path else [] 
 
-        endShape: (context) =>
+        endShape: () =>
             @context.fill()
             @context.stroke()
-            return                  
+            return    
 
-    Peanutty.htmlifyCode = (code) ->
-        code.replace(/^\s*/g, '')
-            .replace(/&amp;/g, '&').replace(/\</g, '&lt;').replace(/\>/g, '&gt;')
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/\n(\s+)/g, '<br>$1')
-            .replace(/\n/g, '</p><p>')
-            .replace(/^/, '<p>')
-            .replace(/$/, '</p>')
-            .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-            .replace(/\s/g, '&nbsp;')            
-            
-    Peanutty.runCode = (code) =>
-        parsed = []
+
+    Peanutty.runCode = (editor) => 
+        code = editor.getSession().getValue()
+
+        complete = []
         active = []
         tab = "    "
         indent = ""
-
-        code = code.children().first() while code.children().first().html().startsWith("<p")
-        segments = ($(child).html() for child in code.children())
-        for segment in segments
+        
+        segments = code.split(/\n/)
+        for segment, index in segments
             if segment.indexOf("peanutty.wait") > -1
-                parsed.push(active.join(""))
+                complete.push(active.join("\n"))
                 active = []
-                time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""))
-                parsed.push(indent + "$.timeout #{time}, () =>\n")
-                indent += tab
+                if index < segments.length - 1
+                    time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""))
+                    complete.push(indent + "$.timeout #{time}, () =>\n")
+                    indent += tab
             else
-                segment = segment.replace(/&nbsp;/g, ' ')
-                                 .replace(/\n*\s*\<br\>\n*/g, "\n")
-                                 .replace(/^\n/, "")
-                                 .replace(/^/, indent)
-                                 .replace(/\n/g, "\n" + indent)                                     
-                                 .replace(/\s*$/, "\n")
-                                 .replace(/&gt;/g, '>')
-                                 .replace(/&lt;/g, '<')
-                                 .replace(/&amp;/g, '&')
-                active.push(segment)
+                active.push(indent + segment)
+    
+        complete.push(active.join("\n"))
+        CoffeeScript.run(complete.join("\n"))
 
-        parsed.push(active.join(""))
-        CoffeeScript.run(parsed.join(""))
+    Peanutty.runScript = (scriptEditor = view.scriptEditor) => Peanutty.runCode(scriptEditor)    
 
-    Peanutty.runScript = (script = view.$('#codes .script')) => Peanutty.runCode(script)    
+    Peanutty.setStage = (stageEditor = view.stageEditor) => Peanutty.runCode(stageEditor)
 
-    Peanutty.setStage = (stage = view.$('#codes .stage')) => Peanutty.runCode(stage)
-
-    Peanutty.loadEnvironment = (environment = view.$('#codes .environment')) => Peanutty.runCode(environment)
+    Peanutty.loadEnvironment = (environmentEditor = view.environmentEditor) => Peanutty.runCode(environmentEditor)
         
             
     class views.Home extends views.BaseView
@@ -479,11 +403,21 @@
             window.Peanutty = Peanutty
             window.b2d = b2d
             window.view = @
+            
+            CoffeeScriptMode = ace.require("ace/mode/coffee").Mode
+            @scriptEditor = ace.edit(@$('#codes .script')[0])
+            @scriptEditor.getSession().setMode(new CoffeeScriptMode())
+            
+            @stageEditor = ace.edit(@$('#codes .stage')[0])
+            @stageEditor.getSession().setMode(new CoffeeScriptMode())
+            
+            @environmentEditor = ace.edit(@$('#codes .environment')[0])
+            @environmentEditor.getSession().setMode(new CoffeeScriptMode())
 
             @loadCode()
                                     
             Peanutty.runScript()
-
+            
             @loadNewStage(@data.stage) if @data.stage?
 
         loadCode: () =>
@@ -491,9 +425,9 @@
             @loadStage()
             @loadEnvironment()
             
-        loadScript: () => @$('#codes .script').html(Peanutty.htmlifyCode(@templates.script.render()))
-        loadStage: () => @$('#codes .stage').html(Peanutty.htmlifyCode(@templates.stage.render()))
-        loadEnvironment: () => @$('#codes .environment').html(Peanutty.htmlifyCode(@templates.environment.render()))
+        loadScript: () => @scriptEditor.getSession().setValue(@templates.script.render())
+        loadStage: () => @stageEditor.getSession().setValue(@templates.stage.render())
+        loadEnvironment: () => @environmentEditor.getSession().setValue(@templates.environment.render())
 
         loadNewStage: (stageName) => 
             @templates.stage = view.templates[stageName]

@@ -19,7 +19,7 @@
 
       function Peanutty(_arg) {
         var gravity;
-        this.canvas = _arg.canvas, this.code = _arg.code, this.message = _arg.message, this.scale = _arg.scale, gravity = _arg.gravity;
+        this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.stageEditor = _arg.stageEditor, this.environmentEditor = _arg.environmentEditor, this.message = _arg.message, this.codeMessage = _arg.codeMessage, this.scale = _arg.scale, gravity = _arg.gravity;
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -30,6 +30,8 @@
         this.drawFreeformShape = __bind(this.drawFreeformShape, this);
         this.addTempToFreeformShape = __bind(this.addTempToFreeformShape, this);
         this.addToFreeformShape = __bind(this.addToFreeformShape, this);
+        this.createAchievementStar = __bind(this.createAchievementStar, this);
+        this.testAchievementReached = __bind(this.testAchievementReached, this);
         this.redrawTempShapes = __bind(this.redrawTempShapes, this);
         this.redrawCurrentShape = __bind(this.redrawCurrentShape, this);
         this.createRandomObjects = __bind(this.createRandomObjects, this);
@@ -38,15 +40,12 @@
         this.counterClockWise = __bind(this.counterClockWise, this);
         this.createPoly = __bind(this.createPoly, this);
         this.polyFixtureDef = __bind(this.polyFixtureDef, this);
-        this.createStar = __bind(this.createStar, this);
         this.createBall = __bind(this.createBall, this);
         this.createBox = __bind(this.createBox, this);
         this.createGround = __bind(this.createGround, this);
         this.sendCodeMessage = __bind(this.sendCodeMessage, this);
         this.sendMessage = __bind(this.sendMessage, this);
         this.addToScript = __bind(this.addToScript, this);
-        this.handleContentEditableKey = __bind(this.handleContentEditableKey, this);
-        this.initCode = __bind(this.initCode, this);
         this.setScale = __bind(this.setScale, this);
         this.initDraw = __bind(this.initDraw, this);
         this.destroyDynamicObjects = __bind(this.destroyDynamicObjects, this);
@@ -55,12 +54,8 @@
         this.context = this.canvas[0].getContext("2d");
         this.scale || (this.scale = 30);
         this.defaultScale = 30;
-        this.script = this.code.find('.script');
-        this.stage = this.code.find('.stage');
-        this.codeMessage = this.code.find('.message');
         this.world = new b2d.Dynamics.b2World(gravity || new b2d.Common.Math.b2Vec2(0, 10), true);
         this.initDraw();
-        this.initCode();
       }
 
       Peanutty.prototype.runSimulation = function() {
@@ -83,31 +78,27 @@
       };
 
       Peanutty.prototype.destroyWorld = function() {
-        var b, body, _results;
+        var b, body;
         body = this.world.m_bodyList;
-        _results = [];
         while (body != null) {
           b = body;
           body = body.m_next;
-          _results.push(this.world.DestroyBody(b));
+          this.world.DestroyBody(b);
         }
-        return _results;
+        return this.tempShapes = [];
       };
 
       Peanutty.prototype.destroyDynamicObjects = function() {
-        var b, body, _results;
+        var b, body;
         body = this.world.m_bodyList;
-        _results = [];
         while (body != null) {
           b = body;
           body = body.m_next;
           if (b.m_type === b2d.Dynamics.b2Body.b2_dynamicBody) {
-            _results.push(this.world.DestroyBody(b));
-          } else {
-            _results.push(void 0);
+            this.world.DestroyBody(b);
           }
         }
-        return _results;
+        return this.tempShapes = [];
       };
 
       Peanutty.prototype.initDraw = function() {
@@ -125,75 +116,27 @@
         return this.debugDraw.SetDrawScale(this.scale);
       };
 
-      Peanutty.prototype.initCode = function() {
-        var contentEditable, _i, _len, _ref, _results;
-        var _this = this;
-        _ref = this.code.find('.code');
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          contentEditable = _ref[_i];
-          _results.push((function(contentEditable) {
-            $(contentEditable).bind('keydown', _this.handleContentEditableKey);
-            $(contentEditable).bind('keyup', _this.handleContentEditableKey);
-            return $(contentEditable).bind('keypress', _this.handleContentEditableKey);
-          })(contentEditable));
-        }
-        return _results;
-      };
-
-      Peanutty.prototype.handleContentEditableKey = function(e) {
-        var node, range, sel;
-        switch (e.keyCode) {
-          case 13:
-            if ((this.enterHit != null) && new Date() - this.enterHit > 50) {
-              return true;
-            }
-            this.enterHit = new Date();
-            e.preventDefault();
-            sel = window.getSelection();
-            range = sel.getRangeAt(0);
-            node = document.createElement("BR");
-            range.insertNode(node);
-            range.setStartAfter(node);
-            sel.removeAllRanges();
-            sel.addRange(range);
-            return false;
-          case 9:
-            e.preventDefault();
-            if (e.type === "keyup") return false;
-            sel = window.getSelection();
-            range = sel.getRangeAt(0);
-            node = document.createTextNode('\u00a0\u00a0\u00a0\u00a0');
-            range.insertNode(node);
-            range.setStartAfter(node);
-            sel.removeAllRanges();
-            sel.addRange(range);
-            return false;
-          default:
-            this.enterHit = null;
-            return true;
-        }
-      };
-
       Peanutty.prototype.addToScript = function(_arg) {
-        var command, commandContainer, commandElements, time, wait;
+        var command, endLine, time;
         var _this = this;
         command = _arg.command, time = _arg.time;
         CoffeeScript.run(command);
-        if (this.script.html().length > 0 && time > 0) {
-          wait = $(document.createElement("P"));
-          wait.html("peanutty.wait(" + (parseInt(time)) + ")");
-          this.script.append(wait);
+        endLine = this.scriptEditor.getSession().getValue().split("\n").length + 1;
+        this.scriptEditor.gotoLine(endLine);
+        if (this.scriptEditor.getSession().getValue().length > 0 && time > 0) {
+          this.scriptEditor.insert("\npeanutty.wait(" + (parseInt(time)) + ")");
         }
-        commandContainer = $(document.createElement("DIV"));
-        commandContainer.html(Peanutty.htmlifyCode(command));
-        commandElements = commandContainer.find("p");
-        commandElements.addClass('highlight');
-        this.script.append(commandElements);
-        $.timeout(500, function() {
-          return commandElements.removeClass('highlight');
+        this.scriptEditor.insert("\n" + command + "\n");
+        return $.timeout(10, function() {
+          var commandElements, commandLength, lines;
+          commandLength = command.split("\n").length;
+          lines = $(_this.scriptEditor.container).find(".ace_line");
+          commandElements = $(lines.slice(lines.length - commandLength - 1, (lines.length - 1)));
+          commandElements.addClass('highlight');
+          return $.timeout(1000, function() {
+            return $(_this.scriptEditor.container).find(".ace_line").removeClass('highlight');
+          });
         });
-        return this.code.scrollTop(commandElements.offset().top);
       };
 
       Peanutty.prototype.sendMessage = function(_arg) {
@@ -258,64 +201,6 @@
         bodyDef.position.x = options.x / this.defaultScale;
         bodyDef.position.y = options.y / this.defaultScale;
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-      };
-
-      Peanutty.prototype.createStar = function(_arg) {
-        var fixtureDefs, i, points, radius, static, totalPoints, x, y;
-        x = _arg.x, y = _arg.y, radius = _arg.radius, totalPoints = _arg.totalPoints, static = _arg.static;
-        radius || (radius = 20);
-        points = (totalPoints || 12) / 4;
-        fixtureDefs = [];
-        for (i = 0; 0 <= points ? i <= points : i >= points; 0 <= points ? i++ : i--) {
-          fixtureDefs.push(this.polyFixtureDef({
-            path: [
-              {
-                x: x,
-                y: y
-              }, {
-                x: x + (radius * Math.pow(i / points, 0.6)),
-                y: y - (radius * Math.pow((points - i) / points, 0.6))
-              }
-            ]
-          }));
-          fixtureDefs.push(this.polyFixtureDef({
-            path: [
-              {
-                x: x,
-                y: y
-              }, {
-                x: x - (radius * Math.pow(i / points, 0.6)),
-                y: y - (radius * Math.pow((points - i) / points, 0.6))
-              }
-            ]
-          }));
-          fixtureDefs.push(this.polyFixtureDef({
-            path: [
-              {
-                x: x,
-                y: y
-              }, {
-                x: x - (radius * Math.pow(i / points, 0.6)),
-                y: y + (radius * Math.pow((points - i) / points, 0.6))
-              }
-            ]
-          }));
-          fixtureDefs.push(this.polyFixtureDef({
-            path: [
-              {
-                x: x,
-                y: y
-              }, {
-                x: x + (radius * Math.pow(i / points, 0.6)),
-                y: y + (radius * Math.pow((points - i) / points, 0.6))
-              }
-            ]
-          }));
-        }
-        return this.createPoly({
-          fixtureDefs: fixtureDefs,
-          static: static
-        });
       };
 
       Peanutty.prototype.polyFixtureDef = function(_arg) {
@@ -434,17 +319,79 @@
       Peanutty.prototype.tempShapes = [];
 
       Peanutty.prototype.redrawTempShapes = function() {
-        var point, shape, _i, _j, _len, _len2, _ref, _ref2;
+        var index, point, shape, _i, _len, _len2, _ref, _ref2;
         _ref = this.tempShapes;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           shape = _ref[_i];
           this.startFreeformShape(shape.start);
           _ref2 = shape.path;
-          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-            point = _ref2[_j];
+          for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
+            point = _ref2[index];
             this.drawFreeformShape(point);
           }
         }
+      };
+
+      Peanutty.prototype.testAchievementReached = function(aabb) {
+        var body, _results;
+        body = this.world.m_bodyList;
+        console.log(body);
+        _results = [];
+        while (body != null) {
+          b2Collision.CollidePolygons();
+          _results.push(body = body.m_next);
+        }
+        return _results;
+      };
+
+      Peanutty.prototype.createAchievementStar = function(_arg) {
+        var i, path, points, radius, static, totalPoints, x, y;
+        x = _arg.x, y = _arg.y, radius = _arg.radius, totalPoints = _arg.totalPoints, static = _arg.static;
+        radius || (radius = 20);
+        points = (totalPoints || 16) / 4;
+        path = [];
+        for (i = 0; 0 <= points ? i <= points : i >= points; 0 <= points ? i++ : i--) {
+          path.push({
+            x: x,
+            y: y
+          });
+          path.push({
+            x: x + (radius * Math.pow(i / points, 0.6)),
+            y: y - (radius * Math.pow((points - i) / points, 0.6))
+          });
+          path.push({
+            x: x,
+            y: y
+          });
+          path.push({
+            x: x - (radius * Math.pow(i / points, 0.6)),
+            y: y - (radius * Math.pow((points - i) / points, 0.6))
+          });
+          path.push({
+            x: x,
+            y: y
+          });
+          path.push({
+            x: x - (radius * Math.pow(i / points, 0.6)),
+            y: y + (radius * Math.pow((points - i) / points, 0.6))
+          });
+          path.push({
+            x: x,
+            y: y
+          });
+          path.push({
+            x: x + (radius * Math.pow(i / points, 0.6)),
+            y: y + (radius * Math.pow((points - i) / points, 0.6))
+          });
+        }
+        return this.tempShapes.push({
+          start: {
+            x: x,
+            y: y
+          },
+          achievement: true,
+          path: path
+        });
       };
 
       Peanutty.prototype.addToFreeformShape = function(_arg) {
@@ -469,6 +416,7 @@
       Peanutty.prototype.drawFreeformShape = function(_arg) {
         var x, y;
         x = _arg.x, y = _arg.y;
+        this.context.lineWidth = 0.25;
         this.context.lineTo(x, y);
         return this.context.stroke();
       };
@@ -548,7 +496,7 @@
         }
       };
 
-      Peanutty.prototype.endShape = function(context) {
+      Peanutty.prototype.endShape = function() {
         this.context.fill();
         this.context.stroke();
       };
@@ -556,55 +504,42 @@
       return Peanutty;
 
     })();
-    Peanutty.htmlifyCode = function(code) {
-      return code.replace(/^\s*/g, '').replace(/&amp;/g, '&').replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace(/\n\n/g, '</p><p>').replace(/\n(\s+)/g, '<br>$1').replace(/\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\s/g, '&nbsp;');
-    };
-    Peanutty.runCode = function(code) {
-      var active, child, indent, parsed, segment, segments, tab, time, _i, _len;
-      parsed = [];
+    Peanutty.runCode = function(editor) {
+      var active, code, complete, indent, index, segment, segments, tab, time, _len;
+      code = editor.getSession().getValue();
+      complete = [];
       active = [];
       tab = "    ";
       indent = "";
-      while (code.children().first().html().startsWith("<p")) {
-        code = code.children().first();
-      }
-      segments = (function() {
-        var _i, _len, _ref, _results;
-        _ref = code.children();
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          child = _ref[_i];
-          _results.push($(child).html());
-        }
-        return _results;
-      })();
-      for (_i = 0, _len = segments.length; _i < _len; _i++) {
-        segment = segments[_i];
+      segments = code.split(/\n/);
+      for (index = 0, _len = segments.length; index < _len; index++) {
+        segment = segments[index];
         if (segment.indexOf("peanutty.wait") > -1) {
-          parsed.push(active.join(""));
+          complete.push(active.join("\n"));
           active = [];
-          time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""));
-          parsed.push(indent + ("$.timeout " + time + ", () =>\n"));
-          indent += tab;
+          if (index < segments.length - 1) {
+            time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""));
+            complete.push(indent + ("$.timeout " + time + ", () =>\n"));
+            indent += tab;
+          }
         } else {
-          segment = segment.replace(/&nbsp;/g, ' ').replace(/\n*\s*\<br\>\n*/g, "\n").replace(/^\n/, "").replace(/^/, indent).replace(/\n/g, "\n" + indent).replace(/\s*$/, "\n").replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
-          active.push(segment);
+          active.push(indent + segment);
         }
       }
-      parsed.push(active.join(""));
-      return CoffeeScript.run(parsed.join(""));
+      complete.push(active.join("\n"));
+      return CoffeeScript.run(complete.join("\n"));
     };
-    Peanutty.runScript = function(script) {
-      if (script == null) script = view.$('#codes .script');
-      return Peanutty.runCode(script);
+    Peanutty.runScript = function(scriptEditor) {
+      if (scriptEditor == null) scriptEditor = view.scriptEditor;
+      return Peanutty.runCode(scriptEditor);
     };
-    Peanutty.setStage = function(stage) {
-      if (stage == null) stage = view.$('#codes .stage');
-      return Peanutty.runCode(stage);
+    Peanutty.setStage = function(stageEditor) {
+      if (stageEditor == null) stageEditor = view.stageEditor;
+      return Peanutty.runCode(stageEditor);
     };
-    Peanutty.loadEnvironment = function(environment) {
-      if (environment == null) environment = view.$('#codes .environment');
-      return Peanutty.runCode(environment);
+    Peanutty.loadEnvironment = function(environmentEditor) {
+      if (environmentEditor == null) environmentEditor = view.environmentEditor;
+      return Peanutty.runCode(environmentEditor);
     };
     views.Home = (function() {
 
@@ -630,6 +565,7 @@
       };
 
       Home.prototype.renderView = function() {
+        var CoffeeScriptMode;
         var _this = this;
         if (navigator.userAgent.indexOf("Chrome") === -1) {
           this.el.html(this._requireTemplate('templates/chrome_only.html').render());
@@ -658,6 +594,13 @@
         window.Peanutty = Peanutty;
         window.b2d = b2d;
         window.view = this;
+        CoffeeScriptMode = ace.require("ace/mode/coffee").Mode;
+        this.scriptEditor = ace.edit(this.$('#codes .script')[0]);
+        this.scriptEditor.getSession().setMode(new CoffeeScriptMode());
+        this.stageEditor = ace.edit(this.$('#codes .stage')[0]);
+        this.stageEditor.getSession().setMode(new CoffeeScriptMode());
+        this.environmentEditor = ace.edit(this.$('#codes .environment')[0]);
+        this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
         this.loadCode();
         Peanutty.runScript();
         if (this.data.stage != null) return this.loadNewStage(this.data.stage);
@@ -670,15 +613,15 @@
       };
 
       Home.prototype.loadScript = function() {
-        return this.$('#codes .script').html(Peanutty.htmlifyCode(this.templates.script.render()));
+        return this.scriptEditor.getSession().setValue(this.templates.script.render());
       };
 
       Home.prototype.loadStage = function() {
-        return this.$('#codes .stage').html(Peanutty.htmlifyCode(this.templates.stage.render()));
+        return this.stageEditor.getSession().setValue(this.templates.stage.render());
       };
 
       Home.prototype.loadEnvironment = function() {
-        return this.$('#codes .environment').html(Peanutty.htmlifyCode(this.templates.environment.render()));
+        return this.environmentEditor.getSession().setValue(this.templates.environment.render());
       };
 
       Home.prototype.loadNewStage = function(stageName) {

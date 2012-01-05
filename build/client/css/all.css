@@ -582,21 +582,19 @@ img {
 }
 #console #codes .code {
   padding: 6px;
-  width: 500px;
+  width: 372px;
+  height: 420px;
   display: none;
 }
 #console #codes .code.selected {
   display: block;
 }
-#console #codes .code p {
-  margin: 0;
-  padding: 6px;
-  background-color: white;
+#console #codes .code .ace_line {
   -webkit-transition: background-color 1s linear;
   -moz-transition: background-color 1s linear;
   transition: background-color 1s linear;
 }
-#console #codes .code p.highlight {
+#console #codes .code .ace_line.highlight {
   background-color: #88cc66;
 }
 #console #codes .message {
