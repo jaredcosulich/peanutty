@@ -9,7 +9,7 @@ task 'build:index', 'Build the static index page', ->
     templates = ({
             src: "templates/#{name}",
             text: fs.readFileSync("#{client}/templates/#{name}")
-        } for name in fs.readdirSync("#{client}/templates") when name != 'base.html' and /\.html$/.test(name))
+        } for name in fs.readdirSync("#{client}/templates") when name != 'base.html' and (/\.html$/.test(name) or /\.coffee$/.test(name))) 
 
     overwriteFonts =
         """
