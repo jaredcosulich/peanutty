@@ -574,12 +574,14 @@
         }
         this.el.html(this.templates.main.render());
         this.$('#tabs .tab').bind('click', function(e) {
-          var tab;
+          var tab, tabName;
           $('#tabs .tab').removeClass('selected');
           tab = $(e.currentTarget);
           tab.addClass('selected');
           $('#codes .code').removeClass('selected');
-          return _this.$("#codes ." + (tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, ''))).addClass('selected');
+          tabName = tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '');
+          _this.$("#codes ." + tabName).addClass('selected');
+          return _this["" + tabName + "Editor"].getSession().setValue(_this["" + tabName + "Editor"].getSession().getValue());
         });
         this.$('#execute .run_script').bind('click', function(e) {
           peanutty.destroyWorld();

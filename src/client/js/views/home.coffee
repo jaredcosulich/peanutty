@@ -388,7 +388,9 @@
                 tab = $(e.currentTarget)
                 tab.addClass('selected')
                 $('#codes .code').removeClass('selected')
-                @$("#codes .#{tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '')}").addClass('selected')
+                tabName = tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '')
+                @$("#codes .#{tabName}").addClass('selected')
+                @["#{tabName}Editor"].getSession().setValue(@["#{tabName}Editor"].getSession().getValue())
    
             @$('#execute .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()

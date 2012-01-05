@@ -584,9 +584,6 @@ img {
 #console #codes .code.selected {
   display: block;
 }
-#console #codes .code .ace_gutter-cell {
-  padding-left: 12px;
-}
 #console #codes .code .ace_scroller, #console #codes .code .ace_gutter-cell {
   padding-top: 6px;
 }
