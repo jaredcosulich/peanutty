@@ -326,9 +326,23 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
             @createBox x: x+55, y: y-45, width: 5, height: 35
             @createBox x: x+30, y: y-85, width: 30, height: 5
         when "p"
-            return
+            @createBox x: x+17, y: y-30, width: 5,  height: 30
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y-60}},{{x: x, y: y-70}},{{x: x+50, y: y-70}},{{x: x+50, y: y-60}}]),
+                    @polyFixtureDef(path: [{{x: x+50, y: y-60}},{{x: x+50, y: y-40}},{{x: x+40, y: y-40}},{{x: x+40, y: y-60}}]),
+                    @polyFixtureDef(path: [{{x: x+50, y: y-40}},{{x: x+50, y: y-30}},{{x: x+22, y: y-30}},{{x: x+22, y: y-40}}])
+                ]
+            @createBox x: x+4,  y: y-72, width: 6,  height: 2, density: 10
         when "P"
-            return
+            @createBox x: x+17, y: y-40, width: 5,  height: 40
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y-80}},{{x: x, y: y-90}},{{x: x+60, y: y-90}},{{x: x+60, y: y-80}}]),
+                    @polyFixtureDef(path: [{{x: x+60, y: y-80}},{{x: x+60, y: y-50}},{{x: x+50, y: y-50}},{{x: x+50, y: y-80}}]),
+                    @polyFixtureDef(path: [{{x: x+60, y: y-50}},{{x: x+60, y: y-40}},{{x: x+22, y: y-40}},{{x: x+22, y: y-50}}])
+                ]
+            @createBox x: x+4,  y: y-92, width: 6,  height: 2, density: 30
         when "q"
             @createBox x: x+25, y: y-5,  width: 25, height: 5
             @createBox x: x+5,  y: y-35, width: 5, height: 25
