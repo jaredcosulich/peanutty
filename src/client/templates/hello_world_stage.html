@@ -42,7 +42,7 @@ nameInput.css
     left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
     
 nameInput.bind 'keyup', (e) ->
-    letters = $(e.currentTarget).val().replace(/\s/g, '')
+    letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '')
     view.loadScript()
     peanutty.destroyDynamicObjects()
     peanutty.addToScript
@@ -440,13 +440,35 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
                     @polyFixtureDef(path: [{{x: x+30, y: y-55}}, {{x: x+50, y: y-90}}, {{x: x+60, y: y-90}}, {{x: x+35, y: y-45}}])                  
                 ]
         when "y"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y-70}}, {{x: x+10, y: y-70}}, {{x: x+30, y: y-35}}, {{x: x+20, y: y-35}}]),                  
+                    @polyFixtureDef(path: [{{x: x+25, y: y-45}}, {{x: x+40, y: y-70}}, {{x: x+50, y: y-70}}, {{x: x+30, y: y-35}}])                  
+                ]
+            @createBox x: x+25, y: y-17,  width: 5, height: 17
         when "Y"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y-90}}, {{x: x+10, y: y-90}}, {{x: x+35, y: y-45}}, {{x: x+25, y: y-45}}]),                  
+                    @polyFixtureDef(path: [{{x: x+30, y: y-55}}, {{x: x+50, y: y-90}}, {{x: x+60, y: y-90}}, {{x: x+35, y: y-45}}])                  
+                ]
+            @createBox x: x+30, y: y-22,  width: 5, height: 22
         when "z"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}}, {{x: x, y: y-10}}, {{x: x+50, y: y-10}}, {{x: x+50, y: y}}]),                  
+                    @polyFixtureDef(path: [{{x: x, y: y-10}}, {{x: x+40, y: y-60}}, {{x: x+50, y: y-60}}, {{x: x+10, y: y-10}}])                  
+                ]
+            @createBox x: x+25, y: y-65,  width: 25, height: 5
+            @createBox x: x+47, y: y-72, width: 6,  height: 2, density: 50
         when "Z"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y}}, {{x: x, y: y-10}}, {{x: x+60, y: y-10}}, {{x: x+60, y: y}}]),                  
+                    @polyFixtureDef(path: [{{x: x, y: y-10}}, {{x: x+50, y: y-90}}, {{x: x+60, y: y-90}}, {{x: x+10, y: y-10}}])                  
+                ]
+            @createBox x: x+30, y: y-95,  width: 30, height: 5
+            @createBox x: x+57, y: y-102, width: 6,  height: 2, density: 50
         else 
             return
 
