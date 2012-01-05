@@ -42,8 +42,7 @@ nameInput.css
     left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
     
 nameInput.bind 'keyup', (e) ->
-    letters = $(e.currentTarget).val()
-    return if letters.replace(/\s/g, '').length == 0
+    letters = $(e.currentTarget).val().replace(/\s/g, '')
     view.loadScript()
     peanutty.destroyDynamicObjects()
     peanutty.addToScript
@@ -320,14 +319,33 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
             @createBox x: x+5,  y: y-35, width: 5, height: 25
             @createBox x: x+35, y: y-35, width: 5, height: 25
             @createBox x: x+20, y: y-65, width: 20, height: 5
+        when "O"
+            @createBox x: x+30, y: y-5,  width: 30, height: 5
+            @createBox x: x+5,  y: y-45, width: 5, height: 35
+            @createBox x: x+55, y: y-45, width: 5, height: 35
+            @createBox x: x+30, y: y-85, width: 30, height: 5
         when "p"
             return
         when "P"
             return
         when "q"
-            return
+            @createBox x: x+25, y: y-5,  width: 25, height: 5
+            @createBox x: x+5,  y: y-35, width: 5, height: 25
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x+40, y: y-10}},{{x: x+40, y: y-60}},{{x: x+50, y: y-60}},{{x: x+50, y: y-10}}]),                   
+                    @polyFixtureDef(path: [{{x: x+20, y: y-40}},{{x: x+30, y: y-40}},{{x: x+40, y: y-20}},{{x: x+40, y: y-10}},{{x: x+35, y: y-10}}])
+                ]
+            @createBox x: x+25, y: y-65, width: 25, height: 5
         when "Q"
-            return
+            @createBox x: x+30, y: y-5,  width: 30, height: 5
+            @createBox x: x+5,  y: y-40, width: 5, height: 30
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x+50, y: y-10}},{{x: x+50, y: y-70}},{{x: x+60, y: y-70}},{{x: x+60, y: y-10}}]),                  
+                    @polyFixtureDef(path: [{{x: x+30, y: y-40}},{{x: x+40, y: y-40}},{{x: x+50, y: y-20}},{{x: x+50, y: y-10}},{{x: x+45, y: y-10}}])
+                ]
+            @createBox x: x+30, y: y-75, width: 30, height: 5
         when "r"       
             @createBox x: x+5,  y: y-20, width: 5,  height: 30 
             @createBox x: x+28, y: y-5,  width: 5,  height: 15 
@@ -371,9 +389,17 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
             @createBox x: x+5,  y: y-50, width: 5,  height: 40
             @createBox x: x+55,  y: y-50, width: 5,  height: 40
         when "v"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y-70}}, {{x: x+10, y: y-70}}, {{x: x+25, y: y-20}}, {{x: x+25, y: y}}]),                  
+                    @polyFixtureDef(path: [{{x: x+25, y: y}}, {{x: x+25, y: y-20}}, {{x: x+40, y: y-70}}, {{x: x+50, y: y-70}}])                  
+                ]
         when "V"
-            return
+            @createPoly
+                fixtureDefs: [
+                    @polyFixtureDef(path: [{{x: x, y: y-90}}, {{x: x+10, y: y-90}}, {{x: x+30, y: y-20}}, {{x: x+30, y: y}}]),                  
+                    @polyFixtureDef(path: [{{x: x+30, y: y}}, {{x: x+30, y: y-20}}, {{x: x+50, y: y-90}}, {{x: x+60, y: y-90}}])                  
+                ]
         when "w"
             @createBox x: x+40, y: y-5,  width: 40, height: 5
             @createBox x: x+10, y: y-45, width: 10, height: 40
@@ -399,4 +425,8 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
         else 
             return
 
+peanutty.createLetters
+    x: peanutty.canvas.width() / 2
+    y: peanutty.canvas.height() - 55
+    letters: 'Hello World'
 
