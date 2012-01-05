@@ -248,7 +248,7 @@ nameInput.bind 'keyup', (e) ->
             position: 'absolute'
             top: '90px'
             left: "#{{(peanutty.canvas.width() / 2) - 150}}px"
-        destroyInstructions.html("Now destroy your name!<br/>(click anywhere above your name)")
+        destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)")
         view.$('#canvas_container').append(destroyInstructions)
         peanutty.sendMessage
             message:
@@ -508,17 +508,33 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
         when "Q"
             return
         when "r"       
-            @createBox x: x+5,  y: y-20, width: 5, height: 30 
-            @createBox x: x+28, y: y-5,  width: 5, height: 15 
+            @createBox x: x+5,  y: y-20, width: 5,  height: 30 
+            @createBox x: x+28, y: y-5,  width: 5,  height: 15 
             @createBox x: x+25, y: y-25, width: 15, height: 5 
-            @createBox x: x+35, y: y-40, width: 5, height: 10 
+            @createBox x: x+35, y: y-40, width: 5,  height: 10 
             @createBox x: x+20, y: y-55, width: 20, height: 5 
         when "R"
-            return
+            @createBox x: x+5,  y: y-40, width: 5,  height: 40  
+            @createBox x: x+35, y: y-20, width: 5,  height: 20  
+            @createBox x: x+35, y: y-45, width: 25, height: 5   
+            @createBox x: x+55, y: y-65, width: 5,  height: 15  
+            @createBox x: x+30, y: y-85, width: 30, height: 5   
         when "s"
-            return
+            @createBox x: x+25, y: y-5,  width: 25, height: 5              
+            @createBox x: x+40, y: y-20, width: 10, height: 10             
+            @createBox x: x+25, y: y-35, width: 25, height: 5              
+            @createBox x: x+47, y: y-42, width: 6,  height: 2, density: 50 
+            @createBox x: x+10, y: y-50, width: 10, height: 10             
+            @createBox x: x+25, y: y-65, width: 25, height: 5              
+            @createBox x: x+4,  y: y-72, width: 6,  height: 2, density: 10 
         when "S"
-            return
+            @createBox x: x+30, y: y-5,   width: 30, height: 5                
+            @createBox x: x+50,  y: y-25, width: 10, height: 15               
+            @createBox x: x+30, y: y-45,  width: 30, height: 5                
+            @createBox x: x+57,  y: y-52, width: 6,  height: 2, density: 80   
+            @createBox x: x+10,  y: y-65, width: 10, height: 15               
+            @createBox x: x+30, y: y-85, width: 30,  height: 5                
+            @createBox x: x+4,  y: y-92, width: 6,   height: 2, density: 10      
         when "t"
             @createBox x: x+25, y: y-30, width: 5,  height: 30 
             @createBox x: x+25, y: y-60, width: 25, height: 5  
