@@ -13,8 +13,7 @@
     }
 
     #execute {
-        float: right;
-        padding-right: 60px;
+        float: left;
         .button {
             float: right;
             margin: 10px 30px 0 0;
@@ -80,16 +79,18 @@
         border-top: 1px solid @header-background;
         border-right: 1px solid @header-background;
         background-color: white;
-        height: 450px;
-        width: 390px;
-        overflow: auto;
         .code {
-            padding: 6px;
-            width: 372px;
-            height: 420px;
+            width: 420px;
+            height: 476px;
             display: none;
             &.selected {
                 display: block;
+            }
+            .ace_gutter-cell {
+                padding-left: 12px;
+            }
+            .ace_scroller, .ace_gutter-cell {
+                padding-top: 6px
             }
             .ace_line {
                 .transition(background-color 1s linear);

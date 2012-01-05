@@ -404,6 +404,9 @@
             window.b2d = b2d
             window.view = @
             
+            @resizeAreas()
+            $(window).bind 'resize', @resizeAreas
+            
             CoffeeScriptMode = ace.require("ace/mode/coffee").Mode
             @scriptEditor = ace.edit(@$('#codes .script')[0])
             @scriptEditor.getSession().setMode(new CoffeeScriptMode())
@@ -437,6 +440,19 @@
             Peanutty.runScript()
             $.route.navigate("stage/#{stageName}", false)
                    
+        resizeAreas: () =>
+            fullWidth = $(window).width()
+            codeWidth = fullWidth * 0.3
+            codeWidth = 390 if codeWidth < 390
+            codeWidth = 450 if codeWidth > 450
+            $('#execute').width(codeWidth)
+            $('#console').width(codeWidth)
+            $('#codes .code').width(codeWidth)
+            
+            remainingWidth = fullWidth - codeWidth - 90
+            $('#message').width(remainingWidth - (parseInt($('#message').css('paddingLeft')) * 2))
+            $('#canvas')[0].width = remainingWidth
+    
     $.route.add
         '': () ->
             $('#content').view

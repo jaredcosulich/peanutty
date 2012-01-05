@@ -514,8 +514,7 @@ img {
   margin-left: 45px;
 }
 #top_area #execute {
-  float: right;
-  padding-right: 60px;
+  float: left;
 }
 #top_area #execute .button {
   float: right;
@@ -576,18 +575,20 @@ img {
   border-top: 1px solid #4f3526;
   border-right: 1px solid #4f3526;
   background-color: white;
-  height: 450px;
-  width: 390px;
-  overflow: auto;
 }
 #console #codes .code {
-  padding: 6px;
-  width: 372px;
-  height: 420px;
+  width: 420px;
+  height: 476px;
   display: none;
 }
 #console #codes .code.selected {
   display: block;
+}
+#console #codes .code .ace_gutter-cell {
+  padding-left: 12px;
+}
+#console #codes .code .ace_scroller, #console #codes .code .ace_gutter-cell {
+  padding-top: 6px;
 }
 #console #codes .code .ace_line {
   -webkit-transition: background-color 1s linear;

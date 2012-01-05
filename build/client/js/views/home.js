@@ -546,6 +546,7 @@
       __extends(Home, views.BaseView);
 
       function Home() {
+        this.resizeAreas = __bind(this.resizeAreas, this);
         this.loadNewStage = __bind(this.loadNewStage, this);
         this.loadEnvironment = __bind(this.loadEnvironment, this);
         this.loadStage = __bind(this.loadStage, this);
@@ -594,6 +595,8 @@
         window.Peanutty = Peanutty;
         window.b2d = b2d;
         window.view = this;
+        this.resizeAreas();
+        $(window).bind('resize', this.resizeAreas);
         CoffeeScriptMode = ace.require("ace/mode/coffee").Mode;
         this.scriptEditor = ace.edit(this.$('#codes .script')[0]);
         this.scriptEditor.getSession().setMode(new CoffeeScriptMode());
@@ -631,6 +634,20 @@
         this.loadCode();
         Peanutty.runScript();
         return $.route.navigate("stage/" + stageName, false);
+      };
+
+      Home.prototype.resizeAreas = function() {
+        var codeWidth, fullWidth, remainingWidth;
+        fullWidth = $(window).width();
+        codeWidth = fullWidth * 0.3;
+        if (codeWidth < 390) codeWidth = 390;
+        if (codeWidth > 450) codeWidth = 450;
+        $('#execute').width(codeWidth);
+        $('#console').width(codeWidth);
+        $('#codes .code').width(codeWidth);
+        remainingWidth = fullWidth - codeWidth - 90;
+        $('#message').width(remainingWidth - (parseInt($('#message').css('paddingLeft')) * 2));
+        return $('#canvas')[0].width = remainingWidth;
       };
 
       return Home;
