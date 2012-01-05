@@ -61,14 +61,20 @@
     </style>
     <script data-src="templates/basic_environment.html" type="text/html" charset="utf-8">
         scale = 30
-canvas = $('#canvas')     
-code = $('#codes')
-message = $('#message')
+canvas = view.$('#canvas')
+scriptEditor = view.scriptEditor
+stageEditor = view.stageEditor
+environmentEditor = view.environmentEditor
+message = view.$('#message')
+codeMessage = view.$('#codes .message')
 
 window.peanutty = new Peanutty
     canvas: canvas
-    code: code
+    scriptEditor: scriptEditor
+    stageEditor: stageEditor
+    environmentEditor: environmentEditor
     message: message
+    codeMessage: codeMessage
     scale: scale
     gravity: new b2d.Common.Math.b2Vec2(0, 10)
 
@@ -603,9 +609,9 @@ Peanutty::createLetter = ({{x, y, letter}}) ->
     </div>
     <div id='codes'>
         <div class='message'></div>
-        <div class='code script selected' contenteditable=true></div>
-        <div class='code stage' contenteditable=true></div>
-        <div class='code environment' contenteditable=true></div>        
+        <div class='code script selected'></div>
+        <div class='code stage'></div>
+        <div class='code environment'></div>        
     </div>
 </div>
 
