@@ -558,10 +558,10 @@
       Home.prototype.prepare = function() {
         return this.templates = {
           main: this._requireTemplate('templates/home.html'),
-          script: this._requireTemplate('templates/basic_script.html'),
-          stage: this._requireTemplate('templates/hello_world_stage.html'),
-          environment: this._requireTemplate('templates/basic_environment.html'),
-          stack_em: this._requireTemplate('templates/stack_em_stage.html')
+          script: this._requireTemplate('templates/basic_script.coffee'),
+          stage: this._requireTemplate('templates/hello_world_stage.coffee'),
+          environment: this._requireTemplate('templates/basic_environment.coffee'),
+          stack_em: this._requireTemplate('templates/stack_em_stage.coffee')
         };
       };
 
@@ -618,15 +618,15 @@
       };
 
       Home.prototype.loadScript = function() {
-        return this.scriptEditor.getSession().setValue(this.templates.script.render().replace(/^\n*/, ''));
+        return this.scriptEditor.getSession().setValue(this.templates.script.html().replace(/^\n*/, ''));
       };
 
       Home.prototype.loadStage = function() {
-        return this.stageEditor.getSession().setValue(this.templates.stage.render().replace(/^\n*/, ''));
+        return this.stageEditor.getSession().setValue(this.templates.stage.html().replace(/^\n*/, ''));
       };
 
       Home.prototype.loadEnvironment = function() {
-        return this.environmentEditor.getSession().setValue(this.templates.environment.render().replace(/^\n*/, ''));
+        return this.environmentEditor.getSession().setValue(this.templates.environment.html().replace(/^\n*/, ''));
       };
 
       Home.prototype.loadNewStage = function(stageName) {

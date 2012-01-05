@@ -370,10 +370,10 @@
         prepare: () ->
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
-                script: @_requireTemplate('templates/basic_script.html'),
-                stage: @_requireTemplate('templates/hello_world_stage.html'),
-                environment: @_requireTemplate('templates/basic_environment.html'),
-                stack_em: @_requireTemplate('templates/stack_em_stage.html')
+                script: @_requireTemplate('templates/basic_script.coffee'),
+                stage: @_requireTemplate('templates/hello_world_stage.coffee'),
+                environment: @_requireTemplate('templates/basic_environment.coffee'),
+                stack_em: @_requireTemplate('templates/stack_em_stage.coffee')
             }
     
         renderView: () ->
@@ -430,9 +430,9 @@
             @loadStage()
             @loadEnvironment()
             
-        loadScript: () => @scriptEditor.getSession().setValue(@templates.script.render().replace(/^\n*/, ''))
-        loadStage: () => @stageEditor.getSession().setValue(@templates.stage.render().replace(/^\n*/, ''))
-        loadEnvironment: () => @environmentEditor.getSession().setValue(@templates.environment.render().replace(/^\n*/, ''))
+        loadScript: () => @scriptEditor.getSession().setValue(@templates.script.html().replace(/^\n*/, ''))
+        loadStage: () => @stageEditor.getSession().setValue(@templates.stage.html().replace(/^\n*/, ''))
+        loadEnvironment: () => @environmentEditor.getSession().setValue(@templates.environment.html().replace(/^\n*/, ''))
 
         loadNewStage: (stageName) => 
             @templates.stage = view.templates[stageName]

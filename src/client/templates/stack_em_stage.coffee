@@ -55,7 +55,7 @@ setUpChallenge()
     
 instructions = $(document.createElement("DIV"))
 instructions.css
-    width: "#{{peanutty.canvas.width()}}px"
+    width: "#{peanutty.canvas.width()}px"
     textAlign: 'center'
     position: 'absolute'
     top: '20px'
@@ -81,9 +81,9 @@ view.$('#canvas_container').append(instructions)
 
 for level in [10,20,30]
     do (level) ->
-        view.$("#level_#{{level}}").bind 'click', () -> 
+        view.$("#level_#{level}").bind 'click', () -> 
             peanutty.addToScript
-                command: "setUpChallenge(#{{level}})"
+                command: "setUpChallenge(#{level})"
                 time: 0
 
 view.$('#tools #box').click()

@@ -153,6 +153,14 @@ aside {
   height: 100%;
   z-index: 1;
 }
+.no-user-select {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
 .progress {
   position: relative;
   overflow: hidden;
@@ -529,6 +537,20 @@ img {
   background-color: #eee;
   border: 1px solid #4f3526;
   cursor: pointer;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+#canvas_container div, #canvas_container p {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 #tools {
   width: 45px;

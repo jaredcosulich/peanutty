@@ -55,11 +55,11 @@ initiateBox = (canvas) =>
             command:
                 """
                 peanutty.createBox
-                    x: #{{e.offsetX * (peanutty.defaultScale/peanutty.scale)}}
-                    y: #{{e.offsetY * (peanutty.defaultScale/peanutty.scale)}}
+                    x: #{e.offsetX * (peanutty.defaultScale/peanutty.scale)}
+                    y: #{e.offsetY * (peanutty.defaultScale/peanutty.scale)}
                     width: 20
                     height: 20
-                    static: #{{static}}
+                    static: #{static}
                 """
             time: getTimeDiff()
 
@@ -70,10 +70,10 @@ initiateBall = (canvas) =>
             command: 
                 """
                 peanutty.createBall
-                    x: #{{e.offsetX * (peanutty.defaultScale/peanutty.scale)}}
-                    y: #{{e.offsetY * (peanutty.defaultScale/peanutty.scale)}}
+                    x: #{e.offsetX * (peanutty.defaultScale/peanutty.scale)}
+                    y: #{e.offsetY * (peanutty.defaultScale/peanutty.scale)}
                     radius: 20
-                    static: #{{static}}
+                    static: #{static}
                 """
             time: getTimeDiff()
     

@@ -256,6 +256,15 @@
 .border-right-lighten(@alpha: @default-shade, @width: 1px) { .border-right-alpha(@white, @alpha, @width); }
 
 
+.no-user-select {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
 // Effects
 .impress(@alpha1: 0.32, @alpha2: 0.24, @bgalpha: 0.02) {
     .border-darken(@alpha1);
