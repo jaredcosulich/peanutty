@@ -4,7 +4,7 @@ peanutty.runSimulation()
 peanutty.sendMessage
     message: 
         """
-        <h4>Stack 'Em Up!</h4>
+        <strong>Stack 'Em Up!</strong>
         <p>
             Can you build a tower to reach the star?
             <a href='javascript:void(0)' onclick="view.$('#execute .reset_script').click()">Reset and try again.</a>

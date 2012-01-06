@@ -1,261 +1,227 @@
-// Typography
-.font(@weight: @body-font-weight, @style: @body-font-style, @size: @body-font-size, @line-height: @body-line-height, @family: @body-font-family) {
-    font-weight: @weight;
-    font-style: @style;
-    font-size: @size;
-    line-height: @line-height;
-    font-family: @family;
-}
+/* Mixins.less
+ * Snippets of reusable CSS to develop faster and keep code readable
+ * ----------------------------------------------------------------- */
 
-.serif-font(@size: @body-font-size, @line-height: @body-line-height) {
-    .font(@body-font-weight, @body-font-style, @size, @line-height, @serif-font-family);
-}
 
-.sans-serif-font(@size: @body-font-size, @line-height: @body-line-height) {
-    .font(@body-font-weight, @body-font-style, @size, @line-height, @sans-serif-font-family);
-}
-
-.icon-font {
-    font-family: 'Mingl Icons';
-    -webkit-font-smoothing: antialiased;
-}
-
-// Layout and Size
-.absolute(@left: 0, @top: 0) {
-    position: absolute;
-    left: @left;
-    top: @top;
-}
-
-.relative(@left: 0, @top: 0) {
-    position: relative;
-    left: @left;
-    top: @top;
-}
-
-.size(@height: 0, @width: 0) {
-    height: @height;
-    width: @width;
-}
-
-.square(@size: 0) {
-    .size(@size, @size);
-}
-
-.clearfix {
+// Clearfix for clearing floats like a boss h5bp.com/q
+.clearfix() {
+  zoom: 1;
+  &:before,
+  &:after {
+    display: table;
+    content: "";
     zoom: 1;
-
-    &:before, &:after {
-        clear: both;
-        display: table;
-        content: "";
-    }
+  }
+  &:after {
+    clear: both;
+  }
 }
 
-.center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+// Center-align a block level element
+.center-block() {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.fill { width: 100%; height: 100%; }
-
-.behind { z-index: -1; }
-
-.front { z-index: 1; }
-
-.cover { .absolute(); .fill; .front; }
-
-
-// Compatibility
-.placeholder(@color: @placeholder-color) {
-    :-moz-placeholder {
-        color: @color;
-    }
-    ::-webkit-input-placeholder {
-        color: @color;
-    }
+// Sizing shortcuts
+.size(@height: 5px, @width: 5px) {
+  height: @height;
+  width: @width;
+}
+.square(@size: 5px) {
+  .size(@size, @size);
 }
 
-.content-columns(@columnCount, @columnGap: 20px) {
-    -webkit-column-count: @columnCount;
-    -webkit-column-gap: @columnGap;
-    -moz-column-count: @columnCount;
-    -moz-column-gap: @columnGap;
-    column-count: @columnCount;
-    column-gap: @columnGap;
+// Input placeholder text
+.placeholder(@color: @grayLight) {
+  :-moz-placeholder {
+    color: @color;
+  }
+  ::-webkit-input-placeholder {
+    color: @color;
+  }
 }
 
-.background-clip(@clip) {
-    -webkit-background-clip: @clip;
-    -moz-background-clip: @clip;
-    background-clip: @clip;
+// Font Stacks
+#font {
+  .shorthand(@weight: normal, @size: 14px, @lineHeight: 20px) {
+    font-size: @size;
+    font-weight: @weight;
+    line-height: @lineHeight;
+  }
+  .sans-serif(@weight: normal, @size: 14px, @lineHeight: 20px) {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: @size;
+    font-weight: @weight;
+    line-height: @lineHeight;
+  }
+  .serif(@weight: normal, @size: 14px, @lineHeight: 20px) {
+    font-family: "Georgia", Times New Roman, Times, serif;
+    font-size: @size;
+    font-weight: @weight;
+    line-height: @lineHeight;
+  }
+  .monospace(@weight: normal, @size: 12px, @lineHeight: 20px) {
+    font-family: "Monaco", Courier New, monospace;
+    font-size: @size;
+    font-weight: @weight;
+    line-height: @lineHeight;
+  }
 }
 
-.box-shadow(@val) {
-    box-shadow: @val;
-    -webkit-box-shadow: @val;
-    -moz-box-shadow: @val;
+// Grid System
+.fixed-container() {
+  width: @siteWidth;
+  margin-left: auto;
+  margin-right: auto;
+  .clearfix();
 }
-
-.opacity(@opacity: @default-opacity) {
-    filter: e(%("alpha(opacity=%d)", @opacity * 100));
-    -khtml-opacity: @opacity;
-    -moz-opacity: @opacity;
-    opacity: @opacity;
+.columns(@columnSpan: 1) {
+  width: (@gridColumnWidth * @columnSpan) + (@gridGutterWidth * (@columnSpan - 1));
 }
-
-.transition(@transition) {
-	-webkit-transition: @transition;
-	-moz-transition: @transition;
-	transition: @transition;
+.offset(@columnOffset: 1) {
+  margin-left: (@gridColumnWidth * @columnOffset) + (@gridGutterWidth * (@columnOffset - 1)) + @extraSpace;
 }
-
-
-// Shadows and Highlights
-.outer-shadow(@x: 0, @y: 0, @blur: @default-box-shadow-blur, @alpha: @default-box-shadow-alpha) {
-    @val: @x @y @blur rgba(0, 0, 0, @alpha);
-    .box-shadow(@val)
+// Necessary grid styles for every column to make them appear next to each other horizontally
+.gridColumn() {
+  display: inline;
+  float: left;
+  margin-left: @gridGutterWidth;
 }
-
-.outer-highlight(@x: 0, @y: 0, @blur: @default-box-highlight-blur, @alpha: @default-box-highlight-alpha) {
-    @val: @x @y @blur rgba(255, 255, 255, @alpha);
-    .box-shadow(@val)
+// makeColumn can be used to mark any element (e.g., .content-primary) as a column without changing markup to .span something
+.makeColumn(@columnSpan: 1) {
+  .gridColumn();
+  .columns(@columnSpan);
 }
-
-.inner-shadow(@x: 0, @y: 0, @blur: @default-box-shadow-blur, @alpha: @default-box-shadow-alpha) {
-    @val: inset @x @y @blur rgba(0, 0, 0, @alpha);
-    .box-shadow(@val)
-}
-
-.inner-highlight(@x: 0, @y: 0, @blur: @default-box-highlight-blur, @alpha: @default-box-highlight-alpha) {
-    @val: inset @x @y @blur rgba(255, 255, 255, @alpha);
-    .box-shadow(@val)
-}
-
-.text-shadow(@x: 0, @y: 0, @blur: @default-text-shadow-blur, @alpha: @default-text-shadow-alpha) {
-    @val: @x @y @blur rgba(0, 0, 0, @alpha);
-    text-shadow: @val;
-}
-
-.text-highlight(@x: 0, @y: 0, @blur: @default-text-shadow-blur, @alpha: @default-text-shadow-alpha) {
-    @val: @x @y @blur rgba(255, 255, 255, @alpha);
-    text-shadow: @val;
-}
-
 
 // Border Radius
-.rounded(@radius: @default-radius) {
-    .background-clip(padding-box);
-    -webkit-border-radius: @radius;
-    -moz-border-radius: @radius;
-    border-radius: @radius;
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
 }
 
-.border-top-left-radius(@radius: @default-radius) {
-    .background-clip(padding-box);
-    border-top-left-radius: @radius;
-    -webkit-border-top-left-radius: @radius;
-    -moz-border-radius-topleft: @radius;
+// Drop shadows
+.box-shadow(@shadow: 0 1px 3px rgba(0,0,0,.25)) {
+  -webkit-box-shadow: @shadow;
+     -moz-box-shadow: @shadow;
+          box-shadow: @shadow;
 }
 
-.border-top-right-radius(@radius: @default-radius) {
-    .background-clip(padding-box);
-    border-top-right-radius: @radius;
-    -webkit-border-top-right-radius: @radius;
-    -moz-border-radius-topright: @radius;
+// Transitions
+.transition(@transition) {
+     -webkit-transition: @transition;
+        -moz-transition: @transition;
+         -ms-transition: @transition;
+          -o-transition: @transition;
+             transition: @transition;
 }
 
-.border-bottom-left-radius(@radius: @default-radius) {
-    .background-clip(padding-box);
-    border-bottom-left-radius: @radius;
-    -webkit-border-bottom-left-radius: @radius;
-    -moz-border-radius-bottomleft: @radius;
+// Background clipping
+.background-clip(@clip) {
+  -webkit-background-clip: @clip;
+     -moz-background-clip: @clip;
+          background-clip: @clip;
 }
 
-.border-bottom-right-radius(@radius: @default-radius) {
-    .background-clip(padding-box);
-    border-bottom-right-radius: @radius;
-    -webkit-border-bottom-right-radius: @radius;
-    -moz-border-radius-bottomright: @radius;
+// CSS3 Content Columns
+.content-columns(@columnCount, @columnGap: 20px) {
+  -webkit-column-count: @columnCount;
+     -moz-column-count: @columnCount;
+          column-count: @columnCount;
+  -webkit-column-gap: @columnGap;
+     -moz-column-gap: @columnGap;
+          column-gap: @columnGap;
 }
 
-.border-top-radius(@radius: @default-radius) {
-    .border-top-left-radius(@radius);
-    .border-top-right-radius(@radius);
+// Make any element resizable for prototyping
+.resizable(@direction: both) {
+  resize: @direction; // Options are horizontal, vertical, both
+  overflow: auto; // Safari fix
 }
 
-.border-bottom-radius(@radius: @default-radius) {
-    .border-bottom-left-radius(@radius);
-    .border-bottom-right-radius(@radius);
+// Add an alphatransparency value to any background or border color (via Elyse Holladay)
+#translucent {
+  .background(@color: @white, @alpha: 1) {
+    background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+  }
+  .border(@color: @white, @alpha: 1) {
+    border-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+    background-clip: padding-box;
+  }
 }
 
-.border-left-radius(@radius: @default-radius) {
-    .border-top-left-radius(@radius);
-    .border-bottom-left-radius(@radius);
+// Gradient Bar Colors for buttons and allerts
+.gradientBar(@primaryColor, @secondaryColor) {
+  #gradient > .vertical(@primaryColor, @secondaryColor);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  border-color: @secondaryColor @secondaryColor darken(@secondaryColor, 15%);
+  border-color: rgba(0,0,0,.1) rgba(0,0,0,.1) fadein(rgba(0,0,0,.1), 15%);
 }
 
-.border-right-radius(@radius: @default-radius) {
-    .border-top-right-radius(@radius);
-    .border-bottom-right-radius(@radius);
+// Gradients
+#gradient {
+  .horizontal (@startColor: #555, @endColor: #333) {
+    background-color: @endColor;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, right top, from(@startColor), to(@endColor)); // Konqueror
+    background-image: -moz-linear-gradient(left, @startColor, @endColor); // FF 3.6+
+    background-image: -ms-linear-gradient(left, @startColor, @endColor); // IE10
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, @startColor), color-stop(100%, @endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(left, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(left, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(left, @startColor, @endColor); // Le standard
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",@startColor,@endColor)); // IE9 and down
+  }
+  .vertical (@startColor: #555, @endColor: #333) {
+    background-color: @endColor;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(@startColor), to(@endColor)); // Konqueror
+    background-image: -moz-linear-gradient(top, @startColor, @endColor); // FF 3.6+
+    background-image: -ms-linear-gradient(top, @startColor, @endColor); // IE10
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @startColor), color-stop(100%, @endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(top, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(top, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(top, @startColor, @endColor); // The standard
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); // IE9 and down
+  }
+  .directional (@startColor: #555, @endColor: #333, @deg: 45deg) {
+    background-color: @endColor;
+    background-repeat: repeat-x;
+    background-image: -moz-linear-gradient(@deg, @startColor, @endColor); // FF 3.6+
+    background-image: -ms-linear-gradient(@deg, @startColor, @endColor); // IE10
+    background-image: -webkit-linear-gradient(@deg, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(@deg, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(@deg, @startColor, @endColor); // The standard
+  }
+  .vertical-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) {
+    background-color: @endColor;
+    background-repeat: no-repeat;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@startColor), color-stop(@colorStop, @midColor), to(@endColor));
+    background-image: -webkit-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+    background-image: -moz-linear-gradient(top, @startColor, @midColor @colorStop, @endColor);
+    background-image: -ms-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+    background-image: -o-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+    background-image: linear-gradient(@startColor, @midColor @colorStop, @endColor);
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); // IE9 and down, gets no color-stop at all for proper fallback
+  }
 }
 
-.border-radius(@topLeft: 0, @topRight: 0, @bottomRight: 0, @bottomLeft: 0) {
-    .border-top-left-radius(@topLeft);
-    .border-top-right-radius(@topRight);
-    .border-bottom-right-radius(@bottomRight);
-    .border-bottom-left-radius(@bottomLeft);
+// Reset filters for IE
+.reset-filter() {
+  filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
 }
 
-
-// Colors
-.bg-alpha(@color, @alpha: @default-opacity) { background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha); }
-.fg-alpha(@color, @alpha: @default-opacity) { background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha); }
-
-.border-alpha(@color, @alpha: @default-opacity, @width: 1px) {
-    .background-clip(padding-box);
-    border: @width solid hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+// Opacity
+.opacity(@opacity: 100) {
+  filter: e(%("alpha(opacity=%d)", @opacity));
+  -khtml-opacity: @opacity / 100;
+    -moz-opacity: @opacity / 100;
+         opacity: @opacity / 100;
 }
 
-.border-top-alpha(@color, @alpha: @default-opacity, @width: 1px) {
-    .background-clip(padding-box);
-    border-top: @width solid hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
-}
-
-.border-bottom-alpha(@color, @alpha: @default-opacity, @width: 1px) {
-    .background-clip(padding-box);
-    border-bottom: @width solid hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
-}
-
-.border-left-alpha(@color, @alpha: @default-opacity, @width: 1px) {
-    .background-clip(padding-box);
-    border-left: @width solid hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
-}
-
-.border-right-alpha(@color, @alpha: @default-opacity, @width: 1px) {
-    .background-clip(padding-box);
-    border-right: @width solid hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
-}
-
-.fg-darken(@alpha: @default-shade) { .fg-alpha(@black, @alpha); }
-.fg-lighten(@alpha: @default-shade) { .fg-alpha(@white, @alpha); }
-
-.bg-darken(@alpha: @default-shade) { .bg-alpha(@black, @alpha); }
-.bg-lighten(@alpha: @default-shade) { .bg-alpha(@white, @alpha); }
-
-.border-darken(@alpha: @default-shade, @width: 1px) { .border-alpha(@black, @alpha, @width); }
-.border-top-darken(@alpha: @default-shade, @width: 1px) { .border-top-alpha(@black, @alpha, @width); }
-.border-bottom-darken(@alpha: @default-shade, @width: 1px) { .border-bottom-alpha(@black, @alpha, @width); }
-.border-left-darken(@alpha: @default-shade, @width: 1px) { .border-left-alpha(@black, @alpha, @width); }
-.border-right-darken(@alpha: @default-shade, @width: 1px) { .border-right-alpha(@black, @alpha, @width); }
-
-.border-lighten(@alpha: @default-shade, @width: 1px) { .border-alpha(@white, @alpha, @width); }
-.border-top-lighten(@alpha: @default-shade, @width: 1px) { .border-top-alpha(@white, @alpha, @width); }
-.border-bottom-lighten(@alpha: @default-shade, @width: 1px) { .border-bottom-alpha(@white, @alpha, @width); }
-.border-left-lighten(@alpha: @default-shade, @width: 1px) { .border-left-alpha(@white, @alpha, @width); }
-.border-right-lighten(@alpha: @default-shade, @width: 1px) { .border-right-alpha(@white, @alpha, @width); }
-
-
+// Disable Text Selection
 .no-user-select {
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -263,36 +229,4 @@
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
-}
-
-// Effects
-.impress(@alpha1: 0.32, @alpha2: 0.24, @bgalpha: 0.02) {
-    .border-darken(@alpha1);
-    .border-bottom-darken(@alpha2);
-    .bg-darken(@bgalpha);
-}
-
-.inset-text(@alpha1: 0.5, @alpha2: 1.0) {
-    text-shadow: 0 -1px 1px rgba(0, 0, 0, @alpha1),
-                 0 1px 1px rgba(255, 255, 255, @alpha2);
-}
-
-.glass(@alpha1: 0.16, @alpha2: 0.24) {
-    &:after {
-        content: "";
-        position: absolute;
-        top: -1px;
-        right: 0;
-        left: 0;
-        height: 50%;
-        z-index: 0;
-        .bg-lighten(@alpha1);
-        .border-bottom-lighten(@alpha2);
-    }
-}
-
-.hover-darken(@alpha: 0.08) {
-    &:hover {
-        .bg-darken(@alpha);
-    }
 }

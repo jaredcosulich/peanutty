@@ -4,7 +4,7 @@ peanutty.runSimulation()
 peanutty.sendMessage
     message: 
         """
-        <h4>Welcome to Peanutty!</h4>
+        <strong>Welcome to Peanutty!</strong>
         <p>
             To get started, type your name in and then destroy it with boxes, balls, or freeform shapes.
         </p>

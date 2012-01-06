@@ -583,6 +583,17 @@
           _this.$("#codes ." + tabName).addClass('selected');
           return _this["" + tabName + "Editor"].getSession().setValue(_this["" + tabName + "Editor"].getSession().getValue());
         });
+        $('.topbar a').bind('click', function(e) {
+          var currentRoute;
+          var _this = this;
+          currentRoute = window.location.hash;
+          $.route.navigate(this.href.replace(/.*#/, ''), false);
+          if (currentRoute.indexOf('stage') > -1) {
+            return $.timeout(5, function() {
+              return $.route.navigate(currentRoute.replace('#', ''), false);
+            });
+          }
+        });
         this.$('#execute .run_script').bind('click', function(e) {
           peanutty.destroyWorld();
           _this.$('.stage_element').remove();
@@ -607,8 +618,8 @@
         this.environmentEditor = ace.edit(this.$('#codes .environment')[0]);
         this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
         this.loadCode();
-        Peanutty.runScript();
-        if (this.data.stage != null) return this.loadNewStage(this.data.stage);
+        if (this.data.stage != null) this.loadNewStage(this.data.stage);
+        return Peanutty.runScript();
       };
 
       Home.prototype.loadCode = function() {
@@ -656,7 +667,7 @@
 
     })();
     return $.route.add({
-      '': function() {
+      '.*': function() {
         return $('#content').view({
           name: 'Home',
           data: {}

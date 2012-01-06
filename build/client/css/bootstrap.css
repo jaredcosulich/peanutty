@@ -1,3 +1,13 @@
+/*!
+ * Bootstrap @VERSION
+ *
+ * Copyright 2011 Twitter, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Designed and built with all the love in the world @twitter by @mdo and @fat.
+ * Date: @DATE
+ */
 /* Reset.less
  * Props to Eric Meyer (meyerweb.com) for his CSS reset file. We're using an adapted version here	that cuts out some of the reset HTML elements we will never need here (i.e., dfn, samp, etc).
  * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -2465,146 +2475,4 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
-}
-body {
-  padding: 45px 0 300px 0;
-}
-.topbar {
-  background-color: #4f3526;
-  padding-left: 45px;
-}
-#top_area {
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-#top_area #message {
-  float: left;
-  width: 786px;
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 6px;
-  height: 36px;
-  overflow: hidden;
-  margin-left: 45px;
-}
-#top_area #execute {
-  float: left;
-}
-#top_area #execute .btn {
-  float: right;
-  margin: 10px 21px 0 0;
-}
-#canvas_container {
-  margin-bottom: 60px;
-  float: left;
-  position: relative;
-}
-#canvas_container #canvas {
-  background-color: #e6e6e6;
-  border: 1px solid #4f3526;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
-#canvas_container div, #canvas_container p {
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
-#tools {
-  width: 45px;
-  float: left;
-  text-align: center;
-  border-top: 1px solid #4f3526;
-}
-#tools .tool, #tools .setting, #tools .tool_spacer {
-  line-height: 45px;
-  height: 45px;
-  border-bottom: 1px solid #4f3526;
-}
-#tools .tool, #tools .setting {
-  border-left: 1px solid #4f3526;
-  cursor: pointer;
-}
-#tools .tool.selected, #tools .setting.selected {
-  background-color: #4f3526;
-  color: white;
-}
-#console {
-  width: 420px;
-  float: left;
-}
-#console #tabs {
-  overflow: hidden;
-}
-#console #tabs .tab {
-  float: left;
-  display: block;
-  width: 90px;
-  padding: 6px 0;
-  border-top: 1px solid #4f3526;
-  border-left: 1px solid #4f3526;
-  border-right: 1px solid #4f3526;
-  text-align: center;
-  margin-left: 12px;
-}
-#console #tabs .tab.selected {
-  background-color: #4f3526;
-  color: white;
-}
-#console #codes {
-  border-top: 1px solid #4f3526;
-  border-right: 1px solid #4f3526;
-  background-color: white;
-}
-#console #codes .code {
-  width: 420px;
-  height: 476px;
-  display: none;
-}
-#console #codes .code.selected {
-  display: block;
-}
-#console #codes .code .ace_scroller, #console #codes .code .ace_gutter-cell {
-  padding-top: 6px;
-}
-#console #codes .code .ace_line {
-  -webkit-transition: background-color 1s linear;
-  -moz-transition: background-color 1s linear;
-  -ms-transition: background-color 1s linear;
-  -o-transition: background-color 1s linear;
-  transition: background-color 1s linear;
-}
-#console #codes .code .ace_line.highlight {
-  background-color: #46a546;
-}
-#console #codes .message {
-  height: 0;
-  overflow: auto;
-  padding: 0 12px;
-  background-color: white;
-  border-bottom: 1px solid #4f3526;
-  -webkit-transition: all 1s linear;
-  -moz-transition: all 1s linear;
-  -ms-transition: all 1s linear;
-  -o-transition: all 1s linear;
-  transition: all 1s linear;
-}
-#console #codes .message.displayed {
-  padding: 12px;
-  height: 45px;
-}
-#console #codes .message.highlight {
-  background-color: #46a546;
-}
-section {
-  clear: both;
-  padding: 45px;
 }

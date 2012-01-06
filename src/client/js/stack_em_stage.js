@@ -7,7 +7,7 @@
   peanutty.runSimulation();
 
   peanutty.sendMessage({
-    message: "<h4>Stack 'Em Up!</h4>\n<p>\n    Can you build a tower to reach the star?\n    <a href='javascript:void(0)' onclick=\"view.$('#execute .reset_script').click()\">Reset and try again.</a>\n</p>"
+    message: "<strong>Stack 'Em Up!</strong>\n<p>\n    Can you build a tower to reach the star?\n    <a href='javascript:void(0)' onclick=\"view.$('#execute .reset_script').click()\">Reset and try again.</a>\n</p>"
   });
 
   window.setUpChallenge = function(scale) {

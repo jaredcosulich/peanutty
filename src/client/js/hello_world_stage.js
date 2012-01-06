@@ -7,7 +7,7 @@
   peanutty.runSimulation();
 
   peanutty.sendMessage({
-    message: "<h4>Welcome to Peanutty!</h4>\n<p>\n    To get started, type your name in and then destroy it with boxes, balls, or freeform shapes.\n</p>"
+    message: "<strong>Welcome to Peanutty!</strong>\n<p>\n    To get started, type your name in and then destroy it with boxes, balls, or freeform shapes.\n</p>"
   });
 
   peanutty.createGround({

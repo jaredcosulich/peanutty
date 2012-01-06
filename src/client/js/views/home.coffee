@@ -391,6 +391,12 @@
                 tabName = tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '')
                 @$("#codes .#{tabName}").addClass('selected')
                 @["#{tabName}Editor"].getSession().setValue(@["#{tabName}Editor"].getSession().getValue())
+                
+            $('.topbar a').bind 'click', (e) -> 
+                currentRoute = window.location.hash
+                $.route.navigate(@.href.replace(/.*#/, ''), false)
+                if currentRoute.indexOf('stage') > -1
+                    $.timeout 5, () => $.route.navigate(currentRoute.replace('#', ''), false)
    
             @$('#execute .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
@@ -419,11 +425,10 @@
             @environmentEditor = ace.edit(@$('#codes .environment')[0])
             @environmentEditor.getSession().setMode(new CoffeeScriptMode())
 
-            @loadCode()
-                                    
+            @loadCode()                                    
+            @loadNewStage(@data.stage) if @data.stage?
             Peanutty.runScript()
             
-            @loadNewStage(@data.stage) if @data.stage?
 
         loadCode: () =>
             @loadScript()
@@ -456,7 +461,7 @@
             $('#canvas')[0].width = remainingWidth
     
     $.route.add
-        '': () ->
+        '.*': () ->
             $('#content').view
                 name: 'Home'
                 data: {}  

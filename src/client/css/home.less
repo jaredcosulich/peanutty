@@ -1,3 +1,12 @@
+body {
+    padding: 45px 0 300px 0;
+}
+
+.topbar {
+    background-color: @brown;
+    padding-left: 45px;
+}
+
 #top_area {
     overflow: hidden;
     margin-bottom: 12px;
@@ -14,9 +23,9 @@
 
     #execute {
         float: left;
-        .button {
+        .btn {
             float: right;
-            margin: 10px 30px 0 0;
+            margin: 10px 21px 0 0;
         }
     }
 }
@@ -26,8 +35,8 @@
     float: left;
     position: relative;
     #canvas {
-        background-color: #eee;
-        border: 1px solid @header-background;
+        background-color: @grayLighter;
+        border: 1px solid @brown;
         cursor: pointer;
         .no-user-select
     }
@@ -40,17 +49,17 @@
     width: 45px;
     float: left;
     text-align: center;
-    border-top: 1px solid @header-background;
+    border-top: 1px solid @brown;
     .tool, .setting, .tool_spacer {
         line-height: 45px;
         height: 45px;
-        border-bottom: 1px solid @header-background;
+        border-bottom: 1px solid @brown;
     }
     .tool, .setting {
-        border-left: 1px solid @header-background;
+        border-left: 1px solid @brown;
         cursor: pointer;
         &.selected {
-            background-color: @header-background;
+            background-color: @brown;
             color: white;
         }
     }
@@ -59,7 +68,7 @@
 #console {
     width: 420px;
     float: left;
-    
+
     #tabs {
         overflow: hidden;
         .tab {
@@ -67,21 +76,21 @@
             display: block;
             width: 90px;
             padding: 6px 0;
-            border-top: 1px solid @header-background;
-            border-left: 1px solid @header-background;
-            border-right: 1px solid @header-background;
+            border-top: 1px solid @brown;
+            border-left: 1px solid @brown;
+            border-right: 1px solid @brown;
             text-align: center;
             margin-left: 12px;
             &.selected {
-                background-color: @header-background;
+                background-color: @brown;
                 color: white;
             }
         }
     }
-    
+
     #codes {
-        border-top: 1px solid @header-background;
-        border-right: 1px solid @header-background;
+        border-top: 1px solid @brown;
+        border-right: 1px solid @brown;
         background-color: white;
         .code {
             width: 420px;
@@ -105,7 +114,7 @@
             overflow: auto;
             padding: 0 12px;
             background-color: white;
-            border-bottom: 1px solid @header-background;
+            border-bottom: 1px solid @brown;
             .transition(all 1s linear);
             &.displayed {
                 padding: 12px;
@@ -116,4 +125,9 @@
             }
         }
     }
+}
+
+section {
+    clear: both;
+    padding: 45px;
 }
