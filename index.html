@@ -4,62 +4,17 @@
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="favicon.png" />
     <title>Peanutty</title>
-    <link rel="stylesheet" href="build/client/css/all.css" type="text/css" />
-    
-    <script src="src/client/js/lib/ender.js" type="text/javascript" charset="utf-8"></script>
-    <script src="src/client/js/lib/ace/ace-uncompressed-noconflict.js" type="text/javascript" charset="utf-8"></script>
-    <script src="src/client/js/lib/ace/mode-coffee-uncompressed-noconflict.js" type="text/javascript" charset="utf-8"></script>
-    <script src="src/client/js/lib/coffee-script.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/views/base.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/views/home.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/views/main.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/init.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/util.js" type="text/javascript" charset="utf-8"></script>
-    
-    <style type="text/css">
-        @font-face {
-  font-family: 'Mingl Icons';
-  src: url('src/client/css/fonts/icons-webfont.eot');
-  src: url('src/client/css/fonts/icons-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/icons-webfont.woff') format('woff'), url('src/client/css/fonts/icons-webfont.ttf') format('truetype'), url('src/client/css/fonts/icons-webfont.svg#MinglIcons') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-/* Museo: A font by Jos Buivenga (exljbris) -&gt; www.exljbris.com */@font-face {
-  font-family: 'Museo';
-  src: url('src/client/css/fonts/museo500-regular-webfont.eot');
-  src: url('src/client/css/fonts/museo500-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo500-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo500-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo500-regular-webfont.svg#webfontnuwysBIH') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Museo';
-  src: url('src/client/css/fonts/museo300-regular-webfont.eot');
-  src: url('src/client/css/fonts/museo300-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo300-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo300-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo300-regular-webfont.svg#webfontMmwAEq4Z') format('svg');
-  font-weight: lighter;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Museo';
-  src: url('src/client/css/fonts/museo700-regular-webfont.eot');
-  src: url('src/client/css/fonts/museo700-regular-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museo700-regular-webfont.woff') format('woff'), url('src/client/css/fonts/museo700-regular-webfont.ttf') format('truetype'), url('src/client/css/fonts/museo700-regular-webfont.svg#webfonthvYIakly') format('svg');
-  font-weight: bold;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Museo Sans';
-  src: url('src/client/css/fonts/museosans500-webfont.eot');
-  src: url('src/client/css/fonts/museosans500-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500-webfont.svg#webfont1H1968T3') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Museo Sans';
-  src: url('src/client/css/fonts/museosans500_italic-webfont.eot');
-  src: url('src/client/css/fonts/museosans500-italic-webfont.eot?#iefix') format('embedded-opentype'), url('src/client/css/fonts/museosans500_italic-webfont.woff') format('woff'), url('src/client/css/fonts/museosans500_italic-webfont.ttf') format('truetype'), url('src/client/css/fonts/museosans500_italic-webfont.svg#webfontq2OnKNVm') format('svg');
-  font-weight: normal;
-  font-style: italic;
-}
-    </style>
+    <meta name="description" content="Learn how to program by solving puzzles. For kids, adults, grandparents, cats, dogs, small rodents, etc.">
+    <link rel="stylesheet" href="./build/client/css/all.css" type="text/css" />
+    <script src="./src/client/js/lib/ender.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./src/client/js/lib/ace/ace-noconflict.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./src/client/js/lib/ace/mode-coffee-noconflict.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./src/client/js/lib/coffee-script.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./build/client/js/views/base.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./build/client/js/views/home.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./build/client/js/views/main.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./build/client/js/init.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./build/client/js/util.js" type="text/javascript" charset="utf-8"></script>
     <script data-src="templates/basic_environment.coffee" type="text/html" charset="utf-8">
 scale = 30
 canvas = view.$('#canvas')
@@ -861,6 +816,7 @@ for level in [10,20,30]
 
 view.$('#tools #box').click()
     </script>    
+
 </head>
 <body>
 </body>

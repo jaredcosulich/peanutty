@@ -2467,7 +2467,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
 body {
-  padding: 45px 0 300px 0;
+  padding: 45px 3px 300px 3px;
 }
 .topbar {
   background-color: #4f3526;

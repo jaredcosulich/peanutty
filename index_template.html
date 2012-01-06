@@ -4,27 +4,26 @@
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="favicon.png" />
     <title>Peanutty</title>
-    <link rel="stylesheet" href="build/client/css/all.css" type="text/css" />
+    <meta name="description" content="Learn how to program by solving puzzles. For kids, adults, grandparents, cats, dogs, small rodents, etc.">
     
-    <script src="src/client/js/lib/ender.js" type="text/javascript" charset="utf-8"></script>
-    <script src="src/client/js/lib/ace/ace-uncompressed-noconflict.js" type="text/javascript" charset="utf-8"></script>
-    <script src="src/client/js/lib/ace/mode-coffee-uncompressed-noconflict.js" type="text/javascript" charset="utf-8"></script>
-    <script src="src/client/js/lib/coffee-script.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/views/base.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/views/home.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/views/main.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/init.js" type="text/javascript" charset="utf-8"></script>
-    <script src="build/client/js/util.js" type="text/javascript" charset="utf-8"></script>
+    {:stylesheets}
+    <link rel="stylesheet" href="{}" type="text/css" />
+    {/stylesheets}
     
-    <style type="text/css">
-        {overwriteFonts}
-    </style>
+    {:lib}
+    <script src="{}" type="text/javascript" charset="utf-8"></script>
+    {/lib}
+    
+    {:scripts}
+    <script src="{}" type="text/javascript" charset="utf-8"></script>
+    {/scripts}
     
     {:templates}
     <script data-src="{src}" type="text/html" charset="utf-8">
 {&text}
     </script>
     {/templates}    
+
 </head>
 <body>
 </body>
