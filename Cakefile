@@ -30,6 +30,7 @@ task 'build:index', 'Build the static index page', ->
             text: fs.readFileSync("#{client}/templates/#{name}")
         } for name in fs.readdirSync("#{client}/templates") when name != 'base.html' and (/\.html$/.test(name) or /\.coffee$/.test(name))
     ) 
+    templates = []
 
     base = wings.renderTemplate(fs.readFileSync("index_template.html", 'utf-8'), {
         templates: templates
