@@ -556,14 +556,12 @@
       }
 
       Home.prototype.prepare = function() {
-        var templatesHome;
-        templatesHome = 'src/client/templates';
         return this.templates = {
-          main: this._requireTemplate("" + templatesHome + "/home.html"),
-          script: this._requireTemplate("" + templatesHome + "/basic_script.coffee"),
-          stage: this._requireTemplate("" + templatesHome + "/hello_world_stage.coffee"),
-          environment: this._requireTemplate("" + templatesHome + "/basic_environment.coffee"),
-          stack_em: this._requireTemplate("" + templatesHome + "/stack_em_stage.coffee")
+          main: this._requireTemplate('templates/home.html'),
+          script: this._requireTemplate('templates/basic_script.coffee'),
+          stage: this._requireTemplate('templates/hello_world_stage.coffee'),
+          environment: this._requireTemplate('templates/basic_environment.coffee'),
+          stack_em: this._requireTemplate('templates/stack_em_stage.coffee')
         };
       };
 

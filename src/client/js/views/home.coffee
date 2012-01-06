@@ -365,16 +365,15 @@
 
     Peanutty.loadEnvironment = (environmentEditor = view.environmentEditor) => Peanutty.runCode(environmentEditor)
         
+            
     class views.Home extends views.BaseView
         prepare: () ->
-            templatesHome = 'src/client/templates'
-            # templatesHome = 'templates'
             @templates = {
-                main: @_requireTemplate("#{templatesHome}/home.html"),
-                script: @_requireTemplate("#{templatesHome}/basic_script.coffee"),
-                stage: @_requireTemplate("#{templatesHome}/hello_world_stage.coffee"),
-                environment: @_requireTemplate("#{templatesHome}/basic_environment.coffee"),
-                stack_em: @_requireTemplate("#{templatesHome}/stack_em_stage.coffee")
+                main: @_requireTemplate('templates/home.html'),
+                script: @_requireTemplate('templates/basic_script.coffee'),
+                stage: @_requireTemplate('templates/hello_world_stage.coffee'),
+                environment: @_requireTemplate('templates/basic_environment.coffee'),
+                stack_em: @_requireTemplate('templates/stack_em_stage.coffee')
             }
     
         renderView: () ->
