@@ -27,7 +27,7 @@
     <script type='text/coffeescript' charset="utf-8">
         (($) ->
             require 'views'
-            class views.BaseView extends class views.BaseView
+            class views.BaseView extends views.BaseView
                 _requireTemplate: (url) -> @_requireElement("/src/client/#{url}", 'script', 'text/html')
         )
     </script>
