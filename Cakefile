@@ -16,14 +16,14 @@ task 'build:index', 'Build the static index page', ->
         'coffee-script'
     ])   
     
-    scripts = [
+    scripts = ("#{script}?#{new Date().getTime()}" for script in [
         lib...,
         views...,
         "#{target}/js/init.js",
         "#{target}/js/util.js"
-    ] 
+    ]) 
 
-    stylesheets = ["#{target}/css/all.css"]
+    stylesheets = ("#{style}?#{new Date().getTime()}" for style in ["#{target}/css/all.css"])
     
     templates = ({
             src: "templates/#{name}",
