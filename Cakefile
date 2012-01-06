@@ -243,7 +243,7 @@ buildClientHTML = (source, target, callback) ->
         'all.css',
     ])
 
-    views =  ("views/#{name.replace('.coffee', '.js')}" for name in fs.readdirSync("#{source}/js/views"))
+    views =  ("views/#{name.replace('.coffee', '.js')}" for name in fs.readdirSync("#{source}/js/views") when name != 'pages_base.coffee')
 
     scripts = ("js/#{script}" for script in [
         'lib/ender.js',
