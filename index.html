@@ -183,7 +183,7 @@ peanutty.runSimulation()
 peanutty.sendMessage
     message: 
         """
-        <h4>Welcome to Peanutty!</h4>
+        <strong>Welcome to Peanutty!</strong>
         <p>
             To get started, type your name in and then destroy it with boxes, balls, or freeform shapes.
         </p>
@@ -676,14 +676,14 @@ peanutty.createLetters
 <div id='top_area'>
     <div id='message'></div>
     <div id='execute'>
-        <a class="reset_script submit button bg-green">
-            <label>Reset&nbsp;Script</label>
+        <a class="reset_script submit btn large danger">
+            Reset&nbsp;Script
         </a>
-        <a class="load_script submit button bg-green">
-            <label>Load&nbsp;Script</label>
+        <a class="load_script submit btn large primary">
+            Load&nbsp;Script
         </a>
-        <a class="run_script submit button bg-green">
-            <label>Run&nbsp;Script</label>
+        <a class="run_script submit btn large success">
+            Run&nbsp;Script
         </a>
     </div>
 </div>
@@ -723,10 +723,49 @@ peanutty.createLetters
     </div>
 </div>
 
+<section id='about'>
+    <div class='page-header'>
+        <h1>
+            About Peanutty!
+            <small>What is this, who created it?</small>
+        </h1>
+    </div>
+    <p>Peanutty! was created by Jared Cosulich as a way to make it easier for people to learn how to program while having fun.</p>
+    <p>Basically it works like this:</p>
+    <ul>
+        <li>Person discovers Peanutty! and starts solving puzzles, conquering challenges, and just having fun.</li>
+        <li>Person notices that everything they do creates code in the coding area</a>
+        <li>Person starts to play with the code, making larger and larger tweaks to see what happens</li>
+        <li>Eventually person starts writing code directly, potentially even creating their own challenge or puzzle to share with others</li>
+        <li>The next person who comes along has access to more interesting puzzles and challenges to play with!</li>
+        <li>Yay Peanutty!</li>
+    </ul>        
+    <p>
+        If you'd like to contact Jared or have any questions about Peanutty! you can find him on Twitter:
+        <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
+    </p>
+</section>
+
+<section id='challenges'>
+    <div class='page-header'>
+        <h1>
+            Challenges / Puzzles / Levels
+            <small>Verified challenges, puzzles, levels, etc. that people have created.</small>
+        </h1>
+    </div>
+    <p>Coming Soon...</p>
+</section>
+
     </script>
     <script data-src="templates/main.html" type="text/html" charset="utf-8">
-    <div id='header'>
-        <h1>Peanutty! (0.0.1)</h1>
+    <div class='topbar'>
+        <div class='topbar_inner'>
+            <a href='#' class='brand'>Peanutty! (0.0.1)</a>
+            <ul class='nav'>
+                <li><a href='#about'>About</a></li>
+                <li><a href='#challenges'>Challenges</a></li>
+            </ul>
+        </div>
     </div>
     <div id='content'></div>
 
@@ -738,7 +777,7 @@ peanutty.runSimulation()
 peanutty.sendMessage
     message: 
         """
-        <h4>Stack 'Em Up!</h4>
+        <strong>Stack 'Em Up!</strong>
         <p>
             Can you build a tower to reach the star?
             <a href='javascript:void(0)' onclick="view.$('#execute .reset_script').click()">Reset and try again.</a>
