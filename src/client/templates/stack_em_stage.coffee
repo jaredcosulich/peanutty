@@ -1,5 +1,4 @@
 Peanutty.loadEnvironment()
-peanutty.runSimulation()
 
 window.setUpChallenge = (scale=30) =>
     peanutty.destroyWorld()

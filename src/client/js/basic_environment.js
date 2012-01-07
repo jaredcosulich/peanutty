@@ -21,6 +21,8 @@
     gravity: new b2d.Common.Math.b2Vec2(0, 10)
   });
 
+  peanutty.runSimulation();
+
   static = false;
 
   unbindMouseEvents = function(canvas) {

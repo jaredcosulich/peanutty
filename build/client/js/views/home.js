@@ -622,6 +622,11 @@
           _this.$('.stage_element').remove();
           return Peanutty.runScript();
         });
+        this.$('#code_buttons .load_script').bind('click', function(e) {
+          return peanutty.sendCodeMessage({
+            message: "If you want to load in a new stage simply paste the code in to the stage tab."
+          });
+        });
         this.$('#code_buttons .reset_script').bind('click', function(e) {
           peanutty.destroyWorld();
           _this.$('.stage_element').remove();

@@ -4,8 +4,6 @@
 
   Peanutty.loadEnvironment();
 
-  peanutty.runSimulation();
-
   peanutty.createGround({
     x: peanutty.canvas.width() / 2,
     y: peanutty.canvas.height() - 50,
@@ -31,11 +29,11 @@
 
   view.$('#canvas_container').append(instructions);
 
-  window.nameInput = $(document.createElement('INPUT'));
+  view.nameInput = $(document.createElement('INPUT'));
 
-  nameInput.addClass('stage_element');
+  view.nameInput.addClass('stage_element');
 
-  nameInput.css({
+  view.nameInput.css({
     width: '360px',
     height: '30px',
     fontSize: '20pt',
@@ -44,23 +42,28 @@
     left: "" + ((peanutty.canvas.width() / 2) - 180) + "px"
   });
 
-  nameInput.bind('keyup', function(e) {
+  view.nameInput.bind('keyup', function(e) {
     var letters;
     var _this = this;
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '');
     view.loadScript();
+    if (view.destroyInstructions != null) {
+      view.destroyInstructions.remove();
+      view.destroyInstructions = null;
+    }
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
-      command: "peanutty.destroyDynamicObjects()\nnameInput.val(\"" + letters + "\") if nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.canvas.width() / 2\n    y: peanutty.canvas.height() - 55\n    letters: \"" + letters + "\"",
+      command: "peanutty.destroyDynamicObjects()\nview.nameInput.val(\"" + letters + "\") if view.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.canvas.width() / 2\n    y: peanutty.canvas.height() - 55\n    letters: \"" + letters + "\"",
       time: 0
     });
-    window.lastNameInputKey = new Date();
-    return $.timeout(1000, function() {
-      var alreadyCollided, body, checkCollision, destroyInstructions;
-      if (new Date() - window.lastNameInputKey < 1000) return;
-      destroyInstructions = $(document.createElement("DIV"));
-      destroyInstructions.addClass('stage_element');
-      destroyInstructions.css({
+    view.lastNameInputKey = new Date();
+    return $.timeout(1500, function() {
+      var alreadyCollided, body, checkCollision;
+      if (new Date() - view.lastNameInputKey < 1500) return;
+      if (view.destroyInstructions != null) return;
+      view.destroyInstructions = $(document.createElement("DIV"));
+      view.destroyInstructions.addClass('stage_element');
+      view.destroyInstructions.css({
         height: '30px',
         width: '400px',
         textAlign: 'center',
@@ -69,8 +72,8 @@
         top: '100px',
         left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
       });
-      destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>");
-      view.$('#canvas_container').append(destroyInstructions);
+      view.destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>");
+      view.$('#canvas_container').append(view.destroyInstructions);
       letters = (function() {
         var _i, _len, _ref, _results;
         _ref = peanutty.bodies();
@@ -96,26 +99,26 @@
           }
           alreadyCollided.push(body);
           if (!(alreadyCollided.length > 2)) {
-            destroyInstructions.html(destroyInstructions.html() + "Bamm! ");
+            view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ");
           }
           if (alreadyCollided.length === 2) {
-            destroyInstructions.html(destroyInstructions.html() + "<br/>Ok, when you're ready, head to the <a id='next_challenge'>next stage ></a>");
+            view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>");
             $.timeout(10, function() {
-              return view.$('#next_challenge').bind('click', function() {
+              return view.$('#next_stage').bind('click', function() {
                 return view.loadNewStage('stack_em');
               });
             });
           }
         }
-        return $.timeout(100, checkCollision);
+        if (view.destroyInstructions) return $.timeout(100, checkCollision);
       };
       return checkCollision();
     });
   });
 
-  view.$('#canvas_container').append(nameInput);
+  view.$('#canvas_container').append(view.nameInput);
 
-  nameInput[0].focus();
+  view.nameInput[0].focus();
 
   view.codeChangeMessageShown = false;
 

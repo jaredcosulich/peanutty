@@ -1,5 +1,4 @@
 Peanutty.loadEnvironment()
-peanutty.runSimulation()
 
 peanutty.createGround
     x: peanutty.canvas.width() / 2
@@ -22,9 +21,9 @@ instructions.css
 instructions.html("Type your name:")
 view.$('#canvas_container').append(instructions)
 
-window.nameInput = $(document.createElement('INPUT'))
-nameInput.addClass('stage_element')
-nameInput.css
+view.nameInput = $(document.createElement('INPUT'))
+view.nameInput.addClass('stage_element')
+view.nameInput.css
     width: '360px'
     height: '30px'
     fontSize: '20pt'
@@ -32,27 +31,31 @@ nameInput.css
     top: '50px'
     left: "#{(peanutty.canvas.width() / 2) - 180}px"
     
-nameInput.bind 'keyup', (e) ->
+view.nameInput.bind 'keyup', (e) ->
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '')
     view.loadScript()
+    if view.destroyInstructions?
+        view.destroyInstructions.remove()
+        view.destroyInstructions = null
     peanutty.destroyDynamicObjects()
     peanutty.addToScript
         command:
             """
             peanutty.destroyDynamicObjects()
-            nameInput.val("#{letters}") if nameInput.val() != "#{letters}"
+            view.nameInput.val("#{letters}") if view.nameInput.val() != "#{letters}"
             peanutty.createLetters
                 x: peanutty.canvas.width() / 2
                 y: peanutty.canvas.height() - 55
                 letters: "#{letters}"
             """
         time: 0
-    window.lastNameInputKey = new Date()    
-    $.timeout 1000, () =>
-        return if new Date() - window.lastNameInputKey < 1000
-        destroyInstructions = $(document.createElement("DIV"))
-        destroyInstructions.addClass('stage_element')
-        destroyInstructions.css
+    view.lastNameInputKey = new Date()    
+    $.timeout 1500, () =>
+        return if new Date() - view.lastNameInputKey < 1500
+        return if view.destroyInstructions?
+        view.destroyInstructions = $(document.createElement("DIV"))
+        view.destroyInstructions.addClass('stage_element')
+        view.destroyInstructions.css
             height: '30px'
             width: '400px'
             textAlign: 'center'
@@ -60,8 +63,8 @@ nameInput.bind 'keyup', (e) ->
             position: 'absolute'
             top: '100px'
             left: "#{(peanutty.canvas.width() / 2) - 200}px"
-        destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>")
-        view.$('#canvas_container').append(destroyInstructions)
+        view.destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>")
+        view.$('#canvas_container').append(view.destroyInstructions)
         
         letters = (body for body in peanutty.bodies() when body.m_I > 0)
         alreadyCollided = []
@@ -71,22 +74,21 @@ nameInput.bind 'keyup', (e) ->
                 continue if body in letters or body in alreadyCollided
                 continue unless body.m_contactList? and body.m_contactList.other in letters
                 alreadyCollided.push(body)
-                destroyInstructions.html(destroyInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
+                view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
                 if alreadyCollided.length == 2
-                    destroyInstructions.html(
-                        destroyInstructions.html() + 
-                        "<br/>Ok, when you're ready, head to the <a id='next_challenge'>next stage ></a>"
+                    view.destroyInstructions.html(
+                        view.destroyInstructions.html() + 
+                        "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>"
                     )
-                    $.timeout 10, () => view.$('#next_challenge').bind 'click', () => view.loadNewStage('stack_em')
+                    $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('stack_em')
                     
-
-
-            $.timeout 100, checkCollision
+            $.timeout 100, checkCollision if view.destroyInstructions
+            
         checkCollision()
         
             
-view.$('#canvas_container').append(nameInput)
-nameInput[0].focus()
+view.$('#canvas_container').append(view.nameInput)
+view.nameInput[0].focus()
 
 
 view.codeChangeMessageShown = false

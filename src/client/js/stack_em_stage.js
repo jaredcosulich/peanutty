@@ -4,8 +4,6 @@
 
   Peanutty.loadEnvironment();
 
-  peanutty.runSimulation();
-
   window.setUpChallenge = function(scale) {
     if (scale == null) scale = 30;
     peanutty.destroyWorld();

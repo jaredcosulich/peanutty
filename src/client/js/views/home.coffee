@@ -425,6 +425,12 @@
                 peanutty.destroyWorld()
                 @$('.stage_element').remove()
                 Peanutty.runScript()
+            @$('#code_buttons .load_script').bind 'click', (e) =>
+                peanutty.sendCodeMessage
+                    message:
+                        """
+                            If you want to load in a new stage simply paste the code in to the stage tab.
+                        """
             @$('#code_buttons .reset_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
                 @$('.stage_element').remove()
