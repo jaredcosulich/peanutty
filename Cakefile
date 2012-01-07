@@ -10,7 +10,7 @@ task 'build:index', 'Build the static index page', ->
     views = ("#{target}/js/views/#{name.replace('coffee', 'js')}" for name in fs.readdirSync("#{client}/js/views"))
 
     lib = ("#{client}/js/lib/#{name}.js" for name in [
-        'ender',
+        'ender.min',
         'ace/ace-noconflict',
         'ace/mode-coffee-noconflict',
         'coffee-script'

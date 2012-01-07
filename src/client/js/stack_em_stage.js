@@ -6,10 +6,6 @@
 
   peanutty.runSimulation();
 
-  peanutty.sendMessage({
-    message: "<strong>Stack 'Em Up!</strong>\n<p>\n    Can you build a tower to reach the star?\n    <a href='javascript:void(0)' onclick=\"view.$('#execute .reset_script').click()\">Reset and try again.</a>\n</p>"
-  });
-
   window.setUpChallenge = function(scale) {
     if (scale == null) scale = 30;
     peanutty.destroyWorld();
@@ -72,7 +68,7 @@
     fontSize: '20pt'
   });
 
-  header.html("Build a tower to reach the star.");
+  header.html("Build a stable tower that reaches the star.");
 
   instructions.append(header);
 

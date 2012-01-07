@@ -1,15 +1,6 @@
 Peanutty.loadEnvironment()
 peanutty.runSimulation()
 
-peanutty.sendMessage
-    message: 
-        """
-        <strong>Welcome to Peanutty!</strong>
-        <p>
-            To get started, type your name in and then destroy it with boxes, balls, or freeform shapes.
-        </p>
-        """
-
 peanutty.createGround
     x: peanutty.canvas.width() / 2
     y: peanutty.canvas.height() - 50
@@ -57,47 +48,57 @@ nameInput.bind 'keyup', (e) ->
             """
         time: 0
     window.lastNameInputKey = new Date()    
-    $.timeout 1500, () =>
-        return if new Date() - window.lastNameInputKey < 1500
+    $.timeout 1000, () =>
+        return if new Date() - window.lastNameInputKey < 1000
         destroyInstructions = $(document.createElement("DIV"))
         destroyInstructions.addClass('stage_element')
         destroyInstructions.css
             height: '30px'
-            width: '360px'
+            width: '400px'
             textAlign: 'center'
             fontSize: '11pt'
             position: 'absolute'
             top: '100px'
-            left: "#{(peanutty.canvas.width() / 2) - 180}px"
-        destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)")
+            left: "#{(peanutty.canvas.width() / 2) - 200}px"
+        destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>")
         view.$('#canvas_container').append(destroyInstructions)
-        peanutty.sendMessage
-            message:
-                """
-                    <h3> 
-                        Ready for the next challenge? 
-                        <a id='next_challenge'>Load it up ></a>
-                    </h3>
-                """
-        view.$('#next_challenge').bind 'click', => view.loadNewStage('stack_em')
+        
+        letters = (body for body in peanutty.bodies() when body.m_I > 0)
+        alreadyCollided = []
+        checkCollision = () =>
+            for body in peanutty.bodies()
+                continue if body.m_I == 0
+                continue if body in letters or body in alreadyCollided
+                continue unless body.m_contactList? and body.m_contactList.other in letters
+                alreadyCollided.push(body)
+                destroyInstructions.html(destroyInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
+                if alreadyCollided.length == 2
+                    destroyInstructions.html(
+                        destroyInstructions.html() + 
+                        "<br/>Ok, when you're ready, head to the <a id='next_challenge'>next stage ></a>"
+                    )
+                    $.timeout 10, () => view.$('#next_challenge').bind 'click', () => view.loadNewStage('stack_em')
+                    
+
+
+            $.timeout 100, checkCollision
+        checkCollision()
+        
             
 view.$('#canvas_container').append(nameInput)
 nameInput[0].focus()
 
 
-codeChangeMessageShown = false
+view.codeChangeMessageShown = false
 view.$('#codes .code').bind 'keypress', () =>
-    return if codeChangeMessageShown
-    codeChangeMessageShown = true
+    return if view.codeChangeMessageShown
+    view.codeChangeMessageShown = true
     peanutty.sendCodeMessage
         message:
             """
             You've changed your script.
             To see your changes you'll need to rerun your script by clicking "Run Script" above.
-            (<a id='close_code_message'>close this</a>)       
-            """
-    view.$('#close_code_message').bind 'click', () => view.$('#codes .message').removeClass('displayed')
-
+            """    
 
 # LETTERS
 

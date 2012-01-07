@@ -1,14 +1,10 @@
 (function() {
-  var codeChangeMessageShown, instructions;
-  var _this = this;
+  var instructions;
+  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; }, _this = this;
 
   Peanutty.loadEnvironment();
 
   peanutty.runSimulation();
-
-  peanutty.sendMessage({
-    message: "<strong>Welcome to Peanutty!</strong>\n<p>\n    To get started, type your name in and then destroy it with boxes, balls, or freeform shapes.\n</p>"
-  });
 
   peanutty.createGround({
     x: peanutty.canvas.width() / 2,
@@ -59,28 +55,61 @@
       time: 0
     });
     window.lastNameInputKey = new Date();
-    return $.timeout(1500, function() {
-      var destroyInstructions;
-      if (new Date() - window.lastNameInputKey < 1500) return;
+    return $.timeout(1000, function() {
+      var alreadyCollided, body, checkCollision, destroyInstructions;
+      if (new Date() - window.lastNameInputKey < 1000) return;
       destroyInstructions = $(document.createElement("DIV"));
       destroyInstructions.addClass('stage_element');
       destroyInstructions.css({
         height: '30px',
-        width: '360px',
+        width: '400px',
         textAlign: 'center',
         fontSize: '11pt',
         position: 'absolute',
         top: '100px',
-        left: "" + ((peanutty.canvas.width() / 2) - 180) + "px"
+        left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
       });
-      destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)");
+      destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>");
       view.$('#canvas_container').append(destroyInstructions);
-      peanutty.sendMessage({
-        message: "<h3> \n    Ready for the next challenge? \n    <a id='next_challenge'>Load it up ></a>\n</h3>"
-      });
-      return view.$('#next_challenge').bind('click', function() {
-        return view.loadNewStage('stack_em');
-      });
+      letters = (function() {
+        var _i, _len, _ref, _results;
+        _ref = peanutty.bodies();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          body = _ref[_i];
+          if (body.m_I > 0) _results.push(body);
+        }
+        return _results;
+      })();
+      alreadyCollided = [];
+      checkCollision = function() {
+        var body, _i, _len, _ref, _ref2;
+        _ref = peanutty.bodies();
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          body = _ref[_i];
+          if (body.m_I === 0) continue;
+          if (__indexOf.call(letters, body) >= 0 || __indexOf.call(alreadyCollided, body) >= 0) {
+            continue;
+          }
+          if (!((body.m_contactList != null) && (_ref2 = body.m_contactList.other, __indexOf.call(letters, _ref2) >= 0))) {
+            continue;
+          }
+          alreadyCollided.push(body);
+          if (!(alreadyCollided.length > 2)) {
+            destroyInstructions.html(destroyInstructions.html() + "Bamm! ");
+          }
+          if (alreadyCollided.length === 2) {
+            destroyInstructions.html(destroyInstructions.html() + "<br/>Ok, when you're ready, head to the <a id='next_challenge'>next stage ></a>");
+            $.timeout(10, function() {
+              return view.$('#next_challenge').bind('click', function() {
+                return view.loadNewStage('stack_em');
+              });
+            });
+          }
+        }
+        return $.timeout(100, checkCollision);
+      };
+      return checkCollision();
     });
   });
 
@@ -88,16 +117,13 @@
 
   nameInput[0].focus();
 
-  codeChangeMessageShown = false;
+  view.codeChangeMessageShown = false;
 
   view.$('#codes .code').bind('keypress', function() {
-    if (codeChangeMessageShown) return;
-    codeChangeMessageShown = true;
-    peanutty.sendCodeMessage({
-      message: "You've changed your script.\nTo see your changes you'll need to rerun your script by clicking \"Run Script\" above.\n(<a id='close_code_message'>close this</a>)       "
-    });
-    return view.$('#close_code_message').bind('click', function() {
-      return view.$('#codes .message').removeClass('displayed');
+    if (view.codeChangeMessageShown) return;
+    view.codeChangeMessageShown = true;
+    return peanutty.sendCodeMessage({
+      message: "You've changed your script.\nTo see your changes you'll need to rerun your script by clicking \"Run Script\" above."
     });
   });
 

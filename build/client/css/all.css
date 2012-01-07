@@ -2467,32 +2467,14 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
 body {
-  padding: 45px 3px 300px 3px;
+  padding: 50px 3px 300px 3px;
+}
+a {
+  cursor: pointer;
 }
 .topbar {
   background-color: #4f3526;
   padding-left: 45px;
-}
-#top_area {
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-#top_area #message {
-  float: left;
-  width: 786px;
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 6px;
-  height: 36px;
-  overflow: hidden;
-  margin-left: 45px;
-}
-#top_area #execute {
-  float: left;
-}
-#top_area #execute .btn {
-  float: right;
-  margin: 10px 21px 0 0;
 }
 #canvas_container {
   margin-bottom: 60px;
@@ -2536,6 +2518,13 @@ body {
 #tools .tool.selected, #tools .setting.selected {
   background-color: #4f3526;
   color: white;
+}
+#code_buttons {
+  float: left;
+}
+#code_buttons .btn {
+  float: left;
+  margin: 10px 0 20px 22px;
 }
 #console {
   width: 420px;
@@ -2585,27 +2574,38 @@ body {
 #console #codes .code .ace_line.highlight {
   background-color: #46a546;
 }
-#console #codes .message {
-  display: none;
-  height: 0;
-  overflow: auto;
-  padding: 0 12px;
+.code_message {
+  position: absolute;
+  overflow: hidden;
+}
+.code_message div {
+  margin-top: -18px;
+  border: 1px solid #4f3526;
   background-color: white;
+  padding: 6px 6px 6px 18px;
+  width: 210px;
+  margin-right: -240px;
+  -webkit-transition: margin-right 1s linear;
+  -moz-transition: margin-right 1s linear;
+  -ms-transition: margin-right 1s linear;
+  -o-transition: margin-right 1s linear;
+  transition: margin-right 1s linear;
+}
+.code_message .close_link {
+  padding: 0 3px;
+  border-right: 1px solid #4f3526;
   border-bottom: 1px solid #4f3526;
-  -webkit-transition: all 1s linear;
-  -moz-transition: all 1s linear;
-  -ms-transition: all 1s linear;
-  -o-transition: all 1s linear;
-  transition: all 1s linear;
+  margin-right: -240px;
+  -webkit-transition: margin-right 1s linear;
+  -moz-transition: margin-right 1s linear;
+  -ms-transition: margin-right 1s linear;
+  -o-transition: margin-right 1s linear;
+  transition: margin-right 1s linear;
 }
-#console #codes .message.displayed {
-  padding: 12px;
-  height: 45px;
-}
-#console #codes .message.highlight {
-  background-color: #46a546;
+.code_message.expanded div, .code_message.expanded a {
+  margin-right: 0;
 }
 section {
   clear: both;
-  padding: 45px;
+  padding: 50px 45px;
 }

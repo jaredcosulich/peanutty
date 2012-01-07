@@ -3,16 +3,12 @@ canvas = view.$('#canvas')
 scriptEditor = view.scriptEditor
 stageEditor = view.stageEditor
 environmentEditor = view.environmentEditor
-message = view.$('#message')
-codeMessage = view.$('#codes .message')
 
 window.peanutty = new Peanutty
     canvas: canvas
     scriptEditor: scriptEditor
     stageEditor: stageEditor
     environmentEditor: environmentEditor
-    message: message
-    codeMessage: codeMessage
     scale: scale
     gravity: new b2d.Common.Math.b2Vec2(0, 10)
 

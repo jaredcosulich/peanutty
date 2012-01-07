@@ -19,7 +19,7 @@
 
       function Peanutty(_arg) {
         var gravity;
-        this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.stageEditor = _arg.stageEditor, this.environmentEditor = _arg.environmentEditor, this.message = _arg.message, this.codeMessage = _arg.codeMessage, this.scale = _arg.scale, gravity = _arg.gravity;
+        this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.stageEditor = _arg.stageEditor, this.environmentEditor = _arg.environmentEditor, this.scale = _arg.scale, gravity = _arg.gravity;
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -44,7 +44,7 @@
         this.createBox = __bind(this.createBox, this);
         this.createGround = __bind(this.createGround, this);
         this.sendCodeMessage = __bind(this.sendCodeMessage, this);
-        this.sendMessage = __bind(this.sendMessage, this);
+        this.bodies = __bind(this.bodies, this);
         this.addToScript = __bind(this.addToScript, this);
         this.setScale = __bind(this.setScale, this);
         this.initDraw = __bind(this.initDraw, this);
@@ -140,22 +140,45 @@
         });
       };
 
-      Peanutty.prototype.sendMessage = function(_arg) {
-        var message;
-        message = _arg.message;
-        return this.message.html(message);
+      Peanutty.prototype.bodies = function() {
+        var allBodies, body;
+        allBodies = [];
+        body = this.world.m_bodyList;
+        while (body != null) {
+          allBodies.push(body);
+          body = body.m_next;
+        }
+        return allBodies;
       };
 
       Peanutty.prototype.sendCodeMessage = function(_arg) {
-        var message;
+        var activeEditor, closeLink, editor, message, _i, _len, _ref;
         var _this = this;
         message = _arg.message;
-        this.codeMessage.html(message);
-        this.codeMessage.addClass('displayed');
-        this.codeMessage.addClass('highlight');
-        return $.timeout(500, function() {
-          return _this.codeMessage.removeClass('highlight');
+        if (this.codeMessage == null) {
+          this.codeMessage = $(document.createElement('DIV'));
+          this.codeMessage.addClass('code_message');
+          $(document.body).append(this.codeMessage);
+          closeLink = $(document.createElement('A'));
+          closeLink.addClass('close_link');
+          closeLink.html('x');
+          closeLink.bind('click', function() {
+            return _this.codeMessage.removeClass('expanded');
+          });
+          this.codeMessage.append(closeLink);
+          this.codeMessage.append(document.createElement('DIV'));
+        }
+        this.codeMessage.find('div').html(message);
+        _ref = [this.scriptEditor, this.stageEditor, this.environmentEditor];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          editor = _ref[_i];
+          if (editor.container.offsetLeft !== 0) activeEditor = editor.container;
+        }
+        this.codeMessage.css({
+          top: activeEditor.offsetTop,
+          right: $(document.body).width() - activeEditor.offsetLeft + (parseInt($(document.body).css('paddingRight')) * 2)
         });
+        return this.codeMessage.addClass('expanded');
       };
 
       Peanutty.prototype.createGround = function(options) {
@@ -586,11 +609,11 @@
         $('.topbar a').bind('click', function(e) {
           var currentRoute;
           var _this = this;
-          currentRoute = window.location.hash;
+          currentRoute = window.location.hash.replace('#', '');
           $.route.navigate(this.href.replace(/.*#/, ''), false);
-          if (currentRoute.indexOf('stage') > -1) {
+          if (currentRoute.indexOf('stage/') > -1) {
             return $.timeout(5, function() {
-              return $.route.navigate(currentRoute.replace('#', ''), false);
+              return $.route.navigate(currentRoute, false);
             });
           }
         });

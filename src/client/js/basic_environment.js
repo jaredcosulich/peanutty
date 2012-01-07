@@ -1,5 +1,5 @@
 (function() {
-  var canvas, codeMessage, environmentEditor, getTimeDiff, initiateBall, initiateBox, initiateFree, message, scale, scriptEditor, stageEditor, static, unbindMouseEvents;
+  var canvas, environmentEditor, getTimeDiff, initiateBall, initiateBox, initiateFree, scale, scriptEditor, stageEditor, static, unbindMouseEvents;
   var _this = this;
 
   scale = 30;
@@ -12,17 +12,11 @@
 
   environmentEditor = view.environmentEditor;
 
-  message = view.$('#message');
-
-  codeMessage = view.$('#codes .message');
-
   window.peanutty = new Peanutty({
     canvas: canvas,
     scriptEditor: scriptEditor,
     stageEditor: stageEditor,
     environmentEditor: environmentEditor,
-    message: message,
-    codeMessage: codeMessage,
     scale: scale,
     gravity: new b2d.Common.Math.b2Vec2(0, 10)
   });

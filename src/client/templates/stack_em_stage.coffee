@@ -1,16 +1,6 @@
 Peanutty.loadEnvironment()
 peanutty.runSimulation()
 
-peanutty.sendMessage
-    message: 
-        """
-        <strong>Stack 'Em Up!</strong>
-        <p>
-            Can you build a tower to reach the star?
-            <a href='javascript:void(0)' onclick="view.$('#execute .reset_script').click()">Reset and try again.</a>
-        </p>
-        """
-
 window.setUpChallenge = (scale=30) =>
     peanutty.destroyWorld()
     peanutty.setScale(scale)
@@ -66,7 +56,7 @@ header.addClass('stage_element')
 header.css
     height: '30px'
     fontSize: '20pt'
-header.html("Build a tower to reach the star.")
+header.html("Build a stable tower that reaches the star.")
 instructions.append(header)
 
 level = $(document.createElement("DIV"))

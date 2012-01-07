@@ -11,7 +11,7 @@
         Function(CoffeeScript.compile code, options)()  
         
     class Peanutty
-        constructor: ({@canvas, @scriptEditor, @stageEditor, @environmentEditor, @message, @codeMessage, @scale, gravity}) ->
+        constructor: ({@canvas, @scriptEditor, @stageEditor, @environmentEditor, @scale, gravity}) ->
             @context = @canvas[0].getContext("2d")
             @scale or= 30
             @defaultScale = 30
@@ -94,14 +94,37 @@
                 commandElements.addClass('highlight')
                 $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
                 
-        sendMessage: ({message}) =>
-            @message.html(message)
-         
+        bodies: () =>
+            allBodies = []
+            body = @world.m_bodyList
+            while body?
+                allBodies.push(body)
+                body = body.m_next
+            return allBodies
+        
         sendCodeMessage: ({message}) =>
-            @codeMessage.html(message)
-            @codeMessage.addClass('displayed')
-            @codeMessage.addClass('highlight')
-            $.timeout 500, () => @codeMessage.removeClass('highlight')
+            unless @codeMessage?
+                @codeMessage = $(document.createElement('DIV'))
+                @codeMessage.addClass('code_message')
+                $(document.body).append(@codeMessage)
+                closeLink = $(document.createElement('A'))
+                closeLink.addClass('close_link')
+                closeLink.html('x')
+                closeLink.bind 'click', () => @codeMessage.removeClass('expanded')
+                @codeMessage.append(closeLink)
+                @codeMessage.append(document.createElement('DIV'))
+            @codeMessage.find('div').html(message)
+            activeEditor = editor.container for editor in [
+                @scriptEditor,
+                @stageEditor,
+                @environmentEditor
+            ] when editor.container.offsetLeft != 0
+            @codeMessage.css
+                top: activeEditor.offsetTop
+                right: $(document.body).width() - 
+                       activeEditor.offsetLeft + 
+                       (parseInt($(document.body).css('paddingRight')) * 2)
+            @codeMessage.addClass('expanded')
                 
         createGround: (options={}) =>
             fixDef = fixDef = @createFixture()
@@ -393,10 +416,10 @@
                 @["#{tabName}Editor"].getSession().setValue(@["#{tabName}Editor"].getSession().getValue())
                 
             $('.topbar a').bind 'click', (e) -> 
-                currentRoute = window.location.hash
+                currentRoute = window.location.hash.replace('#', '')
                 $.route.navigate(@.href.replace(/.*#/, ''), false)
-                if currentRoute.indexOf('stage') > -1
-                    $.timeout 5, () => $.route.navigate(currentRoute.replace('#', ''), false)
+                if currentRoute.indexOf('stage/') > -1
+                    $.timeout 5, () => $.route.navigate(currentRoute, false)
    
             @$('#execute .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
