@@ -2541,39 +2541,39 @@ body {
   width: 420px;
   float: left;
 }
-#console #tabs {
-  overflow: hidden;
+#console .tabs {
+  margin: 0;
+  padding-left: 2.5em;
 }
-#console #tabs .tab {
-  float: left;
-  display: block;
-  width: 90px;
-  padding: 6px 0;
-  border-top: 1px solid #4f3526;
-  border-left: 1px solid #4f3526;
-  border-right: 1px solid #4f3526;
-  text-align: center;
-  margin-left: 12px;
-}
-#console #tabs .tab.selected {
-  background-color: #4f3526;
-  color: white;
+#console .tabs .tab {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 #console #codes {
-  border-top: 1px solid #4f3526;
-  border-right: 1px solid #4f3526;
   background-color: white;
 }
 #console #codes .code {
-  width: 420px;
-  height: 476px;
+  height: 466px;
   display: none;
 }
 #console #codes .code.selected {
   display: block;
 }
-#console #codes .code .ace_scroller, #console #codes .code .ace_gutter-cell {
-  padding-top: 6px;
+#console #codes .code .ace_gutter .ace_gutter-cell {
+  padding: 0;
+  margin-right: 6px;
+}
+#console #codes .code .ace_gutter .ace_layer {
+  margin-top: 6px!important;
+  min-width: 2.5em!important;
+}
+#console #codes .code .ace_content {
+  margin-top: 6px!important;
 }
 #console #codes .code .ace_line {
   -webkit-transition: background-color 1s linear;
@@ -2586,6 +2586,7 @@ body {
   background-color: #46a546;
 }
 #console #codes .message {
+  display: none;
   height: 0;
   overflow: auto;
   padding: 0 12px;

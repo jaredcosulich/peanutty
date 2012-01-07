@@ -382,12 +382,12 @@
             
             @el.html(@templates.main.render())
             
-            @$('#tabs .tab').bind 'click', (e) =>
-                $('#tabs .tab').removeClass('selected')
+            @$('.tabs .tab').bind 'click', (e) =>
+                $('.tabs .tab').removeClass('active')
                 tab = $(e.currentTarget)
-                tab.addClass('selected')
+                tab.addClass('active')
                 $('#codes .code').removeClass('selected')
-                tabName = tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '')
+                tabName = tab[0].className.replace('tab', '').replace('active', '').replace(/\s/ig, '')
                 @$("#codes .#{tabName}").addClass('selected')
                 @["#{tabName}Editor"].getSession().setValue(@["#{tabName}Editor"].getSession().getValue())
                 

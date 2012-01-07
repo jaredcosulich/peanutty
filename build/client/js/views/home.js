@@ -572,13 +572,13 @@
           return;
         }
         this.el.html(this.templates.main.render());
-        this.$('#tabs .tab').bind('click', function(e) {
+        this.$('.tabs .tab').bind('click', function(e) {
           var tab, tabName;
-          $('#tabs .tab').removeClass('selected');
+          $('.tabs .tab').removeClass('active');
           tab = $(e.currentTarget);
-          tab.addClass('selected');
+          tab.addClass('active');
           $('#codes .code').removeClass('selected');
-          tabName = tab[0].className.replace('tab', '').replace('selected', '').replace(/\s/ig, '');
+          tabName = tab[0].className.replace('tab', '').replace('active', '').replace(/\s/ig, '');
           _this.$("#codes ." + tabName).addClass('selected');
           return _this["" + tabName + "Editor"].getSession().setValue(_this["" + tabName + "Editor"].getSession().getValue());
         });

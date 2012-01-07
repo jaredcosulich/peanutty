@@ -69,39 +69,39 @@ body {
     width: 420px;
     float: left;
 
-    #tabs {
-        overflow: hidden;
+    .tabs {
+        margin: 0;
+        padding-left: 2.5em;
         .tab {
-            float: left;
-            display: block;
-            width: 90px;
-            padding: 6px 0;
-            border-top: 1px solid @brown;
-            border-left: 1px solid @brown;
-            border-right: 1px solid @brown;
-            text-align: center;
-            margin-left: 12px;
-            &.selected {
-                background-color: @brown;
-                color: white;
-            }
+            cursor: pointer;
+            .no-user-select();
         }
     }
-
+    
     #codes {
-        border-top: 1px solid @brown;
-        border-right: 1px solid @brown;
         background-color: white;
         .code {
-            width: 420px;
-            height: 476px;
+            height: 466px;
             display: none;
             &.selected {
                 display: block;
             }
-            .ace_scroller, .ace_gutter-cell {
-                padding-top: 6px
+            
+            .ace_gutter {
+                .ace_gutter-cell {
+                    padding: 0;
+                    margin-right: 6px;
+                }
+                .ace_layer {
+                    margin-top: 6px!important;
+                    min-width: 2.5em!important;
+                }
             }
+            
+            .ace_content {
+                margin-top: 6px!important;
+            }
+            
             .ace_line {
                 .transition(background-color 1s linear);
                 &.highlight {
@@ -110,6 +110,7 @@ body {
             }
         }
         .message {
+            display: none;
             height: 0;
             overflow: auto;
             padding: 0 12px;
