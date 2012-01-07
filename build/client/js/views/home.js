@@ -713,7 +713,7 @@
         var _this = this;
         return $.ajax({
           method: 'GET',
-          url: "templates/" + stageName + "_stage.coffee?" + (Math.random()),
+          url: "" + (window.STATIC_SERVER ? 'src/client/' : void 0) + "templates/" + stageName + "_stage.coffee?" + (Math.random()),
           type: 'html',
           success: function(text) {
             _this.templates.stage.html(text);

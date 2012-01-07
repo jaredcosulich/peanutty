@@ -485,7 +485,7 @@
         loadNewStage: (stageName) =>
             $.ajax
                 method: 'GET'
-                url: "templates/#{stageName}_stage.coffee?#{Math.random()}"
+                url: "#{'src/client/' if window.STATIC_SERVER}templates/#{stageName}_stage.coffee?#{Math.random()}"
                 type: 'html'
 
                 success: (text) =>
