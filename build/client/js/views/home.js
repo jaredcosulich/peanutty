@@ -50,12 +50,15 @@
         this.initDraw = __bind(this.initDraw, this);
         this.destroyDynamicObjects = __bind(this.destroyDynamicObjects, this);
         this.destroyWorld = __bind(this.destroyWorld, this);
+        this.addContactListener = __bind(this.addContactListener, this);
+        this.initContactListeners = __bind(this.initContactListeners, this);
         this.runSimulation = __bind(this.runSimulation, this);
         this.context = this.canvas[0].getContext("2d");
         this.scale || (this.scale = 30);
         this.defaultScale = 30;
         this.world = new b2d.Dynamics.b2World(gravity || new b2d.Common.Math.b2Vec2(0, 10), true);
         this.initDraw();
+        this.initContactListeners();
       }
 
       Peanutty.prototype.runSimulation = function() {
@@ -75,6 +78,44 @@
           return _this.redrawTempShapes();
         };
         return requestAnimFrame(update);
+      };
+
+      Peanutty.prototype.beginContactListeners = [];
+
+      Peanutty.prototype.endContactListeners = [];
+
+      Peanutty.prototype.initContactListeners = function() {
+        var PeanuttyContactListener, beginContact;
+        var _this = this;
+        beginContact = function(contact) {
+          var listener, _i, _len, _ref, _results;
+          _ref = _this.beginContactListeners;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            listener = _ref[_i];
+            _results.push(listener(contact));
+          }
+          return _results;
+        };
+        PeanuttyContactListener = (function() {
+
+          __extends(PeanuttyContactListener, b2d.Dynamics.b2ContactListener);
+
+          function PeanuttyContactListener() {
+            PeanuttyContactListener.__super__.constructor.apply(this, arguments);
+          }
+
+          PeanuttyContactListener.prototype.BeginContact = beginContact;
+
+          return PeanuttyContactListener;
+
+        })();
+        return this.world.m_contactManager.m_contactListener = new PeanuttyContactListener;
+      };
+
+      Peanutty.prototype.addContactListener = function(listener, type) {
+        if (type == null) type = 'begin';
+        return this["" + type + "ContactListeners"].push(listener);
       };
 
       Peanutty.prototype.destroyWorld = function() {

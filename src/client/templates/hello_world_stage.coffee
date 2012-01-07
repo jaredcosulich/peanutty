@@ -66,25 +66,22 @@ view.nameInput.bind 'keyup', (e) ->
         view.destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>")
         view.$('#canvas_container').append(view.destroyInstructions)
         
-        letters = (body for body in peanutty.bodies() when body.m_I > 0)
-        alreadyCollided = []
-        checkCollision = () =>
-            for body in peanutty.bodies()
-                continue if body.m_I == 0
-                continue if body in letters or body in alreadyCollided
-                continue unless body.m_contactList? and body.m_contactList.other in letters
-                alreadyCollided.push(body)
-                view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
-                if alreadyCollided.length == 2
-                    view.destroyInstructions.html(
-                        view.destroyInstructions.html() + 
-                        "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>"
-                    )
-                    $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('stack_em')
-                    
-            $.timeout 100, checkCollision if view.destroyInstructions
-            
-        checkCollision()
+    letters = (body for body in peanutty.bodies() when body.m_I > 0)
+    alreadyCollided = []    
+    peanutty.addContactListener (contact) =>
+        contactedBodies = [contact.m_fixtureA.m_body, contact.m_fixtureB.m_body] 
+        for body, index in contactedBodies
+            continue if body.m_I == 0
+            continue if body in letters or body in alreadyCollided
+            continue unless contactedBodies[1-index] in letters
+            alreadyCollided.push(body)
+            view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
+            if alreadyCollided.length == 2
+                view.destroyInstructions.html(
+                    view.destroyInstructions.html() + 
+                    "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>"
+                )
+                $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('stack_em')
         
             
 view.$('#canvas_container').append(view.nameInput)

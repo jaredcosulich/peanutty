@@ -21,6 +21,7 @@
                 true
             )      
             @initDraw()
+            @initContactListeners()
             
         runSimulation: () =>
             window.requestAnimFrame = (() =>
@@ -46,6 +47,19 @@
                 @redrawTempShapes()
             
             requestAnimFrame(update)
+        
+        beginContactListeners: []
+        endContactListeners: []
+        initContactListeners: () =>
+            beginContact = (contact) => listener(contact) for listener in @beginContactListeners
+            
+            class PeanuttyContactListener extends b2d.Dynamics.b2ContactListener
+                BeginContact: beginContact
+            
+            @world.m_contactManager.m_contactListener = new PeanuttyContactListener
+            
+        addContactListener: (listener, type='begin') =>
+            @["#{type}ContactListeners"].push(listener)
             
         destroyWorld: () =>
             body = @world.m_bodyList

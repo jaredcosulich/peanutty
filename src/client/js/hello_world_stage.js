@@ -43,7 +43,7 @@
   });
 
   view.nameInput.bind('keyup', function(e) {
-    var letters;
+    var alreadyCollided, body, letters;
     var _this = this;
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '');
     view.loadScript();
@@ -57,8 +57,7 @@
       time: 0
     });
     view.lastNameInputKey = new Date();
-    return $.timeout(1500, function() {
-      var alreadyCollided, body, checkCollision;
+    $.timeout(1500, function() {
       if (new Date() - view.lastNameInputKey < 1500) return;
       if (view.destroyInstructions != null) return;
       view.destroyInstructions = $(document.createElement("DIV"));
@@ -73,46 +72,48 @@
         left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
       });
       view.destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>");
-      view.$('#canvas_container').append(view.destroyInstructions);
-      letters = (function() {
-        var _i, _len, _ref, _results;
-        _ref = peanutty.bodies();
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          body = _ref[_i];
-          if (body.m_I > 0) _results.push(body);
+      return view.$('#canvas_container').append(view.destroyInstructions);
+    });
+    letters = (function() {
+      var _i, _len, _ref, _results;
+      _ref = peanutty.bodies();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        body = _ref[_i];
+        if (body.m_I > 0) _results.push(body);
+      }
+      return _results;
+    })();
+    alreadyCollided = [];
+    return peanutty.addContactListener(function(contact) {
+      var body, contactedBodies, index, _len, _ref, _results;
+      contactedBodies = [contact.m_fixtureA.m_body, contact.m_fixtureB.m_body];
+      _results = [];
+      for (index = 0, _len = contactedBodies.length; index < _len; index++) {
+        body = contactedBodies[index];
+        if (body.m_I === 0) continue;
+        if (__indexOf.call(letters, body) >= 0 || __indexOf.call(alreadyCollided, body) >= 0) {
+          continue;
         }
-        return _results;
-      })();
-      alreadyCollided = [];
-      checkCollision = function() {
-        var body, _i, _len, _ref, _ref2;
-        _ref = peanutty.bodies();
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          body = _ref[_i];
-          if (body.m_I === 0) continue;
-          if (__indexOf.call(letters, body) >= 0 || __indexOf.call(alreadyCollided, body) >= 0) {
-            continue;
-          }
-          if (!((body.m_contactList != null) && (_ref2 = body.m_contactList.other, __indexOf.call(letters, _ref2) >= 0))) {
-            continue;
-          }
-          alreadyCollided.push(body);
-          if (!(alreadyCollided.length > 2)) {
-            view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ");
-          }
-          if (alreadyCollided.length === 2) {
-            view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>");
-            $.timeout(10, function() {
-              return view.$('#next_stage').bind('click', function() {
-                return view.loadNewStage('stack_em');
-              });
+        if (_ref = contactedBodies[1 - index], __indexOf.call(letters, _ref) < 0) {
+          continue;
+        }
+        alreadyCollided.push(body);
+        if (!(alreadyCollided.length > 2)) {
+          view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ");
+        }
+        if (alreadyCollided.length === 2) {
+          view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>");
+          _results.push($.timeout(10, function() {
+            return view.$('#next_stage').bind('click', function() {
+              return view.loadNewStage('stack_em');
             });
-          }
+          }));
+        } else {
+          _results.push(void 0);
         }
-        if (view.destroyInstructions) return $.timeout(100, checkCollision);
-      };
-      return checkCollision();
+      }
+      return _results;
     });
   });
 
