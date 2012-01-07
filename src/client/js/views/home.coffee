@@ -372,8 +372,7 @@
                 main: @_requireTemplate('templates/home.html'),
                 script: @_requireTemplate('templates/basic_script.coffee'),
                 stage: @_requireTemplate('templates/hello_world_stage.coffee'),
-                environment: @_requireTemplate('templates/basic_environment.coffee'),
-                stack_em: @_requireTemplate('templates/stack_em_stage.coffee')
+                environment: @_requireTemplate('templates/basic_environment.coffee')
             }
     
         renderView: () ->
@@ -439,13 +438,23 @@
         loadStage: () => @stageEditor.getSession().setValue(@templates.stage.html().replace(/^\n*/, ''))
         loadEnvironment: () => @environmentEditor.getSession().setValue(@templates.environment.html().replace(/^\n*/, ''))
 
-        loadNewStage: (stageName) => 
-            @templates.stage = view.templates[stageName]
-            peanutty.destroyWorld()
-            @$('.stage_element').remove()
-            @loadCode()
-            Peanutty.runScript()
-            $.route.navigate("stage/#{stageName}", false)
+        loadNewStage: (stageName) =>
+            $.ajax
+                method: 'GET'
+                url: "templates/#{stageName}_stage.coffee?#{Math.random()}"
+                type: 'html'
+
+                success: (text) =>
+                    @templates.stage.html(text)
+                    peanutty.destroyWorld()
+                    @$('.stage_element').remove()
+                    @loadCode()
+                    Peanutty.runScript()
+                    $.route.navigate("stage/#{stageName}", false)
+
+                error: (xhr, status, e, data) =>
+                    @errors.push(['new stage', stageName])
+            
                    
         resizeAreas: () =>
             fullWidth = $(window).width()
