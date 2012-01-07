@@ -79,7 +79,7 @@ view.nameInput.bind 'keyup', (e) ->
             if alreadyCollided.length == 2
                 view.destroyInstructions.html(
                     view.destroyInstructions.html() + 
-                    "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>"
+                    "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>"
                 )
                 $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('stack_em')
         

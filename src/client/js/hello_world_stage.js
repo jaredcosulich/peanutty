@@ -103,7 +103,7 @@
           view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ");
         }
         if (alreadyCollided.length === 2) {
-          view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Ok, when you're ready, head to the <a id='next_stage'>next stage ></a>");
+          view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>");
           _results.push($.timeout(10, function() {
             return view.$('#next_stage').bind('click', function() {
               return view.loadNewStage('stack_em');
