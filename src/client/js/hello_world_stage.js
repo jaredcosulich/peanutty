@@ -23,12 +23,12 @@
 
   instructions.css({
     height: '30px',
-    width: '300px',
+    width: '360px',
     textAlign: 'center',
     fontSize: '20pt',
     position: 'absolute',
     top: '20px',
-    left: "" + ((peanutty.canvas.width() / 2) - 150) + "px"
+    left: "" + ((peanutty.canvas.width() / 2) - 180) + "px"
   });
 
   instructions.html("Type your name:");
@@ -40,12 +40,12 @@
   nameInput.addClass('stage_element');
 
   nameInput.css({
-    width: '300px',
+    width: '360px',
     height: '30px',
     fontSize: '20pt',
     position: 'absolute',
     top: '50px',
-    left: "" + ((peanutty.canvas.width() / 2) - 150) + "px"
+    left: "" + ((peanutty.canvas.width() / 2) - 180) + "px"
   });
 
   nameInput.bind('keyup', function(e) {
@@ -66,12 +66,12 @@
       destroyInstructions.addClass('stage_element');
       destroyInstructions.css({
         height: '30px',
-        width: '300px',
+        width: '360px',
         textAlign: 'center',
-        fontSize: '12pt',
+        fontSize: '11pt',
         position: 'absolute',
-        top: '90px',
-        left: "" + ((peanutty.canvas.width() / 2) - 150) + "px"
+        top: '100px',
+        left: "" + ((peanutty.canvas.width() / 2) - 180) + "px"
       });
       destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)");
       view.$('#canvas_container').append(destroyInstructions);
