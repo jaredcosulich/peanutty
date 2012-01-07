@@ -25,15 +25,7 @@ task 'build:index', 'Build the static index page', ->
 
     stylesheets = ("#{style}?#{new Date().getTime()}" for style in ["#{target}/css/all.css"])
     
-    templates = ({
-            src: "templates/#{name}",
-            text: fs.readFileSync("#{client}/templates/#{name}")
-        } for name in fs.readdirSync("#{client}/templates") when name != 'base.html' and (/\.html$/.test(name) or /\.coffee$/.test(name))
-    ) 
-    templates = []
-
     base = wings.renderTemplate(fs.readFileSync("index_template.html", 'utf-8'), {
-        templates: templates
         scripts: scripts
         stylesheets: stylesheets
     })
@@ -243,7 +235,7 @@ buildClientHTML = (source, target, callback) ->
         'all.css',
     ])
 
-    views =  ("views/#{name.replace('.coffee', '.js')}" for name in fs.readdirSync("#{source}/js/views") when name != 'pages_base.coffee')
+    views =  ("views/#{name.replace('.coffee', '.js')}" for name in fs.readdirSync("#{source}/js/views"))
 
     scripts = ("js/#{script}" for script in [
         'lib/ender.js',
