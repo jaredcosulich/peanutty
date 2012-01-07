@@ -421,11 +421,11 @@
                 if currentRoute.indexOf('stage/') > -1
                     $.timeout 5, () => $.route.navigate(currentRoute, false)
    
-            @$('#execute .run_script').bind 'click', (e) =>
+            @$('#code_buttons .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
                 @$('.stage_element').remove()
                 Peanutty.runScript()
-            @$('#execute .reset_script').bind 'click', (e) =>
+            @$('#code_buttons .reset_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
                 @$('.stage_element').remove()
                 @loadCode()
