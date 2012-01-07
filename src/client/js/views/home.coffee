@@ -80,16 +80,17 @@
             
         addToScript: ({command, time}) =>  
             CoffeeScript.run(command)
+            commandLength = command.split("\n").length
             endLine = @scriptEditor.getSession().getValue().split("\n").length + 1
             @scriptEditor.gotoLine(endLine)
             if @scriptEditor.getSession().getValue().length > 0 && time > 0
-                @scriptEditor.insert("\npeanutty.wait(#{parseInt(time)})")
+                @scriptEditor.insert("peanutty.wait(#{parseInt(time)})\n")
+                commandLength += 1
 
-            @scriptEditor.insert("\n#{command}\n")
+            @scriptEditor.insert("#{command}\n\n")
             $.timeout 10, () =>
-                commandLength = command.split("\n").length
                 lines = $(@scriptEditor.container).find(".ace_line")
-                commandElements = $(lines[lines.length - commandLength - 1...lines.length - 1])
+                commandElements = $(lines[lines.length - commandLength - 2...lines.length - 2])
                 commandElements.addClass('highlight')
                 $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
                 

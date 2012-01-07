@@ -117,21 +117,22 @@
       };
 
       Peanutty.prototype.addToScript = function(_arg) {
-        var command, endLine, time;
+        var command, commandLength, endLine, time;
         var _this = this;
         command = _arg.command, time = _arg.time;
         CoffeeScript.run(command);
+        commandLength = command.split("\n").length;
         endLine = this.scriptEditor.getSession().getValue().split("\n").length + 1;
         this.scriptEditor.gotoLine(endLine);
         if (this.scriptEditor.getSession().getValue().length > 0 && time > 0) {
-          this.scriptEditor.insert("\npeanutty.wait(" + (parseInt(time)) + ")");
+          this.scriptEditor.insert("peanutty.wait(" + (parseInt(time)) + ")\n");
+          commandLength += 1;
         }
-        this.scriptEditor.insert("\n" + command + "\n");
+        this.scriptEditor.insert("" + command + "\n\n");
         return $.timeout(10, function() {
-          var commandElements, commandLength, lines;
-          commandLength = command.split("\n").length;
+          var commandElements, lines;
           lines = $(_this.scriptEditor.container).find(".ace_line");
-          commandElements = $(lines.slice(lines.length - commandLength - 1, (lines.length - 1)));
+          commandElements = $(lines.slice(lines.length - commandLength - 2, (lines.length - 2)));
           commandElements.addClass('highlight');
           return $.timeout(1000, function() {
             return $(_this.scriptEditor.container).find(".ace_line").removeClass('highlight');
