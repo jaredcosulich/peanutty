@@ -6,7 +6,7 @@
 
   peanutty.createGround({
     x: peanutty.world.dimensions.width / 2,
-    y: peanutty.world.dimensions.height - 50,
+    y: 50,
     width: 600,
     height: 10
   });
@@ -53,7 +53,7 @@
     }
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
-      command: "peanutty.destroyDynamicObjects()\nview.nameInput.val(\"" + letters + "\") if view.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: peanutty.world.dimensions.height - 55\n    letters: \"" + letters + "\"",
+      command: "peanutty.destroyDynamicObjects()\nview.nameInput.val(\"" + letters + "\") if view.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
       time: 0
     });
     view.lastNameInputKey = new Date();
@@ -106,7 +106,7 @@
           view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>");
           _results.push($.timeout(10, function() {
             return view.$('#next_stage').bind('click', function() {
-              return view.loadNewStage('simple_bucket');
+              return view.loadNewStage('stack_em');
             });
           }));
         } else {
@@ -201,10 +201,10 @@
                   y: y
                 }, {
                   x: x + 28,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 13,
                   y: y
@@ -214,16 +214,16 @@
               path: [
                 {
                   x: x + 26,
-                  y: y - 32
+                  y: y + 32
                 }, {
                   x: x + 21,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 34,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 34,
-                  y: y - 32
+                  y: y + 32
                 }
               ]
             })
@@ -235,10 +235,10 @@
               path: [
                 {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 34,
-                  y: y - 54
+                  y: y + 54
                 }, {
                   x: x + 56,
                   y: y
@@ -251,16 +251,16 @@
               path: [
                 {
                   x: x + 34,
-                  y: y - 32
+                  y: y + 32
                 }, {
                   x: x + 34,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 47,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 43,
-                  y: y - 32
+                  y: y + 32
                 }
               ]
             })
@@ -276,10 +276,10 @@
                   y: y
                 }, {
                   x: x + 33,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 48,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 13,
                   y: y
@@ -289,16 +289,16 @@
               path: [
                 {
                   x: x + 26,
-                  y: y - 32
+                  y: y + 32
                 }, {
                   x: x + 22,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 42,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 42,
-                  y: y - 32
+                  y: y + 32
                 }
               ]
             })
@@ -310,10 +310,10 @@
               path: [
                 {
                   x: x + 48,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 42,
-                  y: y - 73
+                  y: y + 73
                 }, {
                   x: x + 64,
                   y: y
@@ -326,16 +326,16 @@
               path: [
                 {
                   x: x + 42,
-                  y: y - 32
+                  y: y + 32
                 }, {
                   x: x + 42,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 57,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 54,
-                  y: y - 32
+                  y: y + 32
                 }
               ]
             })
@@ -344,99 +344,99 @@
       case "b":
         this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
         this.createBox({
           x: x + 45,
-          y: y - 20,
+          y: y + 20,
           width: 5,
           height: 10
         });
         this.createBox({
           x: x + 35,
-          y: y - 35,
+          y: y + 35,
           width: 10,
           height: 5
         });
         this.createBox({
           x: x + 45,
-          y: y - 50,
+          y: y + 50,
           width: 5,
           height: 10
         });
         return this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
       case "B":
         this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 45,
+          y: y + 45,
           width: 10,
           height: 35
         });
         this.createBox({
           x: x + 55,
-          y: y - 25,
+          y: y + 25,
           width: 5,
           height: 15
         });
         this.createBox({
           x: x + 40,
-          y: y - 45,
+          y: y + 45,
           width: 15,
           height: 5
         });
         this.createBox({
           x: x + 55,
-          y: y - 65,
+          y: y + 65,
           width: 5,
           height: 15
         });
         return this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
       case "c":
         this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 35,
+          y: y + 35,
           width: 10,
           height: 25
         });
         this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
         return this.createBox({
           x: x + 4,
-          y: y - 74,
+          y: y + 74,
           width: 6,
           height: 2,
           density: 10
@@ -444,25 +444,25 @@
       case "C":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 45,
+          y: y + 45,
           width: 10,
           height: 35
         });
         this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
         return this.createBox({
           x: x + 6,
-          y: y - 92,
+          y: y + 92,
           width: 8,
           height: 2,
           density: 10
@@ -470,87 +470,87 @@
       case "d":
         this.createBox({
           x: x + 20,
-          y: y - 5,
+          y: y + 5,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
         this.createBox({
           x: x + 35,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
         return this.createBox({
           x: x + 20,
-          y: y - 65,
+          y: y + 65,
           width: 20,
           height: 5
         });
       case "D":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 45,
+          y: y + 45,
           width: 5,
           height: 35
         });
         this.createBox({
           x: x + 55,
-          y: y - 45,
+          y: y + 45,
           width: 5,
           height: 35
         });
         return this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
       case "e":
         this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 20,
+          y: y + 20,
           width: 10,
           height: 10
         });
         this.createBox({
           x: x + 20,
-          y: y - 35,
+          y: y + 35,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 50,
+          y: y + 50,
           width: 10,
           height: 10
         });
         this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
         return this.createBox({
           x: x + 4,
-          y: y - 74,
+          y: y + 74,
           width: 6,
           height: 2,
           density: 10
@@ -558,37 +558,37 @@
       case "E":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 25,
+          y: y + 25,
           width: 10,
           height: 15
         });
         this.createBox({
           x: x + 20,
-          y: y - 45,
+          y: y + 45,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 65,
+          y: y + 65,
           width: 10,
           height: 15
         });
         this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
         return this.createBox({
           x: x + 4,
-          y: y - 91,
+          y: y + 91,
           width: 6,
           height: 2,
           density: 10
@@ -596,32 +596,32 @@
       case "f":
         this.createBox({
           x: x + 10,
-          y: y - 15,
+          y: y + 15,
           width: 10,
           height: 15,
           density: 10
         });
         this.createBox({
           x: x + 20,
-          y: y - 35,
+          y: y + 35,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 50,
+          y: y + 50,
           width: 10,
           height: 10
         });
         this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
         return this.createBox({
           x: x + 4,
-          y: y - 74,
+          y: y + 74,
           width: 6,
           height: 2,
           density: 10
@@ -629,32 +629,32 @@
       case "F":
         this.createBox({
           x: x + 10,
-          y: y - 20,
+          y: y + 20,
           width: 10,
           height: 20,
           density: 10
         });
         this.createBox({
           x: x + 20,
-          y: y - 45,
+          y: y + 45,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 65,
+          y: y + 65,
           width: 10,
           height: 15
         });
         this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
         return this.createBox({
           x: x + 4,
-          y: y - 91,
+          y: y + 91,
           width: 6,
           height: 2,
           density: 10
@@ -662,44 +662,44 @@
       case "g":
         this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 7,
-          y: y - 35,
+          y: y + 35,
           width: 7,
           height: 25
         });
         this.createBox({
           x: x + 45,
-          y: y - 20,
+          y: y + 20,
           width: 5,
           height: 10
         });
         this.createBox({
           x: x + 35,
-          y: y - 35,
+          y: y + 35,
           width: 15,
           height: 5
         });
         this.createBox({
           x: x + 45,
-          y: y - 40,
+          y: y + 40,
           width: 6,
           height: 2,
           density: 10
         });
         this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
         return this.createBox({
           x: x + 5,
-          y: y - 74,
+          y: y + 74,
           width: 8,
           height: 2,
           density: 10
@@ -707,44 +707,44 @@
       case "G":
         this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 45,
+          y: y + 45,
           width: 10,
           height: 35
         });
         this.createBox({
           x: x + 55,
-          y: y - 25,
+          y: y + 25,
           width: 5,
           height: 15
         });
         this.createBox({
           x: x + 45,
-          y: y - 45,
+          y: y + 45,
           width: 15,
           height: 5
         });
         this.createBox({
           x: x + 55,
-          y: y - 52,
+          y: y + 52,
           width: 6,
           height: 2,
           density: 10
         });
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         return this.createBox({
           x: x + 5,
-          y: y - 92,
+          y: y + 92,
           width: 8,
           height: 2,
           density: 10
@@ -752,150 +752,150 @@
       case "h":
         this.createBox({
           x: x + 5,
-          y: y - 15,
+          y: y + 15,
           width: 5,
           height: 15
         });
         this.createBox({
           x: x + 35,
-          y: y - 15,
+          y: y + 15,
           width: 5,
           height: 15
         });
         this.createBox({
           x: x + 20,
-          y: y - 35,
+          y: y + 35,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 55,
+          y: y + 55,
           width: 5,
           height: 15
         });
         return this.createBox({
           x: x + 35,
-          y: y - 55,
+          y: y + 55,
           width: 5,
           height: 15
         });
       case "H":
         this.createBox({
           x: x + 10,
-          y: y - 20,
+          y: y + 20,
           width: 10,
           height: 20
         });
         this.createBox({
           x: x + 50,
-          y: y - 20,
+          y: y + 20,
           width: 10,
           height: 20
         });
         this.createBox({
           x: x + 30,
-          y: y - 45,
+          y: y + 45,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 70,
+          y: y + 70,
           width: 10,
           height: 20
         });
         return this.createBox({
           x: x + 50,
-          y: y - 70,
+          y: y + 70,
           width: 10,
           height: 20
         });
       case "i":
         this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 25,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
         return this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
       case "I":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 30,
-          y: y - 45,
+          y: y + 45,
           width: 5,
           height: 35
         });
         return this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
       case "j":
         this.createBox({
           x: x + 15,
-          y: y - 5,
+          y: y + 5,
           width: 15,
           height: 5
         });
         this.createBox({
           x: x + 4,
-          y: y - 18,
+          y: y + 18,
           width: 5,
           height: 8
         });
         this.createBox({
           x: x + 25,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
         return this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
       case "J":
         this.createBox({
           x: x + 17,
-          y: y - 5,
+          y: y + 5,
           width: 18,
           height: 5
         });
         this.createBox({
           x: x + 4,
-          y: y - 18,
+          y: y + 18,
           width: 5,
           height: 8
         });
         this.createBox({
           x: x + 30,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 35
         });
         return this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
@@ -909,10 +909,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
                   y: y
@@ -922,16 +922,16 @@
               path: [
                 {
                   x: x + 10,
-                  y: y - 30
+                  y: y + 30
                 }, {
                   x: x + 10,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
-                  y: y - 70
+                  y: y + 70
                 }
               ]
             })
@@ -941,10 +941,10 @@
           path: [
             {
               x: x + 10,
-              y: y - 30
+              y: y + 30
             }, {
               x: x + 15,
-              y: y - 35
+              y: y + 35
             }, {
               x: x + 50,
               y: y
@@ -964,10 +964,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
                   y: y
@@ -977,16 +977,16 @@
               path: [
                 {
                   x: x + 10,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 10,
-                  y: y - 50
+                  y: y + 50
                 }, {
                   x: x + 50,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 90
+                  y: y + 90
                 }
               ]
             })
@@ -996,10 +996,10 @@
           path: [
             {
               x: x + 10,
-              y: y - 40
+              y: y + 40
             }, {
               x: x + 15,
-              y: y - 45
+              y: y + 45
             }, {
               x: x + 60,
               y: y
@@ -1012,26 +1012,26 @@
       case "l":
         this.createBox({
           x: x + 20,
-          y: y - 5,
+          y: y + 5,
           width: 20,
           height: 5
         });
         return this.createBox({
           x: x + 5,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 30
         });
       case "L":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         return this.createBox({
           x: x + 5,
-          y: y - 50,
+          y: y + 50,
           width: 5,
           height: 40
         });
@@ -1045,10 +1045,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
                   y: y
@@ -1058,16 +1058,16 @@
               path: [
                 {
                   x: x + 10,
-                  y: y - 55
+                  y: y + 55
                 }, {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 25,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 25,
-                  y: y - 25
+                  y: y + 25
                 }
               ]
             })
@@ -1082,10 +1082,10 @@
                   y: y
                 }, {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
                   y: y
@@ -1095,16 +1095,16 @@
               path: [
                 {
                   x: x + 25,
-                  y: y - 25
+                  y: y + 25
                 }, {
                   x: x + 25,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 40,
-                  y: y - 55
+                  y: y + 55
                 }
               ]
             })
@@ -1120,10 +1120,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
                   y: y
@@ -1133,16 +1133,16 @@
               path: [
                 {
                   x: x + 10,
-                  y: y - 75
+                  y: y + 75
                 }, {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 30,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x + 30,
-                  y: y - 45
+                  y: y + 45
                 }
               ]
             })
@@ -1157,10 +1157,10 @@
                   y: y
                 }, {
                   x: x + 50,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
                   y: y
@@ -1170,16 +1170,16 @@
               path: [
                 {
                   x: x + 30,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 30,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x + 50,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 50,
-                  y: y - 75
+                  y: y + 75
                 }
               ]
             })
@@ -1195,10 +1195,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
                   y: y
@@ -1208,16 +1208,16 @@
               path: [
                 {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
-                  y: y - 55
+                  y: y + 55
                 }, {
                   x: x + 40,
                   y: y
                 }, {
                   x: x + 40,
-                  y: y - 15
+                  y: y + 15
                 }
               ]
             })
@@ -1230,10 +1230,10 @@
               y: y
             }, {
               x: x + 40,
-              y: y - 70
+              y: y + 70
             }, {
               x: x + 50,
-              y: y - 70
+              y: y + 70
             }, {
               x: x + 50,
               y: y
@@ -1250,10 +1250,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
                   y: y
@@ -1263,16 +1263,16 @@
               path: [
                 {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 75
+                  y: y + 75
                 }, {
                   x: x + 50,
                   y: y
                 }, {
                   x: x + 50,
-                  y: y - 15
+                  y: y + 15
                 }
               ]
             })
@@ -1285,10 +1285,10 @@
               y: y
             }, {
               x: x + 50,
-              y: y - 90
+              y: y + 90
             }, {
               x: x + 60,
-              y: y - 90
+              y: y + 90
             }, {
               x: x + 60,
               y: y
@@ -1298,57 +1298,57 @@
       case "o":
         this.createBox({
           x: x + 20,
-          y: y - 5,
+          y: y + 5,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
         this.createBox({
           x: x + 35,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
         return this.createBox({
           x: x + 20,
-          y: y - 65,
+          y: y + 65,
           width: 20,
           height: 5
         });
       case "O":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 45,
+          y: y + 45,
           width: 5,
           height: 35
         });
         this.createBox({
           x: x + 55,
-          y: y - 45,
+          y: y + 45,
           width: 5,
           height: 35
         });
         return this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
       case "p":
         this.createBox({
           x: x + 17,
-          y: y - 30,
+          y: y + 30,
           width: 5,
           height: 30
         });
@@ -1358,48 +1358,48 @@
               path: [
                 {
                   x: x,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
-                  y: y - 60
+                  y: y + 60
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 50,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x + 50,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 40,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 40,
-                  y: y - 60
+                  y: y + 60
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 50,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 50,
-                  y: y - 30
+                  y: y + 30
                 }, {
                   x: x + 22,
-                  y: y - 30
+                  y: y + 30
                 }, {
                   x: x + 22,
-                  y: y - 40
+                  y: y + 40
                 }
               ]
             })
@@ -1407,7 +1407,7 @@
         });
         return this.createBox({
           x: x + 4,
-          y: y - 72,
+          y: y + 72,
           width: 6,
           height: 2,
           density: 10
@@ -1415,7 +1415,7 @@
       case "P":
         this.createBox({
           x: x + 17,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 40
         });
@@ -1425,48 +1425,48 @@
               path: [
                 {
                   x: x,
-                  y: y - 80
+                  y: y + 80
                 }, {
                   x: x,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 80
+                  y: y + 80
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 60,
-                  y: y - 80
+                  y: y + 80
                 }, {
                   x: x + 60,
-                  y: y - 50
+                  y: y + 50
                 }, {
                   x: x + 50,
-                  y: y - 50
+                  y: y + 50
                 }, {
                   x: x + 50,
-                  y: y - 80
+                  y: y + 80
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 60,
-                  y: y - 50
+                  y: y + 50
                 }, {
                   x: x + 60,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 22,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 22,
-                  y: y - 50
+                  y: y + 50
                 }
               ]
             })
@@ -1474,7 +1474,7 @@
         });
         return this.createBox({
           x: x + 4,
-          y: y - 92,
+          y: y + 92,
           width: 6,
           height: 2,
           density: 30
@@ -1482,13 +1482,13 @@
       case "q":
         this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 35,
+          y: y + 35,
           width: 5,
           height: 25
         });
@@ -1498,35 +1498,35 @@
               path: [
                 {
                   x: x + 40,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 40,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x + 50,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x + 50,
-                  y: y - 10
+                  y: y + 10
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 20,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 30,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 40,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 40,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 35,
-                  y: y - 10
+                  y: y + 10
                 }
               ]
             })
@@ -1534,20 +1534,20 @@
         });
         return this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
       case "Q":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 30
         });
@@ -1557,35 +1557,35 @@
               path: [
                 {
                   x: x + 50,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 50,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 60,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 60,
-                  y: y - 10
+                  y: y + 10
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 40,
-                  y: y - 40
+                  y: y + 40
                 }, {
                   x: x + 50,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 50,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 45,
-                  y: y - 10
+                  y: y + 10
                 }
               ]
             })
@@ -1593,113 +1593,113 @@
         });
         return this.createBox({
           x: x + 30,
-          y: y - 75,
+          y: y + 75,
           width: 30,
           height: 5
         });
       case "r":
         this.createBox({
           x: x + 5,
-          y: y - 20,
+          y: y + 20,
           width: 5,
           height: 30
         });
         this.createBox({
           x: x + 28,
-          y: y - 5,
+          y: y + 5,
           width: 5,
           height: 15
         });
         this.createBox({
           x: x + 25,
-          y: y - 25,
+          y: y + 25,
           width: 15,
           height: 5
         });
         this.createBox({
           x: x + 35,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 10
         });
         return this.createBox({
           x: x + 20,
-          y: y - 55,
+          y: y + 55,
           width: 20,
           height: 5
         });
       case "R":
         this.createBox({
           x: x + 5,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 40
         });
         this.createBox({
           x: x + 35,
-          y: y - 20,
+          y: y + 20,
           width: 5,
           height: 20
         });
         this.createBox({
           x: x + 35,
-          y: y - 45,
+          y: y + 45,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 55,
-          y: y - 65,
+          y: y + 65,
           width: 5,
           height: 15
         });
         return this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
       case "s":
         this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 40,
-          y: y - 20,
+          y: y + 20,
           width: 10,
           height: 10
         });
         this.createBox({
           x: x + 25,
-          y: y - 35,
+          y: y + 35,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 47,
-          y: y - 42,
+          y: y + 42,
           width: 6,
           height: 2,
           density: 50
         });
         this.createBox({
           x: x + 10,
-          y: y - 50,
+          y: y + 50,
           width: 10,
           height: 10
         });
         this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
         return this.createBox({
           x: x + 4,
-          y: y - 72,
+          y: y + 72,
           width: 6,
           height: 2,
           density: 10
@@ -1707,44 +1707,44 @@
       case "S":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 50,
-          y: y - 25,
+          y: y + 25,
           width: 10,
           height: 15
         });
         this.createBox({
           x: x + 30,
-          y: y - 45,
+          y: y + 45,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 57,
-          y: y - 52,
+          y: y + 52,
           width: 6,
           height: 2,
           density: 80
         });
         this.createBox({
           x: x + 10,
-          y: y - 65,
+          y: y + 65,
           width: 10,
           height: 15
         });
         this.createBox({
           x: x + 30,
-          y: y - 85,
+          y: y + 85,
           width: 30,
           height: 5
         });
         return this.createBox({
           x: x + 4,
-          y: y - 92,
+          y: y + 92,
           width: 6,
           height: 2,
           density: 10
@@ -1752,64 +1752,64 @@
       case "t":
         this.createBox({
           x: x + 25,
-          y: y - 30,
+          y: y + 30,
           width: 5,
           height: 30
         });
         return this.createBox({
           x: x + 25,
-          y: y - 60,
+          y: y + 60,
           width: 25,
           height: 5
         });
       case "T":
         this.createBox({
           x: x + 30,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 40
         });
         return this.createBox({
           x: x + 30,
-          y: y - 80,
+          y: y + 80,
           width: 30,
           height: 5
         });
       case "u":
         this.createBox({
           x: x + 20,
-          y: y - 5,
+          y: y + 5,
           width: 20,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 30
         });
         return this.createBox({
           x: x + 35,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 30
         });
       case "U":
         this.createBox({
           x: x + 30,
-          y: y - 5,
+          y: y + 5,
           width: 30,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 50,
+          y: y + 50,
           width: 5,
           height: 40
         });
         return this.createBox({
           x: x + 55,
-          y: y - 50,
+          y: y + 50,
           width: 5,
           height: 40
         });
@@ -1820,13 +1820,13 @@
               path: [
                 {
                   x: x,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 25,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 25,
                   y: y
@@ -1839,13 +1839,13 @@
                   y: y
                 }, {
                   x: x + 25,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
-                  y: y - 70
+                  y: y + 70
                 }
               ]
             })
@@ -1858,13 +1858,13 @@
               path: [
                 {
                   x: x,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 30,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 30,
                   y: y
@@ -1877,13 +1877,13 @@
                   y: y
                 }, {
                   x: x + 30,
-                  y: y - 20
+                  y: y + 20
                 }, {
                   x: x + 50,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 90
+                  y: y + 90
                 }
               ]
             })
@@ -1892,50 +1892,50 @@
       case "w":
         this.createBox({
           x: x + 25,
-          y: y - 5,
+          y: y + 5,
           width: 25,
           height: 5
         });
         this.createBox({
           x: x + 5,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 30
         });
         this.createBox({
           x: x + 45,
-          y: y - 40,
+          y: y + 40,
           width: 5,
           height: 30
         });
         return this.createBox({
           x: x + 25,
-          y: y - 25,
+          y: y + 25,
           width: 5,
           height: 15
         });
       case "W":
         this.createBox({
           x: x + 40,
-          y: y - 5,
+          y: y + 5,
           width: 40,
           height: 5
         });
         this.createBox({
           x: x + 10,
-          y: y - 45,
+          y: y + 45,
           width: 10,
           height: 40
         });
         this.createBox({
           x: x + 70,
-          y: y - 45,
+          y: y + 45,
           width: 10,
           height: 40
         });
         return this.createBox({
           x: x + 40,
-          y: y - 20,
+          y: y + 20,
           width: 5,
           height: 15
         });
@@ -1949,10 +1949,10 @@
                   y: y
                 }, {
                   x: x + 20,
-                  y: y - 35
+                  y: y + 35
                 }, {
                   x: x + 30,
-                  y: y - 35
+                  y: y + 35
                 }, {
                   x: x + 10,
                   y: y
@@ -1967,7 +1967,7 @@
               path: [
                 {
                   x: x + 30,
-                  y: y - 35
+                  y: y + 35
                 }, {
                   x: x + 50,
                   y: y
@@ -1976,7 +1976,7 @@
                   y: y
                 }, {
                   x: x + 25,
-                  y: y - 25
+                  y: y + 25
                 }
               ]
             })
@@ -1988,32 +1988,32 @@
               path: [
                 {
                   x: x,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 30,
-                  y: y - 35
+                  y: y + 35
                 }, {
                   x: x + 20,
-                  y: y - 35
+                  y: y + 35
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 25,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 30,
-                  y: y - 35
+                  y: y + 35
                 }
               ]
             })
@@ -2029,10 +2029,10 @@
                   y: y
                 }, {
                   x: x + 25,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 35,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 10,
                   y: y
@@ -2047,7 +2047,7 @@
               path: [
                 {
                   x: x + 35,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 60,
                   y: y
@@ -2056,7 +2056,7 @@
                   y: y
                 }, {
                   x: x + 30,
-                  y: y - 35
+                  y: y + 35
                 }
               ]
             })
@@ -2068,32 +2068,32 @@
               path: [
                 {
                   x: x,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 35,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 25,
-                  y: y - 45
+                  y: y + 45
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
-                  y: y - 55
+                  y: y + 55
                 }, {
                   x: x + 50,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 35,
-                  y: y - 45
+                  y: y + 45
                 }
               ]
             })
@@ -2106,32 +2106,32 @@
               path: [
                 {
                   x: x,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 10,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 30,
-                  y: y - 35
+                  y: y + 35
                 }, {
                   x: x + 20,
-                  y: y - 35
+                  y: y + 35
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 25,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 40,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 50,
-                  y: y - 70
+                  y: y + 70
                 }, {
                   x: x + 30,
-                  y: y - 35
+                  y: y + 35
                 }
               ]
             })
@@ -2139,7 +2139,7 @@
         });
         return this.createBox({
           x: x + 25,
-          y: y - 17,
+          y: y + 17,
           width: 5,
           height: 17
         });
@@ -2150,32 +2150,32 @@
               path: [
                 {
                   x: x,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 35,
-                  y: y - 45
+                  y: y + 45
                 }, {
                   x: x + 25,
-                  y: y - 45
+                  y: y + 45
                 }
               ]
             }), this.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
-                  y: y - 55
+                  y: y + 55
                 }, {
                   x: x + 50,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 35,
-                  y: y - 45
+                  y: y + 45
                 }
               ]
             })
@@ -2183,7 +2183,7 @@
         });
         return this.createBox({
           x: x + 30,
-          y: y - 22,
+          y: y + 22,
           width: 5,
           height: 22
         });
@@ -2197,10 +2197,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 50,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 50,
                   y: y
@@ -2210,16 +2210,16 @@
               path: [
                 {
                   x: x,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 40,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x + 50,
-                  y: y - 60
+                  y: y + 60
                 }, {
                   x: x + 10,
-                  y: y - 10
+                  y: y + 10
                 }
               ]
             })
@@ -2227,13 +2227,13 @@
         });
         this.createBox({
           x: x + 25,
-          y: y - 65,
+          y: y + 65,
           width: 25,
           height: 5
         });
         return this.createBox({
           x: x + 47,
-          y: y - 72,
+          y: y + 72,
           width: 6,
           height: 2,
           density: 50
@@ -2248,10 +2248,10 @@
                   y: y
                 }, {
                   x: x,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 60,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 60,
                   y: y
@@ -2261,16 +2261,16 @@
               path: [
                 {
                   x: x,
-                  y: y - 10
+                  y: y + 10
                 }, {
                   x: x + 50,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 60,
-                  y: y - 90
+                  y: y + 90
                 }, {
                   x: x + 10,
-                  y: y - 10
+                  y: y + 10
                 }
               ]
             })
@@ -2278,13 +2278,13 @@
         });
         this.createBox({
           x: x + 30,
-          y: y - 95,
+          y: y + 95,
           width: 30,
           height: 5
         });
         return this.createBox({
           x: x + 57,
-          y: y - 102,
+          y: y + 102,
           width: 6,
           height: 2,
           density: 50
@@ -2294,7 +2294,7 @@
 
   peanutty.createLetters({
     x: peanutty.world.dimensions.width / 2,
-    y: peanutty.world.dimensions.height - 55,
+    y: 55,
     letters: 'Hello World'
   });
 

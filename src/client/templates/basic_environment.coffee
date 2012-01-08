@@ -27,10 +27,10 @@ initiateFree = (canvas) =>
     unbindMouseEvents(canvas)
     canvas.bind 'click', (e) => 
         x = e.offsetX * (peanutty.defaultScale/peanutty.scale)
-        y = e.offsetY * (peanutty.defaultScale/peanutty.scale)
+        y = (peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale/peanutty.scale)
         
         firstPoint = if peanutty.currentShape? then peanutty.currentShape.path[0] else null
-        if firstPoint? && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5
+        if firstPoint? && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.world.dimensions.height - firstPoint.y) - y) < 10
             peanutty.endFreeformShape
                 static: static
                 time: getTimeDiff()
@@ -54,7 +54,7 @@ initiateBox = (canvas) =>
                 """
                 peanutty.createBox
                     x: #{e.offsetX * (peanutty.defaultScale/peanutty.scale)}
-                    y: #{e.offsetY * (peanutty.defaultScale/peanutty.scale)}
+                    y: #{(peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale/peanutty.scale)}
                     width: 20
                     height: 20
                     static: #{static}
@@ -69,7 +69,7 @@ initiateBall = (canvas) =>
                 """
                 peanutty.createBall
                     x: #{e.offsetX * (peanutty.defaultScale/peanutty.scale)}
-                    y: #{e.offsetY * (peanutty.defaultScale/peanutty.scale)}
+                    y: #{(peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale/peanutty.scale)}
                     radius: 20
                     static: #{static}
                 """

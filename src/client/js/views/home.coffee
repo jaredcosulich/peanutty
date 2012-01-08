@@ -159,7 +159,7 @@
 
             # positions the center of the object (not upper left!)
             bodyDef.position.x = options.x / @defaultScale
-            bodyDef.position.y = options.y / @defaultScale
+            bodyDef.position.y = (@world.dimensions.height - options.y) / @defaultScale
 
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
 
@@ -181,7 +181,7 @@
             
             fixDef.shape.SetAsBox(((options.width)/@defaultScale), ((options.height)/@defaultScale))
             bodyDef.position.x = (options.x/@defaultScale)
-            bodyDef.position.y = (options.y/@defaultScale)
+            bodyDef.position.y = ((@world.dimensions.height - options.y)/@defaultScale)
             
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
@@ -199,7 +199,7 @@
 
             fixDef.shape.SetRadius(options.radius/@defaultScale)
             bodyDef.position.x = (options.x/@defaultScale)
-            bodyDef.position.y = (options.y/@defaultScale)
+            bodyDef.position.y = ((@world.dimensions.height - options.y)/@defaultScale)
 
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
             
@@ -209,7 +209,12 @@
             
             path = path.reverse() if @counterClockWise(path)
             
-            scaledPath = (new b2d.Common.Math.b2Vec2(point.x/@defaultScale, point.y/@defaultScale) for point in path)
+            scaledPath = (
+                new b2d.Common.Math.b2Vec2(
+                    point.x/@defaultScale, 
+                    (@world.dimensions.height - point.y)/@defaultScale
+                ) for point in path
+            )
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
             return fixDef
                 
@@ -338,7 +343,7 @@
             @context.stroke()
 
         initFreeformShape: ({x, y}) =>
-            @currentShape = {start: {x:x, y:y}, path: [{x:x, y:y}]}
+            @currentShape = {start: {x:x, y:(@world.dimensions.height - y)}, path: [{x:x, y:(@world.dimensions.height - y)}]}
             @startFreeformShape(_arg)
 
         startFreeformShape: ({x, y}) =>
@@ -355,15 +360,16 @@
         continueFreeformShape: ({x, y}) =>
             return unless @currentShape?
             @tempPoint = null
-            @currentShape.path.push({x: x, y: y})
+            @currentShape.path.push({x: x, y: (@world.dimensions.height - y)})
             return
 
         endFreeformShape: (options={}) =>
+            path = ("{x: #{point.x}, y: #{@world.dimensions.height - point.y}}" for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10))
             @addToScript
                 command:
                     """
                     peanutty.createPoly
-                        path: [#{"{x: #{point.x}, y: #{point.y}}" for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10)}]
+                        path: [#{path}]
                         static: #{options.static}
                     """
                 time: options.time

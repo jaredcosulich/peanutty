@@ -240,7 +240,7 @@
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody;
         bodyDef.position.x = options.x / this.defaultScale;
-        bodyDef.position.y = options.y / this.defaultScale;
+        bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
         fixDef.shape.SetAsBox((options.width / this.defaultScale) / 2, (options.height / this.defaultScale) / 2);
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
@@ -259,7 +259,7 @@
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
         fixDef.shape.SetAsBox(options.width / this.defaultScale, options.height / this.defaultScale);
         bodyDef.position.x = options.x / this.defaultScale;
-        bodyDef.position.y = options.y / this.defaultScale;
+        bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
@@ -275,7 +275,7 @@
         fixDef.shape = new b2d.Collision.Shapes.b2CircleShape;
         fixDef.shape.SetRadius(options.radius / this.defaultScale);
         bodyDef.position.x = options.x / this.defaultScale;
-        bodyDef.position.y = options.y / this.defaultScale;
+        bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
@@ -290,7 +290,7 @@
           _results = [];
           for (_i = 0, _len = path.length; _i < _len; _i++) {
             point = path[_i];
-            _results.push(new b2d.Common.Math.b2Vec2(point.x / this.defaultScale, point.y / this.defaultScale));
+            _results.push(new b2d.Common.Math.b2Vec2(point.x / this.defaultScale, (this.world.dimensions.height - point.y) / this.defaultScale));
           }
           return _results;
         }).call(this);
@@ -503,12 +503,12 @@
         this.currentShape = {
           start: {
             x: x,
-            y: y
+            y: this.world.dimensions.height - y
           },
           path: [
             {
               x: x,
-              y: y
+              y: this.world.dimensions.height - y
             }
           ]
         };
@@ -536,24 +536,25 @@
         this.tempPoint = null;
         this.currentShape.path.push({
           x: x,
-          y: y
+          y: this.world.dimensions.height - y
         });
       };
 
       Peanutty.prototype.endFreeformShape = function(options) {
-        var firstPoint, point;
+        var firstPoint, path, point;
         if (options == null) options = {};
+        path = (function() {
+          var _i, _len, _ref, _results, _step;
+          _ref = this.currentShape.path;
+          _results = [];
+          for (_i = 0, _len = _ref.length, _step = Math.ceil(this.currentShape.path.length / 10); _i < _len; _i += _step) {
+            point = _ref[_i];
+            _results.push("{x: " + point.x + ", y: " + (this.world.dimensions.height - point.y) + "}");
+          }
+          return _results;
+        }).call(this);
         this.addToScript({
-          command: "peanutty.createPoly\n    path: [" + ((function() {
-            var _i, _len, _ref, _results, _step;
-            _ref = this.currentShape.path;
-            _results = [];
-            for (_i = 0, _len = _ref.length, _step = Math.ceil(this.currentShape.path.length / 10); _i < _len; _i += _step) {
-              point = _ref[_i];
-              _results.push("{x: " + point.x + ", y: " + point.y + "}");
-            }
-            return _results;
-          }).call(this)) + "]\n    static: " + options.static,
+          command: "peanutty.createPoly\n    path: [" + path + "]\n    static: " + options.static,
           time: options.time
         });
         firstPoint = this.currentShape.path[0];

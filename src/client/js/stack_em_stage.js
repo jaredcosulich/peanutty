@@ -16,30 +16,30 @@
     });
     peanutty.createGround({
       x: peanutty.world.dimensions.width / 2,
-      y: peanutty.world.dimensions.height - 50,
+      y: 50,
       width: 600,
       height: 10
     });
     peanutty.createBall({
       x: peanutty.world.dimensions.width / 2,
-      y: peanutty.world.dimensions.height - 75,
+      y: 75,
       radius: 20
     });
     peanutty.createBox({
       x: peanutty.world.dimensions.width / 2,
-      y: peanutty.world.dimensions.height - 100,
+      y: 100,
       width: 150,
       height: 5
     });
     peanutty.createBox({
       x: peanutty.world.dimensions.width / 2,
-      y: peanutty.world.dimensions.height - 140,
+      y: 140,
       width: 20,
       height: 20
     });
     return peanutty.createBox({
       x: peanutty.world.dimensions.width / 2,
-      y: peanutty.world.dimensions.height - 200,
+      y: 200,
       width: 20,
       height: 20
     });

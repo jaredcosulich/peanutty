@@ -37,9 +37,9 @@
     canvas.bind('click', function(e) {
       var firstPoint, x, y;
       x = e.offsetX * (peanutty.defaultScale / peanutty.scale);
-      y = e.offsetY * (peanutty.defaultScale / peanutty.scale);
+      y = (peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale / peanutty.scale);
       firstPoint = peanutty.currentShape != null ? peanutty.currentShape.path[0] : null;
-      if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 5 && Math.abs(firstPoint.y - y) < 5) {
+      if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.world.dimensions.height - firstPoint.y) - y) < 10) {
         peanutty.endFreeformShape({
           static: static,
           time: getTimeDiff()
@@ -63,7 +63,7 @@
     unbindMouseEvents(canvas);
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
-        command: "peanutty.createBox\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (e.offsetY * (peanutty.defaultScale / peanutty.scale)) + "\n    width: 20\n    height: 20\n    static: " + static,
+        command: "peanutty.createBox\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + ((peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale / peanutty.scale)) + "\n    width: 20\n    height: 20\n    static: " + static,
         time: getTimeDiff()
       });
     });
@@ -73,7 +73,7 @@
     unbindMouseEvents(canvas);
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
-        command: "peanutty.createBall\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (e.offsetY * (peanutty.defaultScale / peanutty.scale)) + "\n    radius: 20\n    static: " + static,
+        command: "peanutty.createBall\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + ((peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale / peanutty.scale)) + "\n    radius: 20\n    static: " + static,
         time: getTimeDiff()
       });
     });
