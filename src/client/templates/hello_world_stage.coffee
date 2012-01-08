@@ -1,8 +1,8 @@
 Peanutty.loadEnvironment()
 
 peanutty.createGround
-    x: peanutty.canvas.width() / 2
-    y: peanutty.canvas.height() - 50
+    x: peanutty.world.dimensions.width / 2
+    y: peanutty.world.dimensions.height - 50
     width: 600
     height: 10
     
@@ -44,8 +44,8 @@ view.nameInput.bind 'keyup', (e) ->
             peanutty.destroyDynamicObjects()
             view.nameInput.val("#{letters}") if view.nameInput.val() != "#{letters}"
             peanutty.createLetters
-                x: peanutty.canvas.width() / 2
-                y: peanutty.canvas.height() - 55
+                x: peanutty.world.dimensions.width / 2
+                y: peanutty.world.dimensions.height - 55
                 letters: "#{letters}"
             """
         time: 0
@@ -63,7 +63,7 @@ view.nameInput.bind 'keyup', (e) ->
             position: 'absolute'
             top: '100px'
             left: "#{(peanutty.canvas.width() / 2) - 200}px"
-        view.destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>")
+        view.destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)<br/><br/>")
         view.$('#canvas_container').append(view.destroyInstructions)
         
     letters = (body for body in peanutty.bodies() when body.m_I > 0)
@@ -81,7 +81,7 @@ view.nameInput.bind 'keyup', (e) ->
                     view.destroyInstructions.html() + 
                     "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>"
                 )
-                $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('stack_em')
+                $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('simple_bucket')
         
             
 view.$('#canvas_container').append(view.nameInput)
@@ -487,7 +487,7 @@ Peanutty::createLetter = ({x, y, letter}) ->
             return
 
 peanutty.createLetters
-    x: peanutty.canvas.width() / 2
-    y: peanutty.canvas.height() - 55
+    x: peanutty.world.dimensions.width / 2
+    y: peanutty.world.dimensions.height - 55
     letters: 'Hello World'
 

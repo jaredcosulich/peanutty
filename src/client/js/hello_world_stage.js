@@ -5,8 +5,8 @@
   Peanutty.loadEnvironment();
 
   peanutty.createGround({
-    x: peanutty.canvas.width() / 2,
-    y: peanutty.canvas.height() - 50,
+    x: peanutty.world.dimensions.width / 2,
+    y: peanutty.world.dimensions.height - 50,
     width: 600,
     height: 10
   });
@@ -53,7 +53,7 @@
     }
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
-      command: "peanutty.destroyDynamicObjects()\nview.nameInput.val(\"" + letters + "\") if view.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.canvas.width() / 2\n    y: peanutty.canvas.height() - 55\n    letters: \"" + letters + "\"",
+      command: "peanutty.destroyDynamicObjects()\nview.nameInput.val(\"" + letters + "\") if view.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: peanutty.world.dimensions.height - 55\n    letters: \"" + letters + "\"",
       time: 0
     });
     view.lastNameInputKey = new Date();
@@ -71,7 +71,7 @@
         top: '100px',
         left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
       });
-      view.destroyInstructions.html("Now destroy your name!<br/>(click anywhere below this but above your name)<br/><br/>");
+      view.destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)<br/><br/>");
       return view.$('#canvas_container').append(view.destroyInstructions);
     });
     letters = (function() {
@@ -106,7 +106,7 @@
           view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>");
           _results.push($.timeout(10, function() {
             return view.$('#next_stage').bind('click', function() {
-              return view.loadNewStage('stack_em');
+              return view.loadNewStage('simple_bucket');
             });
           }));
         } else {
@@ -2293,8 +2293,8 @@
   };
 
   peanutty.createLetters({
-    x: peanutty.canvas.width() / 2,
-    y: peanutty.canvas.height() - 55,
+    x: peanutty.world.dimensions.width / 2,
+    y: peanutty.world.dimensions.height - 55,
     letters: 'Hello World'
   });
 

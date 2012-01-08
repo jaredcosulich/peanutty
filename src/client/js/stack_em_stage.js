@@ -4,7 +4,7 @@
 
   Peanutty.loadEnvironment();
 
-  window.setUpChallenge = function(scale) {
+  view.setUpChallenge = function(scale) {
     if (scale == null) scale = 30;
     peanutty.destroyWorld();
     peanutty.setScale(scale);
@@ -15,37 +15,37 @@
       radius: 16 * scale / 30
     });
     peanutty.createGround({
-      x: (peanutty.canvas.width() * (30 / scale)) / 2,
-      y: (peanutty.canvas.height() * (30 / scale)) - 50,
+      x: peanutty.world.dimensions.width / 2,
+      y: peanutty.world.dimensions.height - 50,
       width: 600,
       height: 10
     });
     peanutty.createBall({
-      x: (peanutty.canvas.width() * (30 / scale)) / 2,
-      y: (peanutty.canvas.height() * (30 / scale)) - 75,
+      x: peanutty.world.dimensions.width / 2,
+      y: peanutty.world.dimensions.height - 75,
       radius: 20
     });
     peanutty.createBox({
-      x: (peanutty.canvas.width() * (30 / scale)) / 2,
-      y: (peanutty.canvas.height() * (30 / scale)) - 100,
+      x: peanutty.world.dimensions.width / 2,
+      y: peanutty.world.dimensions.height - 100,
       width: 150,
       height: 5
     });
     peanutty.createBox({
-      x: (peanutty.canvas.width() * (30 / scale)) / 2,
-      y: (peanutty.canvas.height() * (30 / scale)) - 140,
+      x: peanutty.world.dimensions.width / 2,
+      y: peanutty.world.dimensions.height - 140,
       width: 20,
       height: 20
     });
     return peanutty.createBox({
-      x: (peanutty.canvas.width() * (30 / scale)) / 2,
-      y: (peanutty.canvas.height() * (30 / scale)) - 200,
+      x: peanutty.world.dimensions.width / 2,
+      y: peanutty.world.dimensions.height - 200,
       width: 20,
       height: 20
     });
   };
 
-  setUpChallenge();
+  view.setUpChallenge();
 
   instructions = $(document.createElement("DIV"));
 
@@ -89,7 +89,7 @@
   _fn = function(level) {
     return view.$("#level_" + level).bind('click', function() {
       return peanutty.addToScript({
-        command: "setUpChallenge(" + level + ")",
+        command: "view.setUpChallenge(" + level + ")",
         time: 0
       });
     });

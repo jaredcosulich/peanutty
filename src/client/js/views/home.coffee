@@ -20,6 +20,10 @@
                 gravity or new b2d.Common.Math.b2Vec2(0, 10),
                 true
             )      
+            
+            @evaluateDimensions()
+            @canvas.bind 'resize', @evaluateDimensions
+            
             @initDraw()
             @initContactListeners()
             
@@ -60,7 +64,7 @@
             
         addContactListener: (listener, type='begin') =>
             @["#{type}ContactListeners"].push(listener)
-            
+                        
         destroyWorld: () =>
             body = @world.m_bodyList
             while body?
@@ -91,6 +95,12 @@
         setScale: (scale) =>
             @scale = scale
             @debugDraw.SetDrawScale(@scale)
+            @evaluateDimensions()
+            
+        evaluateDimensions: () =>
+            @world.dimensions = 
+                width: @canvas.width() * (30/@scale)
+                height: @canvas.height() * (30/@scale)
             
         addToScript: ({command, time}) =>  
             CoffeeScript.run(command)
@@ -485,7 +495,7 @@
         loadNewStage: (stageName) =>
             $.ajax
                 method: 'GET'
-                url: "#{'src/client/' if window.STATIC_SERVER}templates/#{stageName}_stage.coffee?#{Math.random()}"
+                url: "#{if window.STATIC_SERVER then 'src/client/' else ''}templates/#{stageName}_stage.coffee?#{Math.random()}"
                 type: 'html'
 
                 success: (text) =>
@@ -505,13 +515,13 @@
             codeWidth = fullWidth * 0.3
             codeWidth = 390 if codeWidth < 390
             codeWidth = 450 if codeWidth > 450
-            $('#execute').width(codeWidth)
+            $('#code_buttons').width(codeWidth)
             $('#console').width(codeWidth)
             $('#codes .code').width(codeWidth)
             
             remainingWidth = fullWidth - codeWidth - 90
-            $('#message').width(remainingWidth - (parseInt($('#message').css('paddingLeft')) * 2))
             $('#canvas')[0].width = remainingWidth
+            peanutty.evaluateDimensions() if peanutty?
     
     $.route.add
         '.*': () ->

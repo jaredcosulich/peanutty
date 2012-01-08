@@ -46,6 +46,7 @@
         this.sendCodeMessage = __bind(this.sendCodeMessage, this);
         this.bodies = __bind(this.bodies, this);
         this.addToScript = __bind(this.addToScript, this);
+        this.evaluateDimensions = __bind(this.evaluateDimensions, this);
         this.setScale = __bind(this.setScale, this);
         this.initDraw = __bind(this.initDraw, this);
         this.destroyDynamicObjects = __bind(this.destroyDynamicObjects, this);
@@ -57,6 +58,8 @@
         this.scale || (this.scale = 30);
         this.defaultScale = 30;
         this.world = new b2d.Dynamics.b2World(gravity || new b2d.Common.Math.b2Vec2(0, 10), true);
+        this.evaluateDimensions();
+        this.canvas.bind('resize', this.evaluateDimensions);
         this.initDraw();
         this.initContactListeners();
       }
@@ -154,7 +157,15 @@
 
       Peanutty.prototype.setScale = function(scale) {
         this.scale = scale;
-        return this.debugDraw.SetDrawScale(this.scale);
+        this.debugDraw.SetDrawScale(this.scale);
+        return this.evaluateDimensions();
+      };
+
+      Peanutty.prototype.evaluateDimensions = function() {
+        return this.world.dimensions = {
+          width: this.canvas.width() * (30 / this.scale),
+          height: this.canvas.height() * (30 / this.scale)
+        };
       };
 
       Peanutty.prototype.addToScript = function(_arg) {
@@ -713,7 +724,7 @@
         var _this = this;
         return $.ajax({
           method: 'GET',
-          url: "" + (window.STATIC_SERVER ? 'src/client/' : void 0) + "templates/" + stageName + "_stage.coffee?" + (Math.random()),
+          url: "" + (window.STATIC_SERVER ? 'src/client/' : '') + "templates/" + stageName + "_stage.coffee?" + (Math.random()),
           type: 'html',
           success: function(text) {
             _this.templates.stage.html(text);
@@ -735,12 +746,14 @@
         codeWidth = fullWidth * 0.3;
         if (codeWidth < 390) codeWidth = 390;
         if (codeWidth > 450) codeWidth = 450;
-        $('#execute').width(codeWidth);
+        $('#code_buttons').width(codeWidth);
         $('#console').width(codeWidth);
         $('#codes .code').width(codeWidth);
         remainingWidth = fullWidth - codeWidth - 90;
-        $('#message').width(remainingWidth - (parseInt($('#message').css('paddingLeft')) * 2));
-        return $('#canvas')[0].width = remainingWidth;
+        $('#canvas')[0].width = remainingWidth;
+        if (typeof peanutty !== "undefined" && peanutty !== null) {
+          return peanutty.evaluateDimensions();
+        }
       };
 
       return Home;
