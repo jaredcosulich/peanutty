@@ -119,19 +119,6 @@ task 'build:server-test', 'Build the server tests', ->
         throw err if err
 
 
-task 'build:static', 'Compile all the client-side static files', ->
-    target = 'build/static'
-    cmds = [
-        "mkdir -p #{target}"
-        "cake build:client",
-        'python -m external/snowpack',
-    ]
-
-    exec cmds.join(' && '), (err, stdout, stderr) ->
-        console.log(stdout + stderr) if (stdout or stderr)
-        throw err if err
-
-
 task 'build:server', 'Compile server .coffee files to .js', ->
     source = 'src/server'
     target = 'build/server'
@@ -248,11 +235,6 @@ buildClientHTML = (source, target, callback) ->
         'init.js',
         'util.js',
     ])
-    
-    # templates = ({
-    #         src: "templates/#{name}",
-    #         text: fs.readFileSync("#{source}/templates/#{name}")
-    #     } for name in fs.readdirSync("#{source}/templates") when name != 'base.html' and /\.html$/.test(name))
 
     base = wings.renderTemplate(fs.readFileSync("#{source}/templates/base.html", 'utf-8'), {
             favicon: "favicon.png",
@@ -267,6 +249,7 @@ buildClientHTML = (source, target, callback) ->
     cmds = [
         "ln -sf ../../#{source}/templates #{target}/",
         "ln -sf ../../#{source}/favicon.png #{target}/",
+        "ln -sf ../../#{source}/images #{target}/"
     ]
 
     exec cmds.join(' && '), (err, stdout, stderr) ->

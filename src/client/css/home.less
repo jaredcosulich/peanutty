@@ -1,5 +1,5 @@
 body {
-    padding: 50px 3px 300px 3px;
+    padding: 0 3px 300px 3px;
 }
 
 a {
@@ -23,6 +23,12 @@ a {
     }
     div, p {
         .no-user-select    
+    }
+    .signature {
+        position: absolute;
+        font-size: 11px;
+        bottom: 5px;
+        right: 5px;
     }
 }
 
@@ -125,4 +131,23 @@ a {
 section {
     clear: both;
     padding: 50px 45px;
+    
+    &#home {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    &#stages {
+        overflow: hidden;
+        a {
+            display: block;
+            float: left;
+            text-align: center;
+            margin-right: 12px;
+            image {
+                width: 180px;
+                height: 150px;
+            }
+        }
+    }
 }

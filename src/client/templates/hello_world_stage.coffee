@@ -32,8 +32,11 @@ view.nameInput.css
     top: '50px'
     left: "#{(peanutty.canvas.width() / 2) - 180}px"
     
+view.stageLetters = '';
 view.nameInput.bind 'keyup', (e) ->
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '')
+    return if letters == view.stageLetters
+    view.stageLetters = letters
     view.loadScript()
     if view.destroyInstructions?
         view.destroyInstructions.remove()
@@ -91,7 +94,6 @@ view.nameInput[0].focus()
 
 
 # Add an explanation of how to run the code if you change it.
-
 view.codeChangeMessageShown or= false
 view.$('#codes .code').bind 'keypress', () =>
     return if view.codeChangeMessageShown
@@ -99,9 +101,10 @@ view.$('#codes .code').bind 'keypress', () =>
     peanutty.sendCodeMessage
         message:
             """
-            You've changed your script.
+            You've changed the code.
             To see your changes you'll need to rerun your script by clicking "Run Script" above.
             """    
+
 
 # Letter definitions added to Peanutty
 Peanutty::createLetters = ({x, y, letters}) ->
@@ -497,3 +500,4 @@ peanutty.createLetters
     y: 55
     letters: 'Hello World'
 
+peanutty.sign('@jaredcosulich', 'jaredcosulich')

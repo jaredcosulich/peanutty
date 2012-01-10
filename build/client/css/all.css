@@ -2467,7 +2467,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
 body {
-  padding: 50px 3px 300px 3px;
+  padding: 0 3px 300px 3px;
 }
 a {
   cursor: pointer;
@@ -2499,6 +2499,12 @@ a {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+#canvas_container .signature {
+  position: absolute;
+  font-size: 11px;
+  bottom: 5px;
+  right: 5px;
 }
 #tools {
   width: 45px;
@@ -2604,4 +2610,21 @@ a {
 section {
   clear: both;
   padding: 50px 45px;
+}
+section#home {
+  padding-left: 0;
+  padding-right: 0;
+}
+section#stages {
+  overflow: hidden;
+}
+section#stages a {
+  display: block;
+  float: left;
+  text-align: center;
+  margin-right: 12px;
+}
+section#stages a image {
+  width: 180px;
+  height: 150px;
 }

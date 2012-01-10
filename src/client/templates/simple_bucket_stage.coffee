@@ -76,7 +76,10 @@ peanutty.addContactListener
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
                 <br/><br/><br/><br/><br/>
-                <p>More puzzles coming soon...</p>
+                <p>More stages coming soon...</p>
+                <p>
+                    ... or <a href='#create'>create your own stage!<a> 
+                </p>
                 """
             )
             view.$('#canvas_container').append(success)
@@ -150,4 +153,6 @@ view.$('#reset_stage').bind 'click', () =>
     view.$('#cannon_force').val(forceVal)
     view.$('#reset_stage').hide()
     view.$('#fire_cannon').show()
+    
+peanutty.sign('@jaredcosulich', 'jaredcosulich')
     

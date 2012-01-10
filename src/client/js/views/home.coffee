@@ -415,6 +415,18 @@
             @context.stroke()
             return    
             
+        sign: (name, twitterHandle='') =>
+            signature = $(document.createElement("DIV"))
+            signature.addClass('stage_element')
+            signature.addClass('signature')
+            signature.html('This stage created by: ')
+            signatureLink = $(document.createElement("A"))
+            signatureLink.html(name)
+            signatureLink.attr('href', "http://twitter.com/##{twitterHandle}")
+            signatureLink.attr('target', '_blank')
+            signature.append(signatureLink)
+            $(@canvas[0].parentNode).append(signature)     
+            
         draw: () =>
             return unless @world.m_debugDraw?
             @world.m_debugDraw.m_sprite.graphics.clear()
@@ -534,12 +546,14 @@
             
     class views.Home extends views.BaseView
         prepare: () ->
+            @data.stage or= 'hello_world'
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
                 script: @_requireTemplate('templates/basic_script.coffee'),
-                stage: @_requireTemplate(if @data.stage? then "templates/#{@data.stage}_stage.coffee" else 'templates/hello_world_stage.coffee'),
+                stage: @_requireTemplate("templates/#{@data.stage}_stage.coffee"),
                 environment: @_requireTemplate('templates/basic_environment.coffee')
             }
+            $.route.navigate("stage/#{@data.stage}", false)
     
         renderView: () ->
             if navigator.userAgent.indexOf("Chrome") == -1
@@ -557,12 +571,6 @@
                 @$("#codes .#{tabName}").addClass('selected')
                 @["#{tabName}Editor"].getSession().setValue(@["#{tabName}Editor"].getSession().getValue())
                 
-            $('.topbar a').bind 'click', (e) -> 
-                currentRoute = window.location.hash.replace('#', '')
-                $.route.navigate(@.href.replace(/.*#/, ''), false)
-                if currentRoute.indexOf('stage/') > -1
-                    $.timeout 5, () => $.route.navigate(currentRoute, false)
-   
             @$('#code_buttons .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
                 @$('.stage_element').remove()
@@ -606,7 +614,7 @@
                 beforeLeave(@environmentEditor.getSession().getValue() != @code(@templates.environment))
 
             @loadCode()                
-            Peanutty.runScript()
+            Peanutty.runScript()            
             
 
         loadCode: () =>
@@ -628,6 +636,7 @@
                 type: 'html'
 
                 success: (text) =>
+                    @data.stage = stageName
                     @templates.stage.html(text)
                     peanutty.destroyWorld()
                     @$('.stage_element').remove()
@@ -657,13 +666,31 @@
             @$('.stage_element').remove()
             @loadCode()
             Peanutty.runScript()
-            
-    
+ 
+    INTERNAL_ROUTES = [
+        'home',
+        'stages',
+        'create',
+        'coding',
+        'about',
+        'docs'
+    ]
+    _hash = ''
+    reallyRunRoutes = $.route.run
+    $.route.run = (hash) =>
+        if hash in INTERNAL_ROUTES 
+            $.route.navigate(hash, false)
+            $.timeout 1, () -> $.route.navigate(_hash, false)
+        else
+            _hash = hash
+            reallyRunRoutes(hash)
+        return
+       
     $.route.add
         '': () ->
             $('#content').view
                 name: 'Home'
-                data: {}  
+                data: {} 
         'stage/:name': (name) ->
             $('#content').view
                 name: 'Home'

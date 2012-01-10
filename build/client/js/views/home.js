@@ -1,8 +1,8 @@
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   (function($) {
-    var Peanutty, b2d, views;
+    var INTERNAL_ROUTES, Peanutty, b2d, reallyRunRoutes, views, _hash;
     var _this = this;
     views = require('views');
     b2d = require('coffeebox2d');
@@ -38,6 +38,7 @@
         var gravity;
         this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.stageEditor = _arg.stageEditor, this.environmentEditor = _arg.environmentEditor, this.scale = _arg.scale, gravity = _arg.gravity;
         this.draw = __bind(this.draw, this);
+        this.sign = __bind(this.sign, this);
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -621,6 +622,21 @@
         this.context.stroke();
       };
 
+      Peanutty.prototype.sign = function(name, twitterHandle) {
+        var signature, signatureLink;
+        if (twitterHandle == null) twitterHandle = '';
+        signature = $(document.createElement("DIV"));
+        signature.addClass('stage_element');
+        signature.addClass('signature');
+        signature.html('This stage created by: ');
+        signatureLink = $(document.createElement("A"));
+        signatureLink.html(name);
+        signatureLink.attr('href', "http://twitter.com/#" + twitterHandle);
+        signatureLink.attr('target', '_blank');
+        signature.append(signatureLink);
+        return $(this.canvas[0].parentNode).append(signature);
+      };
+
       Peanutty.prototype.draw = function() {
         var aabb, b, b1, b2, bp, c, cA, cB, color, contact, f, fixtureA, fixtureB, flags, i, invQ, j, s, vs, x1, x2, xf, _results;
         if (this.world.m_debugDraw == null) return;
@@ -778,12 +794,15 @@
       }
 
       Home.prototype.prepare = function() {
-        return this.templates = {
+        var _base;
+        (_base = this.data).stage || (_base.stage = 'hello_world');
+        this.templates = {
           main: this._requireTemplate('templates/home.html'),
           script: this._requireTemplate('templates/basic_script.coffee'),
-          stage: this._requireTemplate(this.data.stage != null ? "templates/" + this.data.stage + "_stage.coffee" : 'templates/hello_world_stage.coffee'),
+          stage: this._requireTemplate("templates/" + this.data.stage + "_stage.coffee"),
           environment: this._requireTemplate('templates/basic_environment.coffee')
         };
+        return $.route.navigate("stage/" + this.data.stage, false);
       };
 
       Home.prototype.renderView = function() {
@@ -803,17 +822,6 @@
           tabName = tab[0].className.replace('tab', '').replace('active', '').replace(/\s/ig, '');
           _this.$("#codes ." + tabName).addClass('selected');
           return _this["" + tabName + "Editor"].getSession().setValue(_this["" + tabName + "Editor"].getSession().getValue());
-        });
-        $('.topbar a').bind('click', function(e) {
-          var currentRoute;
-          var _this = this;
-          currentRoute = window.location.hash.replace('#', '');
-          $.route.navigate(this.href.replace(/.*#/, ''), false);
-          if (currentRoute.indexOf('stage/') > -1) {
-            return $.timeout(5, function() {
-              return $.route.navigate(currentRoute, false);
-            });
-          }
         });
         this.$('#code_buttons .run_script').bind('click', function(e) {
           peanutty.destroyWorld();
@@ -892,6 +900,7 @@
           url: "" + (window.STATIC_SERVER ? 'src/client/' : '') + "templates/" + stageName + "_stage.coffee?" + (Math.random()),
           type: 'html',
           success: function(text) {
+            _this.data.stage = stageName;
             _this.templates.stage.html(text);
             peanutty.destroyWorld();
             _this.$('.stage_element').remove();
@@ -931,6 +940,20 @@
       return Home;
 
     })();
+    INTERNAL_ROUTES = ['home', 'stages', 'create', 'coding', 'about', 'docs'];
+    _hash = '';
+    reallyRunRoutes = $.route.run;
+    $.route.run = function(hash) {
+      if (__indexOf.call(INTERNAL_ROUTES, hash) >= 0) {
+        $.route.navigate(hash, false);
+        $.timeout(1, function() {
+          return $.route.navigate(_hash, false);
+        });
+      } else {
+        _hash = hash;
+        reallyRunRoutes(hash);
+      }
+    };
     return $.route.add({
       '': function() {
         return $('#content').view({

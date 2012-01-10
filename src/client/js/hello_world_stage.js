@@ -42,10 +42,14 @@
     left: "" + ((peanutty.canvas.width() / 2) - 180) + "px"
   });
 
+  view.stageLetters = '';
+
   view.nameInput.bind('keyup', function(e) {
     var alreadyCollided, body, letters;
     var _this = this;
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '');
+    if (letters === view.stageLetters) return;
+    view.stageLetters = letters;
     view.loadScript();
     if (view.destroyInstructions != null) {
       view.destroyInstructions.remove();
@@ -131,7 +135,7 @@
     if (view.codeChangeMessageShown) return;
     view.codeChangeMessageShown = true;
     return peanutty.sendCodeMessage({
-      message: "You've changed your script.\nTo see your changes you'll need to rerun your script by clicking \"Run Script\" above."
+      message: "You've changed the code.\nTo see your changes you'll need to rerun your script by clicking \"Run Script\" above."
     });
   });
 
@@ -2301,5 +2305,7 @@
     y: 55,
     letters: 'Hello World'
   });
+
+  peanutty.sign('@jaredcosulich', 'jaredcosulich');
 
 }).call(this);

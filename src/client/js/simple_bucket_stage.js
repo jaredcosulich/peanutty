@@ -122,7 +122,7 @@
           top: '276px',
           left: '390px'
         });
-        success.html("<h4>Success! Nice Job!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<br/><br/><br/><br/><br/>\n<p>More puzzles coming soon...</p>");
+        success.html("<h4>Success! Nice Job!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<br/><br/><br/><br/><br/>\n<p>More stages coming soon...</p>\n<p>\n    ... or <a href='#create'>create your own stage!<a> \n</p>");
         return view.$('#canvas_container').append(success);
       }
     }
@@ -179,5 +179,7 @@
     view.$('#reset_stage').hide();
     return view.$('#fire_cannon').show();
   });
+
+  peanutty.sign('@jaredcosulich', 'jaredcosulich');
 
 }).call(this);
