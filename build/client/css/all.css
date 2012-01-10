@@ -2619,6 +2619,10 @@ section#home {
   padding-left: 0;
   padding-right: 0;
 }
+section#home .page-header {
+  margin-left: 45px;
+  margin-right: 45px;
+}
 section#stages {
   overflow: hidden;
 }
