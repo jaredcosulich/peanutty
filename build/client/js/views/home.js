@@ -781,7 +781,7 @@
         return this.templates = {
           main: this._requireTemplate('templates/home.html'),
           script: this._requireTemplate('templates/basic_script.coffee'),
-          stage: this._requireTemplate('templates/hello_world_stage.coffee'),
+          stage: this._requireTemplate(this.data.stage != null ? "templates/" + this.data.stage + "_stage.coffee" : 'templates/hello_world_stage.coffee'),
           environment: this._requireTemplate('templates/basic_environment.coffee')
         };
       };
@@ -860,7 +860,6 @@
           return beforeLeave(_this.environmentEditor.getSession().getValue() !== _this.code(_this.templates.environment));
         });
         this.loadCode();
-        if (this.data.stage != null) this.loadNewStage(this.data.stage);
         return Peanutty.runScript();
       };
 

@@ -537,7 +537,7 @@
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
                 script: @_requireTemplate('templates/basic_script.coffee'),
-                stage: @_requireTemplate('templates/hello_world_stage.coffee'),
+                stage: @_requireTemplate(if @data.stage? then "templates/#{@data.stage}_stage.coffee" else 'templates/hello_world_stage.coffee'),
                 environment: @_requireTemplate('templates/basic_environment.coffee')
             }
     
@@ -605,10 +605,7 @@
             @environmentEditor.getSession().on 'change', () =>
                 beforeLeave(@environmentEditor.getSession().getValue() != @code(@templates.environment))
 
-            @loadCode()                                    
-            @loadNewStage(@data.stage) if @data.stage?
-
-
+            @loadCode()                
             Peanutty.runScript()
             
 
