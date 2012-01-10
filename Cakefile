@@ -23,7 +23,9 @@ task 'build:index', 'Build the static index page', ->
         "#{target}/js/util.js"
     ]) 
 
-    stylesheets = ("#{style}?#{new Date().getTime()}" for style in ["#{target}/css/all.css"])
+    stylesheets = ("#{style}?#{new Date().getTime()}" for style in [
+        "#{target}/css/all.css"
+    ])
     
     base = wings.renderTemplate(fs.readFileSync("index_template.html", 'utf-8'), {
         scripts: scripts

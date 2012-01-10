@@ -2611,6 +2611,10 @@ section {
   clear: both;
   padding: 50px 45px;
 }
+section .back_to_top {
+  float: right;
+  margin-top: 18px;
+}
 section#home {
   padding-left: 0;
   padding-right: 0;
@@ -2618,13 +2622,13 @@ section#home {
 section#stages {
   overflow: hidden;
 }
-section#stages a {
+section#stages .load_stage {
   display: block;
   float: left;
   text-align: center;
   margin-right: 12px;
 }
-section#stages a image {
+section#stages .load_stage image {
   width: 180px;
   height: 150px;
 }
