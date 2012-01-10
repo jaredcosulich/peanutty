@@ -80,40 +80,44 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         body = _ref[_i];
-        if (body.m_I > 0) _results.push(body);
+        if (body.GetType() === b2d.Dynamics.b2Body.b2_dynamicBody) {
+          _results.push(body);
+        }
       }
       return _results;
     })();
     alreadyCollided = [];
-    return peanutty.addContactListener(function(contact) {
-      var body, contactedBodies, index, _len, _ref, _results;
-      contactedBodies = [contact.m_fixtureA.m_body, contact.m_fixtureB.m_body];
-      _results = [];
-      for (index = 0, _len = contactedBodies.length; index < _len; index++) {
-        body = contactedBodies[index];
-        if (body.m_I === 0) continue;
-        if (__indexOf.call(letters, body) >= 0 || __indexOf.call(alreadyCollided, body) >= 0) {
-          continue;
+    return peanutty.addContactListener({
+      listener: function(contact) {
+        var body, contactedBodies, index, _len, _ref, _results;
+        contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()];
+        _results = [];
+        for (index = 0, _len = contactedBodies.length; index < _len; index++) {
+          body = contactedBodies[index];
+          if (body.m_I === 0) continue;
+          if (__indexOf.call(letters, body) >= 0 || __indexOf.call(alreadyCollided, body) >= 0) {
+            continue;
+          }
+          if (_ref = contactedBodies[1 - index], __indexOf.call(letters, _ref) < 0) {
+            continue;
+          }
+          alreadyCollided.push(body);
+          if (!(alreadyCollided.length > 2)) {
+            view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ");
+          }
+          if (alreadyCollided.length === 2) {
+            view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>");
+            _results.push($.timeout(10, function() {
+              return view.$('#next_stage').bind('click', function() {
+                return view.loadNewStage('simple_bucket');
+              });
+            }));
+          } else {
+            _results.push(void 0);
+          }
         }
-        if (_ref = contactedBodies[1 - index], __indexOf.call(letters, _ref) < 0) {
-          continue;
-        }
-        alreadyCollided.push(body);
-        if (!(alreadyCollided.length > 2)) {
-          view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ");
-        }
-        if (alreadyCollided.length === 2) {
-          view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>");
-          _results.push($.timeout(10, function() {
-            return view.$('#next_stage').bind('click', function() {
-              return view.loadNewStage('stack_em');
-            });
-          }));
-        } else {
-          _results.push(void 0);
-        }
+        return _results;
       }
-      return _results;
     });
   });
 
@@ -121,7 +125,7 @@
 
   view.nameInput[0].focus();
 
-  view.codeChangeMessageShown = false;
+  view.codeChangeMessageShown || (view.codeChangeMessageShown = false);
 
   view.$('#codes .code').bind('keypress', function() {
     if (view.codeChangeMessageShown) return;

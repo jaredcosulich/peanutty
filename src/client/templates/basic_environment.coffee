@@ -26,14 +26,14 @@ unbindMouseEvents = (canvas) =>
 initiateFree = (canvas) =>
     unbindMouseEvents(canvas)
     canvas.bind 'click', (e) => 
-        x = e.offsetX * (peanutty.defaultScale/peanutty.scale)
-        y = (peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale/peanutty.scale)
+        x = e.offsetX
+        y = (peanutty.canvas.height() - e.offsetY)
         
         firstPoint = if peanutty.currentShape? then peanutty.currentShape.path[0] else null
-        if firstPoint? && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.world.dimensions.height - firstPoint.y) - y) < 10
+        if firstPoint? && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.canvas.height() - firstPoint.y) - y) < 10
             peanutty.endFreeformShape
                 static: static
-                time: getTimeDiff()
+                time: view.getTimeDiff()
             return
             
         peanutty.addToFreeformShape(x: x, y: y) 
@@ -42,8 +42,8 @@ initiateFree = (canvas) =>
                                
     canvas.bind 'mousemove', (e) =>
         peanutty.addTempToFreeformShape
-            x: e.offsetX * (peanutty.defaultScale/peanutty.scale)
-            y: e.offsetY * (peanutty.defaultScale/peanutty.scale)
+            x: e.offsetX
+            y: e.offsetY
         return
 
 initiateBox = (canvas) =>
@@ -53,13 +53,13 @@ initiateBox = (canvas) =>
             command:
                 """
                 peanutty.createBox
-                    x: #{e.offsetX * (peanutty.defaultScale/peanutty.scale)}
-                    y: #{(peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale/peanutty.scale)}
+                    x: #{e.offsetX * (peanutty.defaultScale / peanutty.scale)}
+                    y: #{(peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale)))}
                     width: 20
                     height: 20
                     static: #{static}
                 """
-            time: getTimeDiff()
+            time: view.getTimeDiff()
 
 initiateBall = (canvas) =>
     unbindMouseEvents(canvas)
@@ -68,14 +68,14 @@ initiateBall = (canvas) =>
             command: 
                 """
                 peanutty.createBall
-                    x: #{e.offsetX * (peanutty.defaultScale/peanutty.scale)}
-                    y: #{(peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale/peanutty.scale)}
+                    x: #{e.offsetX * (peanutty.defaultScale / peanutty.scale)}
+                    y: #{(peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale)))}
                     radius: 20
                     static: #{static}
                 """
-            time: getTimeDiff()
+            time: view.getTimeDiff()
     
-getTimeDiff = () =>
+view.getTimeDiff = () =>
     timeDiff = if view.time? then new Date() - view.time else 0
     view.time = new Date() 
     return timeDiff

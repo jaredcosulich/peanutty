@@ -8,8 +8,19 @@
       
     CoffeeScript.run = (code, options = {}) ->
         options.bare = on
-        Function(CoffeeScript.compile code, options)()  
-        
+        Function(CoffeeScript.compile code, options)()
+  
+    b2d.Dynamics.b2Fixture::Create2 = b2d.Dynamics.b2Fixture::Create
+    b2d.Dynamics.b2Fixture::Create = (body, xf, def) ->
+        @drawData = def.drawData
+        @Create2(body, xf, def)
+          
+    b2d.Dynamics.b2Fixture::GetDrawData = () -> 
+        @drawData || {}
+    b2d.Dynamics.b2Fixture::SetDrawData = (drawData) -> 
+        @drawData or= {}
+        @drawData[attr] = drawData[attr] for attr of drawData
+       
     class Peanutty
         constructor: ({@canvas, @scriptEditor, @stageEditor, @environmentEditor, @scale, gravity}) ->
             @context = @canvas[0].getContext("2d")
@@ -44,7 +55,8 @@
                       10       #position iterations
                 )
 
-                @world.DrawDebugData()
+                @draw()
+                # @world.DrawDebugData()
                 @world.ClearForces()
                 requestAnimFrame(update)
                 @redrawCurrentShape()
@@ -62,7 +74,8 @@
             
             @world.m_contactManager.m_contactListener = new PeanuttyContactListener
             
-        addContactListener: (listener, type='begin') =>
+        addContactListener: ({listener, type}) =>
+            type or= 'begin'
             @["#{type}ContactListeners"].push(listener)
                         
         destroyWorld: () =>
@@ -120,11 +133,16 @@
                 
         bodies: () =>
             allBodies = []
-            body = @world.m_bodyList
+            body = @world.GetBodyList()
             while body?
                 allBodies.push(body)
-                body = body.m_next
+                body = body.GetNext()
             return allBodies
+            
+        searchObjectList: (object, searchFunction) =>
+            while object?
+                return object if searchFunction(object)
+                object = object.GetNext()
         
         sendCodeMessage: ({message}) =>
             unless @codeMessage?
@@ -151,20 +169,16 @@
             @codeMessage.addClass('expanded')
                 
         createGround: (options={}) =>
-            fixDef = fixDef = @createFixture()
+            fixDef = fixDef = @createFixtureDef()
+            fixDef.drawData = options.drawData
+            fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
+            fixDef.shape.SetAsBox((options.width / @defaultScale) / 2, (options.height / @defaultScale) / 2)
+
             bodyDef = new b2d.Dynamics.b2BodyDef
-
-            #create ground
             bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody
-
-            # positions the center of the object (not upper left!)
             bodyDef.position.x = options.x / @defaultScale
             bodyDef.position.y = (@world.dimensions.height - options.y) / @defaultScale
 
-            fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
-
-            # half width, half height. eg actual height here is 1 unit
-            fixDef.shape.SetAsBox((options.width / @defaultScale) / 2, (options.height / @defaultScale) / 2)
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
 
         createBox: (options={}) =>
@@ -176,15 +190,17 @@
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
             
-            fixDef = @createFixture(options)
-            fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
-            
+            fixDef = @createFixtureDef(options)
+            fixDef.drawData = options.drawData
+            fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape            
             fixDef.shape.SetAsBox(((options.width)/@defaultScale), ((options.height)/@defaultScale))
+
             bodyDef.position.x = (options.x/@defaultScale)
             bodyDef.position.y = ((@world.dimensions.height - options.y)/@defaultScale)
             
-            @world.CreateBody(bodyDef).CreateFixture(fixDef)
-
+            body = @world.CreateBody(bodyDef)
+            body.CreateFixture(fixDef)
+            return body
 
         createBall: (options={}) =>
             options.x or= 0
@@ -194,17 +210,23 @@
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
 
-            fixDef = @createFixture(options)
+            fixDef = @createFixtureDef(options)
+            fixDef.drawData = options.drawData
             fixDef.shape = new b2d.Collision.Shapes.b2CircleShape
-
             fixDef.shape.SetRadius(options.radius/@defaultScale)
+            
             bodyDef.position.x = (options.x/@defaultScale)
             bodyDef.position.y = ((@world.dimensions.height - options.y)/@defaultScale)
-
-            @world.CreateBody(bodyDef).CreateFixture(fixDef)
+            bodyDef.userData = options.userData
             
-        polyFixtureDef: ({path}) =>
-            fixDef = @createFixture(_arg)
+            body = @world.CreateBody(bodyDef)
+            body.CreateFixture(fixDef)
+            return body
+            
+        polyFixtureDef: ({path, userData, drawData}) =>
+            fixDef = @createFixtureDef(_arg)
+            fixDef.userData = userData
+            fixDef.drawData = drawData
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
             
             path = path.reverse() if @counterClockWise(path)
@@ -218,8 +240,8 @@
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
             return fixDef
                 
-        createPoly: ({fixtureDefs, static, path}) =>
-            fixtureDefs = [@polyFixtureDef(path: path)] if path?
+        createPoly: ({fixtureDefs, static, path, drawData}) =>
+            fixtureDefs = [@polyFixtureDef(path: path, drawData: drawData)] if path?
             
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body[if static then "b2_staticBody" else "b2_dynamicBody"]
@@ -229,6 +251,8 @@
             
             bodyDef.position.x = body.GetWorldCenter().x
             bodyDef.position.y = body.GetWorldCenter().y
+            
+            return body
             
         counterClockWise: (path) =>
             rotation = []
@@ -253,7 +277,7 @@
                 dir = (if dir == 2 then 3 else 4) 
             return dir
 
-        createFixture: (options={}) =>
+        createFixtureDef: (options={}) =>
             fixDef = new b2d.Dynamics.b2FixtureDef
             fixDef.density = options.density || 1.0
             fixDef.friction = options.friction || 0.5
@@ -261,7 +285,7 @@
             return fixDef
                     
         createRandomObjects: () =>
-            fixDef = @createFixture()
+            fixDef = @createFixtureDef()
             bodyDef = new b2d.Dynamics.b2BodyDef
             
             #create some objects
@@ -343,7 +367,7 @@
             @context.stroke()
 
         initFreeformShape: ({x, y}) =>
-            @currentShape = {start: {x:x, y:(@world.dimensions.height - y)}, path: [{x:x, y:(@world.dimensions.height - y)}]}
+            @currentShape = {start: {x:x, y:(@canvas.height() - y)}, path: [{x:x, y:(@canvas.height() - y)}]}
             @startFreeformShape(_arg)
 
         startFreeformShape: ({x, y}) =>
@@ -360,11 +384,13 @@
         continueFreeformShape: ({x, y}) =>
             return unless @currentShape?
             @tempPoint = null
-            @currentShape.path.push({x: x, y: (@world.dimensions.height - y)})
+            @currentShape.path.push({x: x, y: (@canvas.height() - y)})
             return
 
         endFreeformShape: (options={}) =>
-            path = ("{x: #{point.x}, y: #{@world.dimensions.height - point.y}}" for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10))
+            path = for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10)
+                "{x: #{point.x * (@defaultScale / @scale)}, y: #{(@canvas.height() - point.y) * (@defaultScale / @scale)}}"
+    
             @addToScript
                 command:
                     """
@@ -388,7 +414,93 @@
             @context.fill()
             @context.stroke()
             return    
+            
+        draw: () =>
+            return unless @world.m_debugDraw?
+            @world.m_debugDraw.m_sprite.graphics.clear()
+            flags = @world.m_debugDraw.GetFlags()
+            i = 0;
+            invQ = new b2d.b2Vec2
+            x1 = new b2d.b2Vec2
+            x2 = new b2d.b2Vec2
+            b1 = new b2d.b2AABB()
+            b2 = new b2d.b2AABB()
+            vs = [new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2()]
+            color = new b2d.Common.b2Color(0, 0, 0)
+            if flags & b2d.Dynamics.b2DebugDraw.e_shapeBit
+                b = @world.GetBodyList()
+                while b?                    
+                    xf = b.m_xf
+                    f = b.GetFixtureList()
+                    while f?
+                        s = f.GetShape()
+                        if (c = f.GetDrawData().color)?
+                            color._r = c._r
+                            color._b = c._b
+                            color._g = c._g
+                        else if b.IsActive() == false
+                            color.Set(0.5, 0.5, 0.3)
+                        else if b.GetType() == b2d.Dynamics.b2Body.b2_staticBody
+                            color.Set(0.5, 0.9, 0.5)
+                        else if b.GetType() == b2d.Dynamics.b2Body.b2_kinematicBody
+                            color.Set(0.5, 0.5, 0.9)
+                        else if (b.IsAwake() == false)
+                            color.Set(0.6, 0.6, 0.6)
+                        else 
+                            color.Set(0.9, 0.7, 0.7)
+                        @debugDraw.SetFillAlpha(f.GetDrawData().alpha or 0.3)
+                        @world.DrawShape(s, xf, color)
+                        f = f.GetNext()
+                    b = b.GetNext()
+            
+            if flags & b2d.Dynamics.b2DebugDraw.e_jointBit
+                j = @world.GetJointList()
+                while j?
+                    @world.DrawJoint(j)
+                    j.GetNext()
+           
+            if flags & b2d.Dynamics.b2DebugDraw.e_controllerBit
+                c = @world.m_controllerList
+                while c?
+                    c.Draw(@m_debugDraw)
+                    c.GetNext()
+           
+            if flags & b2d.Dynamics.b2DebugDraw.e_pairBit
+                color.Set(0.3, 0.9, 0.9) 
+                contact = @m_contactManager.m_contactList
+                while contact?
+                    fixtureA = contact.GetFixtureA()
+                    fixtureB = contact.GetFixtureB()
+                    cA = fixtureA.GetAABB().GetCenter()
+                    cB = fixtureB.GetAABB().GetCenter()
+                    @world.m_debugDraw.DrawSegment(cA, cB, color)
+           
+            if flags & b2d.Dynamics.b2DebugDraw.e_aabbBit
+                bp = @world.m_contactManager.m_broadPhase;
+                vs = [new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2()]
+                b = @world.GetBodyList()
+                while b?
+                    continue if b.IsActive() == false
+                    f = b.GetFixtureList()
+                    while f?
+                        aabb = bp.GetFatAABB(f.m_proxy)
+                        vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y)
+                        vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y)
+                        vs[2].Set(aabb.upperBound.x, aabb.upperBound.y)
+                        vs[3].Set(aabb.lowerBound.x, aabb.upperBound.y)
+                        @world.m_debugDraw.DrawPolygon(vs, 4, color)
+                        f = f.GetNext()
+                    
+                    b = b.GetNext()
 
+            if flags & b2d.Dynamics.b2DebugDraw.e_centerOfMassBit
+               b = @world.GetBodyList()
+               while b?
+                   xf = b2World.s_xf
+                   xf.R = b.m_xf.R
+                   xf.position = b.GetWorldCenter()
+                   @world.m_debugDraw.DrawTransform(xf)               
+                   b = b.GetNext()
 
     Peanutty.runCode = (editor) => 
         code = editor.getSession().getValue()
@@ -433,7 +545,7 @@
             if navigator.userAgent.indexOf("Chrome") == -1
                 @el.html(@_requireTemplate('templates/chrome_only.html').render())
                 return
-            
+                
             @el.html(@templates.main.render())
             
             @$('.tabs .tab').bind 'click', (e) =>
@@ -455,17 +567,14 @@
                 peanutty.destroyWorld()
                 @$('.stage_element').remove()
                 Peanutty.runScript()
-            @$('#code_buttons .load_script').bind 'click', (e) =>
+            @$('#code_buttons .load_stage').bind 'click', (e) =>
                 peanutty.sendCodeMessage
                     message:
                         """
                             If you want to load in a new stage simply paste the code in to the stage tab.
                         """
-            @$('#code_buttons .reset_script').bind 'click', (e) =>
-                peanutty.destroyWorld()
-                @$('.stage_element').remove()
-                @loadCode()
-                Peanutty.runScript()
+            @$('#code_buttons .reset_stage').bind 'click', (e) =>
+                @resetStage()
             
             window.Peanutty = Peanutty
             window.b2d = b2d
@@ -474,18 +583,32 @@
             @resizeAreas()
             $(window).bind 'resize', @resizeAreas
             
+            beforeLeave = (set) ->
+                if set
+                    $(window).bind 'beforeunload', () => "You have made changes that will be lost if you leave."
+                else
+                    $(window).unbind 'beforeunload'
+
             CoffeeScriptMode = ace.require("ace/mode/coffee").Mode
             @scriptEditor = ace.edit(@$('#codes .script')[0])
             @scriptEditor.getSession().setMode(new CoffeeScriptMode())
+            @scriptEditor.getSession().on 'change', () =>
+                beforeLeave(@scriptEditor.getSession().getValue() != @code(@templates.script))
             
             @stageEditor = ace.edit(@$('#codes .stage')[0])
             @stageEditor.getSession().setMode(new CoffeeScriptMode())
+            @stageEditor.getSession().on 'change', () =>
+                beforeLeave(@stageEditor.getSession().getValue() != @code(@templates.stage))
             
             @environmentEditor = ace.edit(@$('#codes .environment')[0])
             @environmentEditor.getSession().setMode(new CoffeeScriptMode())
+            @environmentEditor.getSession().on 'change', () =>
+                beforeLeave(@environmentEditor.getSession().getValue() != @code(@templates.environment))
 
             @loadCode()                                    
             @loadNewStage(@data.stage) if @data.stage?
+
+
             Peanutty.runScript()
             
 
@@ -494,9 +617,12 @@
             @loadStage()
             @loadEnvironment()
             
-        loadScript: () => @scriptEditor.getSession().setValue(@templates.script.html().replace(/^\n*/, ''))
-        loadStage: () => @stageEditor.getSession().setValue(@templates.stage.html().replace(/^\n*/, ''))
-        loadEnvironment: () => @environmentEditor.getSession().setValue(@templates.environment.html().replace(/^\n*/, ''))
+        code: (template) =>
+            template.html().replace(/^\n*/, '')
+            
+        loadScript: () => @scriptEditor.getSession().setValue(@code(@templates.script))
+        loadStage: () => @stageEditor.getSession().setValue(@code(@templates.stage))
+        loadEnvironment: () => @environmentEditor.getSession().setValue(@code(@templates.environment))
 
         loadNewStage: (stageName) =>
             $.ajax
@@ -528,6 +654,13 @@
             remainingWidth = fullWidth - codeWidth - 90
             $('#canvas')[0].width = remainingWidth
             peanutty.evaluateDimensions() if peanutty?
+        
+        resetStage: () =>
+            peanutty.destroyWorld()
+            @$('.stage_element').remove()
+            @loadCode()
+            Peanutty.runScript()
+            
     
     $.route.add
         '.*': () ->

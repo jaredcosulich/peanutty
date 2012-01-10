@@ -1,12 +1,13 @@
 Peanutty.loadEnvironment()
 
+# Create the ground
 peanutty.createGround
     x: peanutty.world.dimensions.width / 2
     y: 50
     width: 600
     height: 10
     
-# INPUTS
+# Set up the user inputs
 
 instructions = $(document.createElement("DIV"))
 instructions.addClass('stage_element')
@@ -66,29 +67,32 @@ view.nameInput.bind 'keyup', (e) ->
         view.destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)<br/><br/>")
         view.$('#canvas_container').append(view.destroyInstructions)
         
-    letters = (body for body in peanutty.bodies() when body.m_I > 0)
+    letters = (body for body in peanutty.bodies() when body.GetType() == b2d.Dynamics.b2Body.b2_dynamicBody)
     alreadyCollided = []    
-    peanutty.addContactListener (contact) =>
-        contactedBodies = [contact.m_fixtureA.m_body, contact.m_fixtureB.m_body] 
-        for body, index in contactedBodies
-            continue if body.m_I == 0
-            continue if body in letters or body in alreadyCollided
-            continue unless contactedBodies[1-index] in letters
-            alreadyCollided.push(body)
-            view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
-            if alreadyCollided.length == 2
-                view.destroyInstructions.html(
-                    view.destroyInstructions.html() + 
-                    "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>"
-                )
-                $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('stack_em')
+    peanutty.addContactListener 
+        listener: (contact) =>
+            contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()] 
+            for body, index in contactedBodies
+                continue if body.m_I == 0
+                continue if body in letters or body in alreadyCollided
+                continue unless contactedBodies[1-index] in letters
+                alreadyCollided.push(body)
+                view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
+                if alreadyCollided.length == 2
+                    view.destroyInstructions.html(
+                        view.destroyInstructions.html() + 
+                        "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>"
+                    )
+                    $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('simple_bucket')
         
             
 view.$('#canvas_container').append(view.nameInput)
 view.nameInput[0].focus()
 
 
-view.codeChangeMessageShown = false
+# Add an explanation of how to run the code if you change it.
+
+view.codeChangeMessageShown or= false
 view.$('#codes .code').bind 'keypress', () =>
     return if view.codeChangeMessageShown
     view.codeChangeMessageShown = true
@@ -99,8 +103,7 @@ view.$('#codes .code').bind 'keypress', () =>
             To see your changes you'll need to rerun your script by clicking "Run Script" above.
             """    
 
-# LETTERS
-
+# Letter definitions added to Peanutty
 Peanutty::createLetters = ({x, y, letters}) ->
     width = @getLettersWidth letters: letters
     start = x - (width / 2) - (4 * ((letters.length - 1) / 2))
@@ -485,6 +488,9 @@ Peanutty::createLetter = ({x, y, letter}) ->
             @createBox x: x+57, y: y+102, width: 6,  height: 2, density: 50
         else 
             return
+
+
+# Display Hello World
 
 peanutty.createLetters
     x: peanutty.world.dimensions.width / 2

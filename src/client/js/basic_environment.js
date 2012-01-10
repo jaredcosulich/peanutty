@@ -1,5 +1,5 @@
 (function() {
-  var canvas, environmentEditor, getTimeDiff, initiateBall, initiateBox, initiateFree, scale, scriptEditor, stageEditor, static, unbindMouseEvents;
+  var canvas, environmentEditor, initiateBall, initiateBox, initiateFree, scale, scriptEditor, stageEditor, static, unbindMouseEvents;
   var _this = this;
 
   scale = 30;
@@ -36,13 +36,13 @@
     unbindMouseEvents(canvas);
     canvas.bind('click', function(e) {
       var firstPoint, x, y;
-      x = e.offsetX * (peanutty.defaultScale / peanutty.scale);
-      y = (peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale / peanutty.scale);
+      x = e.offsetX;
+      y = peanutty.canvas.height() - e.offsetY;
       firstPoint = peanutty.currentShape != null ? peanutty.currentShape.path[0] : null;
-      if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.world.dimensions.height - firstPoint.y) - y) < 10) {
+      if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.canvas.height() - firstPoint.y) - y) < 10) {
         peanutty.endFreeformShape({
           static: static,
-          time: getTimeDiff()
+          time: view.getTimeDiff()
         });
         return;
       }
@@ -53,8 +53,8 @@
     });
     return canvas.bind('mousemove', function(e) {
       peanutty.addTempToFreeformShape({
-        x: e.offsetX * (peanutty.defaultScale / peanutty.scale),
-        y: e.offsetY * (peanutty.defaultScale / peanutty.scale)
+        x: e.offsetX,
+        y: e.offsetY
       });
     });
   };
@@ -63,8 +63,8 @@
     unbindMouseEvents(canvas);
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
-        command: "peanutty.createBox\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + ((peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale / peanutty.scale)) + "\n    width: 20\n    height: 20\n    static: " + static,
-        time: getTimeDiff()
+        command: "peanutty.createBox\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale))) + "\n    width: 20\n    height: 20\n    static: " + static,
+        time: view.getTimeDiff()
       });
     });
   };
@@ -73,13 +73,13 @@
     unbindMouseEvents(canvas);
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
-        command: "peanutty.createBall\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + ((peanutty.world.dimensions.height - e.offsetY) * (peanutty.defaultScale / peanutty.scale)) + "\n    radius: 20\n    static: " + static,
-        time: getTimeDiff()
+        command: "peanutty.createBall\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale))) + "\n    radius: 20\n    static: " + static,
+        time: view.getTimeDiff()
       });
     });
   };
 
-  getTimeDiff = function() {
+  view.getTimeDiff = function() {
     var timeDiff;
     timeDiff = view.time != null ? new Date() - view.time : 0;
     view.time = new Date();

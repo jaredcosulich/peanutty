@@ -22,7 +22,7 @@
       path = (options.path ? " path=" + options.path : '');
       domain = (options.domain ? " domain=" + options.domain : '');
       secure = (options.secure ? ' secure' : '');
-      return document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+      return document.cookie = [name, '=', encodeURIComponent(JSON.stringify(value)), expires, path, domain, secure].join('');
     } else {
       _ref = document.cookie.split(/;\s/g);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -31,7 +31,7 @@
         if (Array.isArray(m)) {
           if (m[1] === name) {
             try {
-              return decodeURIComponent(m[2]);
+              return JSON.parse(decodeURIComponent(m[2]));
             } catch (e) {
               break;
             }

@@ -1350,28 +1350,28 @@
             , mouseProps = commonProps.concat('button buttons clientX clientY dataTransfer fromElement offsetX offsetY pageX pageY screenX screenY toElement'.split(' '))
             , keyProps = commonProps.concat('char charCode key keyCode'.split(' '))
             , preventDefault = 'preventDefault'
-            , createPreventDefault = function (e) {
+            , createPreventDefault = function (event) {
                 return function () {
-                  if (e[preventDefault])
-                    e[preventDefault]()
+                  if (event[preventDefault])
+                    event[preventDefault]()
                   else
-                    e.returnValue = false
+                    event.returnValue = false
                 }
               }
             , stopPropagation = 'stopPropagation'
-            , createStopPropagation = function (e) {
+            , createStopPropagation = function (event) {
                 return function () {
-                  if (e[stopPropagation])
-                    e[stopPropagation]()
+                  if (event[stopPropagation])
+                    event[stopPropagation]()
                   else
-                    e.cancelBubble = true
+                    event.cancelBubble = true
                 }
               }
-            , createStop = function (e) {
+            , createStop = function (synEvent) {
                 return function () {
-                  e[preventDefault]()
-                  e[stopPropagation]()
-                  e.stopped = true
+                  synEvent[preventDefault]()
+                  synEvent[stopPropagation]()
+                  synEvent.stopped = true
                 }
               }
             , copyProps = function (event, result, props) {
@@ -1393,7 +1393,7 @@
   
             result[preventDefault] = createPreventDefault(event)
             result[stopPropagation] = createStopPropagation(event)
-            result.stop = createStop(event)
+            result.stop = createStop(result)
             result.target = target && target.nodeType === 3 ? target.parentNode : target
   
             if (isNative) { // we only need basic augmentation on custom events, the rest is too expensive
@@ -2240,10 +2240,24 @@
       , byTag = 'getElementsByTagName'
       , readyState = 'readyState'
       , contentType = 'Content-Type'
+      , requestedWith = 'X-Requested-With'
       , head = doc[byTag]('head')[0]
       , uniqid = 0
       , lastValue // data stored by the most recent JSONP callback
-      , xhr = ('XMLHttpRequest' in win) ?
+      , xmlHttpRequest = 'XMLHttpRequest'
+      , defaultHeaders = {
+            contentType: 'application/x-www-form-urlencoded'
+          , accept: {
+                '*':  'text/javascript, text/html, application/xml, text/xml, */*'
+              , xml:  'application/xml, text/xml'
+              , html: 'text/html'
+              , text: 'text/plain'
+              , json: 'application/json, text/javascript'
+              , js:   'application/javascript, text/javascript'
+            }
+          , requestedWith: xmlHttpRequest
+        }
+      , xhr = (xmlHttpRequest in win) ?
           function () {
             return new XMLHttpRequest()
           } :
@@ -2265,18 +2279,10 @@
   
     function setHeaders(http, o) {
       var headers = o.headers || {}
-        , mimetypes= {
-              xml: "application/xml, text/xml"
-            , html: "text/html"
-            , text: "text/plain"
-            , json: "application/json, text/javascript"
-            , js: 'application/javascript, text/javascript'
-          }
-        headers.Accept = headers.Accept || mimetypes[o.type] || 'text/javascript, text/html, application/xml, text/xml, */*'
-  
+      headers.Accept = headers.Accept || defaultHeaders.accept[o.type] || defaultHeaders.accept['*']
       // breaks cross-origin requests with legacy browsers
-      if (!o.crossOrigin) headers['X-Requested-With'] = headers['X-Requested-With'] || 'XMLHttpRequest'
-      headers[contentType] = headers[contentType] || 'application/x-www-form-urlencoded'
+      if (!o.crossOrigin && !headers[requestedWith]) headers[requestedWith] = defaultHeaders.requestedWith
+      if (!headers[contentType]) headers[contentType] = o.contentType || defaultHeaders.contentType
       for (var h in headers) {
         headers.hasOwnProperty(h) && http.setRequestHeader(h, headers[h])
       }
@@ -2462,7 +2468,6 @@
               cb(n, normalize(o.attributes.value && o.attributes.value.specified ? o.value : o.text))
           }
   
-  
       // don't serialize elements that are disabled or without a name
       if (el.disabled || !n) return;
   
@@ -2576,6 +2581,18 @@
       return qs.replace(/&$/, '').replace(/%20/g,'+')
     }
   
+    // jQuery and Zepto compatibility, differences can be remapped here so you can call
+    // .ajax.compat(options, callback)
+    reqwest.compat = function (o, fn) {
+      if (o) {
+        o.type && (o.method = o.type) && delete o.type
+        o.dataType && (o.type = o.dataType)
+        o.jsonpCallback && (o.jsonpCallbackName = o.jsonpCallback) && delete o.jsonpCallback
+        o.jsonp && (o.jsonpCallback = o.jsonp)
+      }
+      return new Reqwest(o, fn)
+    }
+  
     reqwest.noConflict = function () {
       context.reqwest = old
       return this
@@ -2599,14 +2616,14 @@
       , sa = integrate('serializeArray')
   
     $.ender({
-      ajax: r
+        ajax: r
       , serialize: s
       , serializeArray: sa
       , toQueryString: r.toQueryString
     })
   
     $.ender({
-      serialize: s
+        serialize: s
       , serializeArray: sa
     }, true)
   }(ender);
@@ -13483,9 +13500,16 @@
   var i;
   for (i = 0; i < Box2D.postDefs.length; ++i) Box2D.postDefs[i]();
   delete Box2D.postDefs;
-  for (o in Box2D) {
-      exports[o] = Box2D[o];    
+  for (a in Box2D) {
+      exports[a] = Box2D[a];
+      for (b in exports[a]) {
+          exports[b] = exports[a][b];
+          for (c in exports[b]) {
+              exports[c] = exports[b][c];
+          }
+      }
   }
+  
 
   provide("coffeebox2d", module.exports);
 
@@ -15390,7 +15414,7 @@
         path = (options.path ? " path=" + options.path : '');
         domain = (options.domain ? " domain=" + options.domain : '');
         secure = (options.secure ? ' secure' : '');
-        return document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+        return document.cookie = [name, '=', encodeURIComponent(JSON.stringify(value)), expires, path, domain, secure].join('');
       } else {
         _ref = document.cookie.split(/;\s/g);
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -15399,7 +15423,7 @@
           if (Array.isArray(m)) {
             if (m[1] === name) {
               try {
-                return decodeURIComponent(m[2]);
+                return JSON.parse(decodeURIComponent(m[2]));
               } catch (e) {
                 break;
               }

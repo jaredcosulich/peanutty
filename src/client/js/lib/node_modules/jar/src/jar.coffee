@@ -18,7 +18,7 @@
             path = (if options.path then " path=#{options.path}" else '')
             domain = (if options.domain then " domain=#{options.domain}" else '')
             secure = (if options.secure then ' secure' else '')
-            document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('')
+            document.cookie = [name, '=', encodeURIComponent(JSON.stringify(value)), expires, path, domain, secure].join('')
             
         else
             for cookie in document.cookie.split(/;\s/g)
@@ -26,7 +26,7 @@
                 if Array.isArray(m)
                     if m[1] == name
                         try
-                            return decodeURIComponent(m[2])
+                            return JSON.parse(decodeURIComponent(m[2]))
                         catch e
                             break
                 

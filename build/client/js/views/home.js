@@ -15,11 +15,29 @@
       options.bare = true;
       return Function(CoffeeScript.compile(code, options))();
     };
+    b2d.Dynamics.b2Fixture.prototype.Create2 = b2d.Dynamics.b2Fixture.prototype.Create;
+    b2d.Dynamics.b2Fixture.prototype.Create = function(body, xf, def) {
+      this.drawData = def.drawData;
+      return this.Create2(body, xf, def);
+    };
+    b2d.Dynamics.b2Fixture.prototype.GetDrawData = function() {
+      return this.drawData || {};
+    };
+    b2d.Dynamics.b2Fixture.prototype.SetDrawData = function(drawData) {
+      var attr, _results;
+      this.drawData || (this.drawData = {});
+      _results = [];
+      for (attr in drawData) {
+        _results.push(this.drawData[attr] = drawData[attr]);
+      }
+      return _results;
+    };
     Peanutty = (function() {
 
       function Peanutty(_arg) {
         var gravity;
         this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.stageEditor = _arg.stageEditor, this.environmentEditor = _arg.environmentEditor, this.scale = _arg.scale, gravity = _arg.gravity;
+        this.draw = __bind(this.draw, this);
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -35,7 +53,7 @@
         this.redrawTempShapes = __bind(this.redrawTempShapes, this);
         this.redrawCurrentShape = __bind(this.redrawCurrentShape, this);
         this.createRandomObjects = __bind(this.createRandomObjects, this);
-        this.createFixture = __bind(this.createFixture, this);
+        this.createFixtureDef = __bind(this.createFixtureDef, this);
         this.direction = __bind(this.direction, this);
         this.counterClockWise = __bind(this.counterClockWise, this);
         this.createPoly = __bind(this.createPoly, this);
@@ -44,6 +62,7 @@
         this.createBox = __bind(this.createBox, this);
         this.createGround = __bind(this.createGround, this);
         this.sendCodeMessage = __bind(this.sendCodeMessage, this);
+        this.searchObjectList = __bind(this.searchObjectList, this);
         this.bodies = __bind(this.bodies, this);
         this.addToScript = __bind(this.addToScript, this);
         this.evaluateDimensions = __bind(this.evaluateDimensions, this);
@@ -74,7 +93,7 @@
         })();
         update = function() {
           _this.world.Step(1 / 60, 10, 10);
-          _this.world.DrawDebugData();
+          _this.draw();
           _this.world.ClearForces();
           requestAnimFrame(update);
           _this.redrawCurrentShape();
@@ -116,8 +135,10 @@
         return this.world.m_contactManager.m_contactListener = new PeanuttyContactListener;
       };
 
-      Peanutty.prototype.addContactListener = function(listener, type) {
-        if (type == null) type = 'begin';
+      Peanutty.prototype.addContactListener = function(_arg) {
+        var listener, type;
+        listener = _arg.listener, type = _arg.type;
+        type || (type = 'begin');
         return this["" + type + "ContactListeners"].push(listener);
       };
 
@@ -195,12 +216,22 @@
       Peanutty.prototype.bodies = function() {
         var allBodies, body;
         allBodies = [];
-        body = this.world.m_bodyList;
+        body = this.world.GetBodyList();
         while (body != null) {
           allBodies.push(body);
-          body = body.m_next;
+          body = body.GetNext();
         }
         return allBodies;
+      };
+
+      Peanutty.prototype.searchObjectList = function(object, searchFunction) {
+        var _results;
+        _results = [];
+        while (object != null) {
+          if (searchFunction(object)) return object;
+          _results.push(object = object.GetNext());
+        }
+        return _results;
       };
 
       Peanutty.prototype.sendCodeMessage = function(_arg) {
@@ -236,18 +267,19 @@
       Peanutty.prototype.createGround = function(options) {
         var bodyDef, fixDef;
         if (options == null) options = {};
-        fixDef = fixDef = this.createFixture();
+        fixDef = fixDef = this.createFixtureDef();
+        fixDef.drawData = options.drawData;
+        fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
+        fixDef.shape.SetAsBox((options.width / this.defaultScale) / 2, (options.height / this.defaultScale) / 2);
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody;
         bodyDef.position.x = options.x / this.defaultScale;
         bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
-        fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        fixDef.shape.SetAsBox((options.width / this.defaultScale) / 2, (options.height / this.defaultScale) / 2);
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
       Peanutty.prototype.createBox = function(options) {
-        var bodyDef, fixDef;
+        var body, bodyDef, fixDef;
         if (options == null) options = {};
         options.x || (options.x = 0);
         options.y || (options.y = 0);
@@ -255,34 +287,43 @@
         options.height || (options.height = 20);
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
-        fixDef = this.createFixture(options);
+        fixDef = this.createFixtureDef(options);
+        fixDef.drawData = options.drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
         fixDef.shape.SetAsBox(options.width / this.defaultScale, options.height / this.defaultScale);
         bodyDef.position.x = options.x / this.defaultScale;
         bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
-        return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        body = this.world.CreateBody(bodyDef);
+        body.CreateFixture(fixDef);
+        return body;
       };
 
       Peanutty.prototype.createBall = function(options) {
-        var bodyDef, fixDef;
+        var body, bodyDef, fixDef;
         if (options == null) options = {};
         options.x || (options.x = 0);
         options.y || (options.y = 0);
         options.radius || (options.radius = 20);
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
-        fixDef = this.createFixture(options);
+        fixDef = this.createFixtureDef(options);
+        fixDef.drawData = options.drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2CircleShape;
         fixDef.shape.SetRadius(options.radius / this.defaultScale);
         bodyDef.position.x = options.x / this.defaultScale;
         bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
-        return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        bodyDef.userData = options.userData;
+        body = this.world.CreateBody(bodyDef);
+        body.CreateFixture(fixDef);
+        return body;
       };
 
       Peanutty.prototype.polyFixtureDef = function(_arg) {
-        var fixDef, path, point, scaledPath;
-        path = _arg.path;
-        fixDef = this.createFixture(_arg);
+        var drawData, fixDef, path, point, scaledPath, userData;
+        path = _arg.path, userData = _arg.userData, drawData = _arg.drawData;
+        fixDef = this.createFixtureDef(_arg);
+        fixDef.userData = userData;
+        fixDef.drawData = drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
         if (this.counterClockWise(path)) path = path.reverse();
         scaledPath = (function() {
@@ -299,12 +340,13 @@
       };
 
       Peanutty.prototype.createPoly = function(_arg) {
-        var body, bodyDef, fixtureDef, fixtureDefs, path, static, _i, _len;
-        fixtureDefs = _arg.fixtureDefs, static = _arg.static, path = _arg.path;
+        var body, bodyDef, drawData, fixtureDef, fixtureDefs, path, static, _i, _len;
+        fixtureDefs = _arg.fixtureDefs, static = _arg.static, path = _arg.path, drawData = _arg.drawData;
         if (path != null) {
           fixtureDefs = [
             this.polyFixtureDef({
-              path: path
+              path: path,
+              drawData: drawData
             })
           ];
         }
@@ -316,7 +358,8 @@
           body.CreateFixture(fixtureDef);
         }
         bodyDef.position.x = body.GetWorldCenter().x;
-        return bodyDef.position.y = body.GetWorldCenter().y;
+        bodyDef.position.y = body.GetWorldCenter().y;
+        return body;
       };
 
       Peanutty.prototype.counterClockWise = function(path) {
@@ -344,7 +387,7 @@
         return dir;
       };
 
-      Peanutty.prototype.createFixture = function(options) {
+      Peanutty.prototype.createFixtureDef = function(options) {
         var fixDef;
         if (options == null) options = {};
         fixDef = new b2d.Dynamics.b2FixtureDef;
@@ -356,7 +399,7 @@
 
       Peanutty.prototype.createRandomObjects = function() {
         var bodyDef, fixDef, i, _results;
-        fixDef = this.createFixture();
+        fixDef = this.createFixtureDef();
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body.b2_dynamicBody;
         _results = [];
@@ -503,12 +546,12 @@
         this.currentShape = {
           start: {
             x: x,
-            y: this.world.dimensions.height - y
+            y: this.canvas.height() - y
           },
           path: [
             {
               x: x,
-              y: this.world.dimensions.height - y
+              y: this.canvas.height() - y
             }
           ]
         };
@@ -536,7 +579,7 @@
         this.tempPoint = null;
         this.currentShape.path.push({
           x: x,
-          y: this.world.dimensions.height - y
+          y: this.canvas.height() - y
         });
       };
 
@@ -549,7 +592,7 @@
           _results = [];
           for (_i = 0, _len = _ref.length, _step = Math.ceil(this.currentShape.path.length / 10); _i < _len; _i += _step) {
             point = _ref[_i];
-            _results.push("{x: " + point.x + ", y: " + (this.world.dimensions.height - point.y) + "}");
+            _results.push("{x: " + (point.x * (this.defaultScale / this.scale)) + ", y: " + ((this.canvas.height() - point.y) * (this.defaultScale / this.scale)) + "}");
           }
           return _results;
         }).call(this);
@@ -576,6 +619,106 @@
       Peanutty.prototype.endShape = function() {
         this.context.fill();
         this.context.stroke();
+      };
+
+      Peanutty.prototype.draw = function() {
+        var aabb, b, b1, b2, bp, c, cA, cB, color, contact, f, fixtureA, fixtureB, flags, i, invQ, j, s, vs, x1, x2, xf, _results;
+        if (this.world.m_debugDraw == null) return;
+        this.world.m_debugDraw.m_sprite.graphics.clear();
+        flags = this.world.m_debugDraw.GetFlags();
+        i = 0;
+        invQ = new b2d.b2Vec2;
+        x1 = new b2d.b2Vec2;
+        x2 = new b2d.b2Vec2;
+        b1 = new b2d.b2AABB();
+        b2 = new b2d.b2AABB();
+        vs = [new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2()];
+        color = new b2d.Common.b2Color(0, 0, 0);
+        if (flags & b2d.Dynamics.b2DebugDraw.e_shapeBit) {
+          b = this.world.GetBodyList();
+          while (b != null) {
+            xf = b.m_xf;
+            f = b.GetFixtureList();
+            while (f != null) {
+              s = f.GetShape();
+              if ((c = f.GetDrawData().color) != null) {
+                color._r = c._r;
+                color._b = c._b;
+                color._g = c._g;
+              } else if (b.IsActive() === false) {
+                color.Set(0.5, 0.5, 0.3);
+              } else if (b.GetType() === b2d.Dynamics.b2Body.b2_staticBody) {
+                color.Set(0.5, 0.9, 0.5);
+              } else if (b.GetType() === b2d.Dynamics.b2Body.b2_kinematicBody) {
+                color.Set(0.5, 0.5, 0.9);
+              } else if (b.IsAwake() === false) {
+                color.Set(0.6, 0.6, 0.6);
+              } else {
+                color.Set(0.9, 0.7, 0.7);
+              }
+              this.debugDraw.SetFillAlpha(f.GetDrawData().alpha || 0.3);
+              this.world.DrawShape(s, xf, color);
+              f = f.GetNext();
+            }
+            b = b.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_jointBit) {
+          j = this.world.GetJointList();
+          while (j != null) {
+            this.world.DrawJoint(j);
+            j.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_controllerBit) {
+          c = this.world.m_controllerList;
+          while (c != null) {
+            c.Draw(this.m_debugDraw);
+            c.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_pairBit) {
+          color.Set(0.3, 0.9, 0.9);
+          contact = this.m_contactManager.m_contactList;
+          while (contact != null) {
+            fixtureA = contact.GetFixtureA();
+            fixtureB = contact.GetFixtureB();
+            cA = fixtureA.GetAABB().GetCenter();
+            cB = fixtureB.GetAABB().GetCenter();
+            this.world.m_debugDraw.DrawSegment(cA, cB, color);
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_aabbBit) {
+          bp = this.world.m_contactManager.m_broadPhase;
+          vs = [new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2()];
+          b = this.world.GetBodyList();
+          while (b != null) {
+            if (b.IsActive() === false) continue;
+            f = b.GetFixtureList();
+            while (f != null) {
+              aabb = bp.GetFatAABB(f.m_proxy);
+              vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y);
+              vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y);
+              vs[2].Set(aabb.upperBound.x, aabb.upperBound.y);
+              vs[3].Set(aabb.lowerBound.x, aabb.upperBound.y);
+              this.world.m_debugDraw.DrawPolygon(vs, 4, color);
+              f = f.GetNext();
+            }
+            b = b.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_centerOfMassBit) {
+          b = this.world.GetBodyList();
+          _results = [];
+          while (b != null) {
+            xf = b2World.s_xf;
+            xf.R = b.m_xf.R;
+            xf.position = b.GetWorldCenter();
+            this.world.m_debugDraw.DrawTransform(xf);
+            _results.push(b = b.GetNext());
+          }
+          return _results;
+        }
       };
 
       return Peanutty;
@@ -623,11 +766,13 @@
       __extends(Home, views.BaseView);
 
       function Home() {
+        this.resetStage = __bind(this.resetStage, this);
         this.resizeAreas = __bind(this.resizeAreas, this);
         this.loadNewStage = __bind(this.loadNewStage, this);
         this.loadEnvironment = __bind(this.loadEnvironment, this);
         this.loadStage = __bind(this.loadStage, this);
         this.loadScript = __bind(this.loadScript, this);
+        this.code = __bind(this.code, this);
         this.loadCode = __bind(this.loadCode, this);
         Home.__super__.constructor.apply(this, arguments);
       }
@@ -642,7 +787,7 @@
       };
 
       Home.prototype.renderView = function() {
-        var CoffeeScriptMode;
+        var CoffeeScriptMode, beforeLeave;
         var _this = this;
         if (navigator.userAgent.indexOf("Chrome") === -1) {
           this.el.html(this._requireTemplate('templates/chrome_only.html').render());
@@ -675,29 +820,45 @@
           _this.$('.stage_element').remove();
           return Peanutty.runScript();
         });
-        this.$('#code_buttons .load_script').bind('click', function(e) {
+        this.$('#code_buttons .load_stage').bind('click', function(e) {
           return peanutty.sendCodeMessage({
             message: "If you want to load in a new stage simply paste the code in to the stage tab."
           });
         });
-        this.$('#code_buttons .reset_script').bind('click', function(e) {
-          peanutty.destroyWorld();
-          _this.$('.stage_element').remove();
-          _this.loadCode();
-          return Peanutty.runScript();
+        this.$('#code_buttons .reset_stage').bind('click', function(e) {
+          return _this.resetStage();
         });
         window.Peanutty = Peanutty;
         window.b2d = b2d;
         window.view = this;
         this.resizeAreas();
         $(window).bind('resize', this.resizeAreas);
+        beforeLeave = function(set) {
+          var _this = this;
+          if (set) {
+            return $(window).bind('beforeunload', function() {
+              return "You have made changes that will be lost if you leave.";
+            });
+          } else {
+            return $(window).unbind('beforeunload');
+          }
+        };
         CoffeeScriptMode = ace.require("ace/mode/coffee").Mode;
         this.scriptEditor = ace.edit(this.$('#codes .script')[0]);
         this.scriptEditor.getSession().setMode(new CoffeeScriptMode());
+        this.scriptEditor.getSession().on('change', function() {
+          return beforeLeave(_this.scriptEditor.getSession().getValue() !== _this.code(_this.templates.script));
+        });
         this.stageEditor = ace.edit(this.$('#codes .stage')[0]);
         this.stageEditor.getSession().setMode(new CoffeeScriptMode());
+        this.stageEditor.getSession().on('change', function() {
+          return beforeLeave(_this.stageEditor.getSession().getValue() !== _this.code(_this.templates.stage));
+        });
         this.environmentEditor = ace.edit(this.$('#codes .environment')[0]);
         this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
+        this.environmentEditor.getSession().on('change', function() {
+          return beforeLeave(_this.environmentEditor.getSession().getValue() !== _this.code(_this.templates.environment));
+        });
         this.loadCode();
         if (this.data.stage != null) this.loadNewStage(this.data.stage);
         return Peanutty.runScript();
@@ -709,16 +870,20 @@
         return this.loadEnvironment();
       };
 
+      Home.prototype.code = function(template) {
+        return template.html().replace(/^\n*/, '');
+      };
+
       Home.prototype.loadScript = function() {
-        return this.scriptEditor.getSession().setValue(this.templates.script.html().replace(/^\n*/, ''));
+        return this.scriptEditor.getSession().setValue(this.code(this.templates.script));
       };
 
       Home.prototype.loadStage = function() {
-        return this.stageEditor.getSession().setValue(this.templates.stage.html().replace(/^\n*/, ''));
+        return this.stageEditor.getSession().setValue(this.code(this.templates.stage));
       };
 
       Home.prototype.loadEnvironment = function() {
-        return this.environmentEditor.getSession().setValue(this.templates.environment.html().replace(/^\n*/, ''));
+        return this.environmentEditor.getSession().setValue(this.code(this.templates.environment));
       };
 
       Home.prototype.loadNewStage = function(stageName) {
@@ -755,6 +920,13 @@
         if (typeof peanutty !== "undefined" && peanutty !== null) {
           return peanutty.evaluateDimensions();
         }
+      };
+
+      Home.prototype.resetStage = function() {
+        peanutty.destroyWorld();
+        this.$('.stage_element').remove();
+        this.loadCode();
+        return Peanutty.runScript();
       };
 
       return Home;

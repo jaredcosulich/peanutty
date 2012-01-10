@@ -2558,11 +2558,7 @@ a {
   margin-right: 6px;
 }
 #console #codes .code .ace_gutter .ace_layer {
-  margin-top: 6px!important;
   min-width: 2.5em!important;
-}
-#console #codes .code .ace_content {
-  margin-top: 6px!important;
 }
 #console #codes .code .ace_line {
   -webkit-transition: background-color 1s linear;
