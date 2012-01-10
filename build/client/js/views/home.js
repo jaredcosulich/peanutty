@@ -932,7 +932,7 @@
 
     })();
     return $.route.add({
-      '.*': function() {
+      '': function() {
         return $('#content').view({
           name: 'Home',
           data: {}

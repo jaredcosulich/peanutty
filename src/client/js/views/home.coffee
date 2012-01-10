@@ -660,7 +660,7 @@
             
     
     $.route.add
-        '.*': () ->
+        '': () ->
             $('#content').view
                 name: 'Home'
                 data: {}  
