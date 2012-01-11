@@ -382,8 +382,8 @@
 
       Peanutty.prototype.direction = function(point, nextPoint) {
         var dir;
-        if (point.y > nextPoint.y) dir = 1;
-        if (point.y < nextPoint.y) dir = 2;
+        if (point.y < nextPoint.y) dir = 1;
+        if (point.y > nextPoint.y) dir = 2;
         if (point.x > nextPoint.x) dir = (dir === 2 ? 3 : 4);
         return dir;
       };

@@ -237,6 +237,7 @@
                     (@world.dimensions.height - point.y)/@defaultScale
                 ) for point in path
             )
+            
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
             return fixDef
                 
@@ -271,8 +272,8 @@
             # down right  2
             # down left 3
             # up left 4
-            dir = 1 if point.y > nextPoint.y
-            dir = 2 if point.y < nextPoint.y
+            dir = 1 if point.y < nextPoint.y
+            dir = 2 if point.y > nextPoint.y
             if point.x > nextPoint.x
                 dir = (if dir == 2 then 3 else 4) 
             return dir
