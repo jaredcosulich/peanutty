@@ -2626,13 +2626,13 @@ section#home .page-header {
 section#levels {
   overflow: hidden;
 }
-section#levels .load_stage {
+section#levels .load_level {
   display: block;
   float: left;
   text-align: center;
   margin-right: 12px;
 }
-section#levels .load_stage image {
+section#levels .load_level image {
   width: 180px;
   height: 150px;
 }

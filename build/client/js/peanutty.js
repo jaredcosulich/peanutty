@@ -251,6 +251,7 @@
         options.width || (options.width = 20);
         options.height || (options.height = 20);
         bodyDef = new b2d.Dynamics.b2BodyDef;
+        bodyDef.userData = options.userData;
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
         fixDef = this.createFixtureDef(options);
         fixDef.drawData = options.drawData;
@@ -270,6 +271,7 @@
         options.y || (options.y = 0);
         options.radius || (options.radius = 20);
         bodyDef = new b2d.Dynamics.b2BodyDef;
+        bodyDef.userData = options.userData;
         bodyDef.type = b2d.Dynamics.b2Body[options.static ? "b2_staticBody" : "b2_dynamicBody"];
         fixDef = this.createFixtureDef(options);
         fixDef.drawData = options.drawData;
@@ -277,7 +279,6 @@
         fixDef.shape.SetRadius(options.radius / this.defaultScale);
         bodyDef.position.x = options.x / this.defaultScale;
         bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
-        bodyDef.userData = options.userData;
         body = this.world.CreateBody(bodyDef);
         body.CreateFixture(fixDef);
         return body;
@@ -285,7 +286,7 @@
 
       Peanutty.prototype.polyFixtureDef = function(_arg) {
         var drawData, fixDef, path, point, scaledPath, userData;
-        path = _arg.path, userData = _arg.userData, drawData = _arg.drawData;
+        path = _arg.path, drawData = _arg.drawData, userData = _arg.userData;
         fixDef = this.createFixtureDef(_arg);
         fixDef.userData = userData;
         fixDef.drawData = drawData;
@@ -305,8 +306,8 @@
       };
 
       Peanutty.prototype.createPoly = function(_arg) {
-        var body, bodyDef, drawData, fixtureDef, fixtureDefs, path, static, _i, _len;
-        fixtureDefs = _arg.fixtureDefs, static = _arg.static, path = _arg.path, drawData = _arg.drawData;
+        var body, bodyDef, drawData, fixtureDef, fixtureDefs, path, static, userData, _i, _len;
+        fixtureDefs = _arg.fixtureDefs, static = _arg.static, path = _arg.path, drawData = _arg.drawData, userData = _arg.userData;
         if (path != null) {
           fixtureDefs = [
             this.polyFixtureDef({
@@ -316,6 +317,7 @@
           ];
         }
         bodyDef = new b2d.Dynamics.b2BodyDef;
+        bodyDef.userData = userData;
         bodyDef.type = b2d.Dynamics.b2Body[static ? "b2_staticBody" : "b2_dynamicBody"];
         body = this.world.CreateBody(bodyDef);
         for (_i = 0, _len = fixtureDefs.length; _i < _len; _i++) {

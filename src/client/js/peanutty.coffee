@@ -167,6 +167,7 @@
             options.height or= 20
         
             bodyDef = new b2d.Dynamics.b2BodyDef
+            bodyDef.userData = options.userData
             bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
         
             fixDef = @createFixtureDef(options)
@@ -187,6 +188,7 @@
             options.radius or= 20
         
             bodyDef = new b2d.Dynamics.b2BodyDef
+            bodyDef.userData = options.userData
             bodyDef.type = b2d.Dynamics.b2Body[if options.static then "b2_staticBody" else "b2_dynamicBody"]
         
             fixDef = @createFixtureDef(options)
@@ -196,13 +198,13 @@
         
             bodyDef.position.x = (options.x/@defaultScale)
             bodyDef.position.y = ((@world.dimensions.height - options.y)/@defaultScale)
-            bodyDef.userData = options.userData
+            
         
             body = @world.CreateBody(bodyDef)
             body.CreateFixture(fixDef)
             return body
     
-        polyFixtureDef: ({path, userData, drawData}) =>
+        polyFixtureDef: ({path, drawData, userData}) =>
             fixDef = @createFixtureDef(_arg)
             fixDef.userData = userData
             fixDef.drawData = drawData
@@ -220,15 +222,16 @@
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
             return fixDef
     
-        createPoly: ({fixtureDefs, static, path, drawData}) =>
+        createPoly: ({fixtureDefs, static, path, drawData, userData}) =>
             fixtureDefs = [@polyFixtureDef(path: path, drawData: drawData)] if path?
         
             bodyDef = new b2d.Dynamics.b2BodyDef
+            bodyDef.userData = userData
             bodyDef.type = b2d.Dynamics.b2Body[if static then "b2_staticBody" else "b2_dynamicBody"]
         
             body = @world.CreateBody(bodyDef)
             body.CreateFixture(fixtureDef) for fixtureDef in fixtureDefs
-        
+                
             bodyDef.position.x = body.GetWorldCenter().x
             bodyDef.position.y = body.GetWorldCenter().y
         

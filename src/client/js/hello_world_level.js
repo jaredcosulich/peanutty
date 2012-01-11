@@ -81,7 +81,7 @@
     letters = peanutty.searchObjectList({
       object: peanutty.world.GetBodyList(),
       searchFunction: function(body) {
-        return body.GetType() === b2d.Dynamics.b2Body.b2_dynamicBody;
+        return (body.GetUserData() != null) && body.GetUserData().letter;
       }
     });
     alreadyCollided = [];
@@ -229,7 +229,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           fixtureDefs: [
@@ -266,7 +269,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "A":
         this.createPoly({
@@ -304,7 +310,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           fixtureDefs: [
@@ -341,106 +350,157 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "b":
         this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 45,
           y: y + 20,
           width: 5,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 35,
           width: 10,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 45,
           y: y + 50,
           width: 5,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "B":
         this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 55,
           y: y + 25,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 40,
           y: y + 45,
           width: 15,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 55,
           y: y + 65,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "c":
         this.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 35,
           width: 10,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 74,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "C":
@@ -448,25 +508,37 @@
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 6,
           y: y + 92,
           width: 8,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "d":
@@ -474,87 +546,129 @@
           x: x + 20,
           y: y + 5,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 20,
           y: y + 65,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "D":
         this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 45,
           width: 5,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 55,
           y: y + 45,
           width: 5,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "e":
         this.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 20,
           width: 10,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 20,
           y: y + 35,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 50,
           width: 10,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 74,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "E":
@@ -562,37 +676,55 @@
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 25,
           width: 10,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 20,
           y: y + 45,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 65,
           width: 10,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 91,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "f":
@@ -601,31 +733,46 @@
           y: y + 15,
           width: 10,
           height: 15,
+          userData: {
+            letter: true
+          },
           density: 10
         });
         this.createBox({
           x: x + 20,
           y: y + 35,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 50,
           width: 10,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 74,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "F":
@@ -634,31 +781,46 @@
           y: y + 20,
           width: 10,
           height: 20,
+          userData: {
+            letter: true
+          },
           density: 10
         });
         this.createBox({
           x: x + 20,
           y: y + 45,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 65,
           width: 10,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 91,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "g":
@@ -666,44 +828,65 @@
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 7,
           y: y + 35,
           width: 7,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 45,
           y: y + 20,
           width: 5,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 35,
           width: 15,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 45,
           y: y + 40,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
         this.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 5,
           y: y + 74,
           width: 8,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "G":
@@ -711,44 +894,65 @@
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 55,
           y: y + 25,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 45,
           y: y + 45,
           width: 15,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 55,
           y: y + 52,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
         this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 5,
           y: y + 92,
           width: 8,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "h":
@@ -756,150 +960,222 @@
           x: x + 5,
           y: y + 15,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 15,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 20,
           y: y + 35,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 55,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 35,
           y: y + 55,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
       case "H":
         this.createBox({
           x: x + 10,
           y: y + 20,
           width: 10,
-          height: 20
+          height: 20,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 50,
           y: y + 20,
           width: 10,
-          height: 20
+          height: 20,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 45,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 70,
           width: 10,
-          height: 20
+          height: 20,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 50,
           y: y + 70,
           width: 10,
-          height: 20
+          height: 20,
+          userData: {
+            letter: true
+          }
         });
       case "i":
         this.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "I":
         this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 45,
           width: 5,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "j":
         this.createBox({
           x: x + 15,
           y: y + 5,
           width: 15,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 4,
           y: y + 18,
           width: 5,
-          height: 8
+          height: 8,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "J":
         this.createBox({
           x: x + 17,
           y: y + 5,
           width: 18,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 4,
           y: y + 18,
           width: 5,
-          height: 8
+          height: 8,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 40,
           width: 5,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "k":
         this.createPoly({
@@ -937,7 +1213,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           path: [
@@ -954,7 +1233,10 @@
               x: x + 40,
               y: y
             }
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "K":
         this.createPoly({
@@ -992,7 +1274,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           path: [
@@ -1009,33 +1294,48 @@
               x: x + 50,
               y: y
             }
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "l":
         this.createBox({
           x: x + 20,
           y: y + 5,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
       case "L":
         this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 5,
           y: y + 50,
           width: 5,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
       case "m":
         this.createPoly({
@@ -1073,7 +1373,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           fixtureDefs: [
@@ -1110,7 +1413,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "M":
         this.createPoly({
@@ -1148,7 +1454,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           fixtureDefs: [
@@ -1185,7 +1494,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "n":
         this.createPoly({
@@ -1223,7 +1535,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           path: [
@@ -1240,7 +1555,10 @@
               x: x + 50,
               y: y
             }
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "N":
         this.createPoly({
@@ -1278,7 +1596,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           path: [
@@ -1295,64 +1616,94 @@
               x: x + 60,
               y: y
             }
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "o":
         this.createBox({
           x: x + 20,
           y: y + 5,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 20,
           y: y + 65,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "O":
         this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 45,
           width: 5,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 55,
           y: y + 45,
           width: 5,
-          height: 35
+          height: 35,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "p":
         this.createBox({
           x: x + 17,
           y: y + 30,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
         this.createPoly({
           fixtureDefs: [
@@ -1405,13 +1756,19 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 72,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "P":
@@ -1419,7 +1776,10 @@
           x: x + 17,
           y: y + 40,
           width: 5,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
         this.createPoly({
           fixtureDefs: [
@@ -1472,13 +1832,19 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 92,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 30
         });
       case "q":
@@ -1486,13 +1852,19 @@
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
-          height: 25
+          height: 25,
+          userData: {
+            letter: true
+          }
         });
         this.createPoly({
           fixtureDefs: [
@@ -1532,26 +1904,38 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "Q":
         this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
         this.createPoly({
           fixtureDefs: [
@@ -1591,119 +1975,176 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 75,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "r":
         this.createBox({
           x: x + 5,
           y: y + 20,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 28,
           y: y + 5,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 25,
           width: 15,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 40,
           width: 5,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 20,
           y: y + 55,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "R":
         this.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 20,
           width: 5,
-          height: 20
+          height: 20,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 35,
           y: y + 45,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 55,
           y: y + 65,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "s":
         this.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 40,
           y: y + 20,
           width: 10,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 35,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 47,
           y: y + 42,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 50
         });
         this.createBox({
           x: x + 10,
           y: y + 50,
           width: 10,
-          height: 10
+          height: 10,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 72,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "S":
@@ -1711,44 +2152,65 @@
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 50,
           y: y + 25,
           width: 10,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 45,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 57,
           y: y + 52,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 80
         });
         this.createBox({
           x: x + 10,
           y: y + 65,
           width: 10,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 4,
           y: y + 92,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 10
         });
       case "t":
@@ -1756,64 +2218,94 @@
           x: x + 25,
           y: y + 30,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 25,
           y: y + 60,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "T":
         this.createBox({
           x: x + 30,
           y: y + 40,
           width: 5,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 80,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
       case "u":
         this.createBox({
           x: x + 20,
           y: y + 5,
           width: 20,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 35,
           y: y + 40,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
       case "U":
         this.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 50,
           width: 5,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 55,
           y: y + 50,
           width: 5,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
       case "v":
         return this.createPoly({
@@ -1851,7 +2343,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "V":
         return this.createPoly({
@@ -1889,57 +2384,84 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "w":
         this.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 45,
           y: y + 40,
           width: 5,
-          height: 30
+          height: 30,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 25,
           y: y + 25,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
       case "W":
         this.createBox({
           x: x + 40,
           y: y + 5,
           width: 40,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 70,
           y: y + 45,
           width: 10,
-          height: 40
+          height: 40,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 40,
           y: y + 20,
           width: 5,
-          height: 15
+          height: 15,
+          userData: {
+            letter: true
+          }
         });
       case "x":
         this.createPoly({
@@ -1961,7 +2483,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         this.createPoly({
           fixtureDefs: [
@@ -1982,7 +2507,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           fixtureDefs: [
@@ -2019,7 +2547,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "X":
         this.createPoly({
@@ -2041,7 +2572,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         this.createPoly({
           fixtureDefs: [
@@ -2062,7 +2596,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createPoly({
           fixtureDefs: [
@@ -2099,7 +2636,10 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
       case "y":
         this.createPoly({
@@ -2137,13 +2677,19 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 25,
           y: y + 17,
           width: 5,
-          height: 17
+          height: 17,
+          userData: {
+            letter: true
+          }
         });
       case "Y":
         this.createPoly({
@@ -2181,13 +2727,19 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 30,
           y: y + 22,
           width: 5,
-          height: 22
+          height: 22,
+          userData: {
+            letter: true
+          }
         });
       case "z":
         this.createPoly({
@@ -2225,19 +2777,28 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 47,
           y: y + 72,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 50
         });
       case "Z":
@@ -2276,19 +2837,28 @@
                 }
               ]
             })
-          ]
+          ],
+          userData: {
+            letter: true
+          }
         });
         this.createBox({
           x: x + 30,
           y: y + 95,
           width: 30,
-          height: 5
+          height: 5,
+          userData: {
+            letter: true
+          }
         });
         return this.createBox({
           x: x + 57,
           y: y + 102,
           width: 6,
           height: 2,
+          userData: {
+            letter: true
+          },
           density: 50
         });
     }
