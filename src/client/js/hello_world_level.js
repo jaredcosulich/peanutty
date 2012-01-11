@@ -1,5 +1,5 @@
 (function() {
-  var alreadyCollided, instructions;
+  var instructions;
   var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   Peanutty.createEnvironment();
@@ -42,6 +42,8 @@
     left: "" + ((peanutty.canvas.width() / 2) - 180) + "px"
   });
 
+  view.alreadyCollided = [];
+
   view.levelLetters = '';
 
   view.nameInput.bind('keyup', function(e) {
@@ -51,10 +53,8 @@
     if (letters === view.levelLetters) return;
     view.levelLetters = letters;
     view.loadScript();
-    if (view.levelElements.destroyInstructions != null) {
-      view.levelElements.destroyInstructions.remove();
-      view.levelElements.destroyInstructions = null;
-    }
+    view.removeLevelElements();
+    view.alreadyCollided = [];
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
       command: "peanutty.destroyDynamicObjects()\nview.nameInput.val(\"" + letters + "\") if view.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
@@ -80,8 +80,6 @@
     });
   });
 
-  alreadyCollided = [];
-
   peanutty.addContactListener({
     listener: function(contact) {
       var body, contactedBodies, index, successInstructions, _len, _results;
@@ -90,11 +88,11 @@
       for (index = 0, _len = contactedBodies.length; index < _len; index++) {
         body = contactedBodies[index];
         if (body.m_I === 0) continue;
-        if (((body.GetUserData() != null) && body.GetUserData().letter) || __indexOf.call(alreadyCollided, body) >= 0) {
+        if (((body.GetUserData() != null) && body.GetUserData().letter) || __indexOf.call(view.alreadyCollided, body) >= 0) {
           continue;
         }
         if (!((body.GetUserData() != null) && body.GetUserData().letter)) {
-          alreadyCollided.push(body);
+          view.alreadyCollided.push(body);
         }
         if (!((successInstructions = view.levelElements.successInstructions) != null)) {
           successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"));
@@ -110,10 +108,10 @@
           });
           $('#canvas_container').append(successInstructions);
         }
-        if (!(alreadyCollided.length > 2)) {
+        if (!(view.alreadyCollided.length > 2)) {
           successInstructions.html(successInstructions.html() + "Bamm! ");
         }
-        if (alreadyCollided.length === 2) {
+        if (view.alreadyCollided.length === 2) {
           successInstructions.html(successInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>");
           _results.push($.timeout(10, function() {
             return view.$('#next_level').bind('click', function() {

@@ -31,16 +31,16 @@ view.nameInput.css
     position: 'absolute'
     top: '50px'
     left: "#{(peanutty.canvas.width() / 2) - 180}px"
-    
+
+view.alreadyCollided = []        
 view.levelLetters = '';
 view.nameInput.bind 'keyup', (e) ->
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '')
     return if letters == view.levelLetters
     view.levelLetters = letters
     view.loadScript()
-    if view.levelElements.destroyInstructions?
-        view.levelElements.destroyInstructions.remove()
-        view.levelElements.destroyInstructions = null
+    view.removeLevelElements()
+    view.alreadyCollided = []
     peanutty.destroyDynamicObjects()
     peanutty.addToScript
         command:
@@ -69,14 +69,13 @@ view.nameInput.bind 'keyup', (e) ->
         destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)")
         view.$('#canvas_container').append(destroyInstructions)
             
-alreadyCollided = []    
 peanutty.addContactListener 
     listener: (contact) =>
         contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()] 
         for body, index in contactedBodies
             continue if body.m_I == 0
-            continue if (body.GetUserData()? && body.GetUserData().letter) or body in alreadyCollided
-            alreadyCollided.push(body) unless (body.GetUserData()? && body.GetUserData().letter)
+            continue if (body.GetUserData()? && body.GetUserData().letter) or body in view.alreadyCollided
+            view.alreadyCollided.push(body) unless (body.GetUserData()? && body.GetUserData().letter)
             if !(successInstructions = view.levelElements.successInstructions)?
                 successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"))
                 successInstructions.addClass('level_element')
@@ -89,10 +88,9 @@ peanutty.addContactListener
                     top: '150px'
                     left: "#{(peanutty.canvas.width() / 2) - 200}px"
                 $('#canvas_container').append(successInstructions)
-                                  
-            successInstructions.html(successInstructions.html() + "Bamm! ") unless alreadyCollided.length > 2
-
-            if alreadyCollided.length == 2
+            successInstructions.html(successInstructions.html() + "Bamm! ") unless view.alreadyCollided.length > 2
+            
+            if view.alreadyCollided.length == 2
                 successInstructions.html(
                     successInstructions.html() + 
                     "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>"
