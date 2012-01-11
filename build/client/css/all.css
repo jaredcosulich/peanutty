@@ -2623,16 +2623,16 @@ section#home .page-header {
   margin-left: 45px;
   margin-right: 45px;
 }
-section#stages {
+section#levels {
   overflow: hidden;
 }
-section#stages .load_stage {
+section#levels .load_stage {
   display: block;
   float: left;
   text-align: center;
   margin-right: 12px;
 }
-section#stages .load_stage image {
+section#levels .load_stage image {
   width: 180px;
   height: 150px;
 }

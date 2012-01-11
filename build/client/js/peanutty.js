@@ -35,7 +35,7 @@
 
       function Peanutty(_arg) {
         var gravity;
-        this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.stageEditor = _arg.stageEditor, this.environmentEditor = _arg.environmentEditor, this.scale = _arg.scale, gravity = _arg.gravity;
+        this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.levelEditor = _arg.levelEditor, this.environmentEditor = _arg.environmentEditor, this.scale = _arg.scale, gravity = _arg.gravity;
         this.destroyWorld = __bind(this.destroyWorld, this);
         this.destroyDynamicObjects = __bind(this.destroyDynamicObjects, this);
         this.sign = __bind(this.sign, this);
@@ -217,7 +217,7 @@
           this.codeMessage.append(document.createElement('DIV'));
         }
         this.codeMessage.find('div').html(message);
-        _ref = [this.scriptEditor, this.stageEditor, this.environmentEditor];
+        _ref = [this.scriptEditor, this.levelEditor, this.environmentEditor];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           editor = _ref[_i];
           if (editor.container.offsetLeft !== 0) activeEditor = editor.container;
@@ -678,9 +678,9 @@
         var signature, signatureLink;
         if (twitterHandle == null) twitterHandle = '';
         signature = $(document.createElement("DIV"));
-        signature.addClass('stage_element');
+        signature.addClass('level_element');
         signature.addClass('signature');
-        signature.html('This stage created by: ');
+        signature.html('This level created by: ');
         signatureLink = $(document.createElement("A"));
         signatureLink.html(name);
         signatureLink.attr('href', "http://twitter.com/#" + twitterHandle);
@@ -745,11 +745,11 @@
       if (scriptEditor == null) scriptEditor = view.scriptEditor;
       return Peanutty.runCode(scriptEditor);
     };
-    Peanutty.setStage = function(stageEditor) {
-      if (stageEditor == null) stageEditor = view.stageEditor;
-      return Peanutty.runCode(stageEditor);
+    Peanutty.loadLevel = function(levelEditor) {
+      if (levelEditor == null) levelEditor = view.levelEditor;
+      return Peanutty.runCode(levelEditor);
     };
-    Peanutty.loadEnvironment = function(environmentEditor) {
+    Peanutty.createEnvironment = function(environmentEditor) {
       if (environmentEditor == null) environmentEditor = view.environmentEditor;
       return Peanutty.runCode(environmentEditor);
     };

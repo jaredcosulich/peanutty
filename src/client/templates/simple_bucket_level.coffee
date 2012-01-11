@@ -1,5 +1,4 @@
-#82.5, 19.7
-Peanutty.loadEnvironment()
+Peanutty.createEnvironment()
 
 # Zoom out
 peanutty.setScale(25)
@@ -66,7 +65,7 @@ peanutty.addContactListener
         fixtures = [contact.GetFixtureA(), contact.GetFixtureB()]
         if ball.GetFixtureList() in fixtures and bucketBottom in fixtures
             success = $(document.createElement("DIV"))
-            success.addClass('stage_element')
+            success.addClass('level_element')
             success.css
                 textAlign: 'center'
                 position: 'absolute'
@@ -81,9 +80,9 @@ peanutty.addContactListener
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
                 <br/><br/><br/><br/><br/>
-                <p>More stages coming soon...</p>
+                <p>More levels coming soon...</p>
                 <p>
-                    ... or <a href='#create'>create your own stage!<a> 
+                    ... or <a href='#create'>create your own level!<a> 
                 </p>
                 """
             )
@@ -93,7 +92,7 @@ peanutty.addContactListener
     
 # Set up the user inputs
 title = $(document.createElement("DIV"))
-title.addClass('stage_element')
+title.addClass('level_element')
 title.css
     width: '500px'
     textAlign: 'center'
@@ -106,7 +105,7 @@ view.$('#canvas_container').append(title)
 
 
 cannonControl = $(document.createElement("DIV"))
-cannonControl.addClass('stage_element')
+cannonControl.addClass('level_element')
 cannonControl.css
     fontSize: '12pt'
     position: 'absolute'
@@ -153,7 +152,7 @@ view.$('#fire_cannon').bind 'click', () =>
 view.$('#try_again').bind 'click', () =>
     angleVal = view.$('#cannon_angle').val()
     forceVal = view.$('#cannon_force').val()
-    view.resetStage()
+    view.resetLevel()
     view.$('#cannon_angle').val(angleVal)
     view.$('#cannon_force').val(forceVal)
     view.$('#try_again').hide()

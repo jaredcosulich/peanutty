@@ -22,7 +22,7 @@
         @drawData[attr] = drawData[attr] for attr of drawData
 
     class Peanutty
-        constructor: ({@canvas, @scriptEditor, @stageEditor, @environmentEditor, @scale, gravity}) ->
+        constructor: ({@canvas, @scriptEditor, @levelEditor, @environmentEditor, @scale, gravity}) ->
             @context = @canvas[0].getContext("2d")
             @scale or= 30
             @defaultScale = 30
@@ -136,7 +136,7 @@
             @codeMessage.find('div').html(message)
             activeEditor = editor.container for editor in [
                 @scriptEditor,
-                @stageEditor,
+                @levelEditor,
                 @environmentEditor
             ] when editor.container.offsetLeft != 0
             @codeMessage.css
@@ -477,9 +477,9 @@
     
         sign: (name, twitterHandle='') =>
             signature = $(document.createElement("DIV"))
-            signature.addClass('stage_element')
+            signature.addClass('level_element')
             signature.addClass('signature')
-            signature.html('This stage created by: ')
+            signature.html('This level created by: ')
             signatureLink = $(document.createElement("A"))
             signatureLink.html(name)
             signatureLink.attr('href', "http://twitter.com/##{twitterHandle}")
@@ -529,8 +529,8 @@
         CoffeeScript.run(complete.join("\n"))
 
     Peanutty.runScript = (scriptEditor = view.scriptEditor) => Peanutty.runCode(scriptEditor)    
-    Peanutty.setStage = (stageEditor = view.stageEditor) => Peanutty.runCode(stageEditor)
-    Peanutty.loadEnvironment = (environmentEditor = view.environmentEditor) => Peanutty.runCode(environmentEditor)
+    Peanutty.loadLevel = (levelEditor = view.levelEditor) => Peanutty.runCode(levelEditor)
+    Peanutty.createEnvironment = (environmentEditor = view.environmentEditor) => Peanutty.runCode(environmentEditor)
     Peanutty.b2d = b2d
     
     provide('Peanutty', Peanutty)

@@ -7,10 +7,10 @@
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
                 script: @_requireTemplate('templates/basic_script.coffee'),
-                stage: @_requireTemplate("templates/#{@data.stage}_stage.coffee"),
+                level: @_requireTemplate("templates/#{@data.level}_level.coffee"),
                 environment: @_requireTemplate('templates/basic_environment.coffee')
             }
-            $.route.navigate("stage/#{@data.stage}", false)
+            $.route.navigate("level/#{@data.level}", false)
     
         renderView: () ->
             if navigator.userAgent.indexOf("Chrome") == -1
@@ -46,10 +46,10 @@
             @scriptEditor.getSession().on 'change', () =>
                 beforeLeave(@scriptEditor.getSession().getValue() != @code(@templates.script))
             
-            @stageEditor = ace.edit(@$('#codes .stage')[0])
-            @stageEditor.getSession().setMode(new CoffeeScriptMode())
-            @stageEditor.getSession().on 'change', () =>
-                beforeLeave(@stageEditor.getSession().getValue() != @code(@templates.stage))
+            @levelEditor = ace.edit(@$('#codes .level')[0])
+            @levelEditor.getSession().setMode(new CoffeeScriptMode())
+            @levelEditor.getSession().on 'change', () =>
+                beforeLeave(@levelEditor.getSession().getValue() != @code(@templates.level))
             
             @environmentEditor = ace.edit(@$('#codes .environment')[0])
             @environmentEditor.getSession().setMode(new CoffeeScriptMode())
@@ -69,16 +69,16 @@
         initTopButtons: () =>
             @$('#code_buttons .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
-                @$('.stage_element').remove()
+                @$('.level_element').remove()
                 Peanutty.runScript()
-            @$('#code_buttons .load_stage').bind 'click', (e) =>
+            @$('#code_buttons .load_level').bind 'click', (e) =>
                 peanutty.sendCodeMessage
                     message:
                         """
-                            If you want to load in a new stage simply paste the code in to the stage tab.
+                            If you want to load in a new level simply paste the code in to the level tab.
                         """
-            @$('#code_buttons .reset_stage').bind 'click', (e) =>
-                @resetStage()            
+            @$('#code_buttons .reset_level').bind 'click', (e) =>
+                @resetLevel()            
                    
         resizeAreas: () =>
             fullWidth = $(window).width()
@@ -93,70 +93,58 @@
             $('#canvas')[0].width = remainingWidth
             peanutty.evaluateDimensions() if peanutty?
         
-        resetStage: () =>
+        resetLevel: () =>
             peanutty.destroyWorld()
-            @$('.stage_element').remove()
+            @$('.level_element').remove()
             @loadCode()
             Peanutty.runScript()
             
         loadCode: () =>
             @loadScript()
-            @loadStage()
+            @loadLevel()
             @loadEnvironment()
 
         code: (template) =>
             template.html().replace(/^\n*/, '')
 
         loadScript: () => @scriptEditor.getSession().setValue(@code(@templates.script))
-        loadStage: () => @stageEditor.getSession().setValue(@code(@templates.stage))
+        loadLevel: () => @levelEditor.getSession().setValue(@code(@templates.level))
         loadEnvironment: () => @environmentEditor.getSession().setValue(@code(@templates.environment))
 
-        loadNewStage: (stageName) =>
-            $.ajax
-                method: 'GET'
-                url: "#{if window.STATIC_SERVER then 'src/client/' else ''}templates/#{stageName}_stage.coffee?#{Math.random()}"
-                type: 'html'
-
-                success: (text) =>
-                    @data.stage = stageName
-                    @templates.stage.html(text)
-                    peanutty.destroyWorld()
-                    @$('.stage_element').remove()
-                    @loadCode()
-                    Peanutty.runScript()
-                    $.route.navigate("stage/#{stageName}", false)
-
-                error: (xhr, status, e, data) =>
-                    @errors.push(['new stage', stageName])
+        loadNewLevel: (levelName) =>
+            $.route.navigate("level/#{levelName}", true)
         
 
     # Make the internal anchors work with the routing (hacky!)
     INTERNAL_ROUTES = [
         'home',
-        'stages',
+        'levels',
         'create',
         'coding',
         'about',
         'docs'
     ]
     reallyRunRoutes = $.route.run
-    $.route.run = (hash) =>
-        _hash or= 'stage/hello_world'
+    _hash = 'level/hello_world'
+    handleInternalRoutes = (hash) ->
         if hash in INTERNAL_ROUTES 
             $.route.navigate(hash, false)
             $.timeout 1, () -> $.route.navigate(_hash, false)
         else
-            _hash = hash
+            _hash = hash unless hash.replace(/\s/g, '').length == 0
             reallyRunRoutes(hash)
         return
+        
+    $.route.run = handleInternalRoutes
+        
        
     $.route.add
         '': () ->
             $('#content').view
                 name: 'Home'
-                data: {stage: 'hello_world'} 
-        'stage/:name': (name) ->
+                data: {level: 'hello_world'} 
+        'level/:name': (name) ->
             $('#content').view
                 name: 'Home'
-                data: {stage: name}
+                data: {level: name}
 )(ender)

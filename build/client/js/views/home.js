@@ -2,8 +2,7 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   (function($) {
-    var INTERNAL_ROUTES, Peanutty, reallyRunRoutes, views;
-    var _this = this;
+    var INTERNAL_ROUTES, Peanutty, handleInternalRoutes, reallyRunRoutes, views, _hash;
     Peanutty = require('Peanutty');
     views = require('views');
     views.Home = (function() {
@@ -11,13 +10,13 @@
       __extends(Home, views.BaseView);
 
       function Home() {
-        this.loadNewStage = __bind(this.loadNewStage, this);
+        this.loadNewLevel = __bind(this.loadNewLevel, this);
         this.loadEnvironment = __bind(this.loadEnvironment, this);
-        this.loadStage = __bind(this.loadStage, this);
+        this.loadLevel = __bind(this.loadLevel, this);
         this.loadScript = __bind(this.loadScript, this);
         this.code = __bind(this.code, this);
         this.loadCode = __bind(this.loadCode, this);
-        this.resetStage = __bind(this.resetStage, this);
+        this.resetLevel = __bind(this.resetLevel, this);
         this.resizeAreas = __bind(this.resizeAreas, this);
         this.initTopButtons = __bind(this.initTopButtons, this);
         this.initTabs = __bind(this.initTabs, this);
@@ -29,10 +28,10 @@
         this.templates = {
           main: this._requireTemplate('templates/home.html'),
           script: this._requireTemplate('templates/basic_script.coffee'),
-          stage: this._requireTemplate("templates/" + this.data.stage + "_stage.coffee"),
+          level: this._requireTemplate("templates/" + this.data.level + "_level.coffee"),
           environment: this._requireTemplate('templates/basic_environment.coffee')
         };
-        return $.route.navigate("stage/" + this.data.stage, false);
+        return $.route.navigate("level/" + this.data.level, false);
       };
 
       Home.prototype.renderView = function() {
@@ -72,10 +71,10 @@
         this.scriptEditor.getSession().on('change', function() {
           return beforeLeave(_this.scriptEditor.getSession().getValue() !== _this.code(_this.templates.script));
         });
-        this.stageEditor = ace.edit(this.$('#codes .stage')[0]);
-        this.stageEditor.getSession().setMode(new CoffeeScriptMode());
-        this.stageEditor.getSession().on('change', function() {
-          return beforeLeave(_this.stageEditor.getSession().getValue() !== _this.code(_this.templates.stage));
+        this.levelEditor = ace.edit(this.$('#codes .level')[0]);
+        this.levelEditor.getSession().setMode(new CoffeeScriptMode());
+        this.levelEditor.getSession().on('change', function() {
+          return beforeLeave(_this.levelEditor.getSession().getValue() !== _this.code(_this.templates.level));
         });
         this.environmentEditor = ace.edit(this.$('#codes .environment')[0]);
         this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
@@ -102,16 +101,16 @@
         var _this = this;
         this.$('#code_buttons .run_script').bind('click', function(e) {
           peanutty.destroyWorld();
-          _this.$('.stage_element').remove();
+          _this.$('.level_element').remove();
           return Peanutty.runScript();
         });
-        this.$('#code_buttons .load_stage').bind('click', function(e) {
+        this.$('#code_buttons .load_level').bind('click', function(e) {
           return peanutty.sendCodeMessage({
-            message: "If you want to load in a new stage simply paste the code in to the stage tab."
+            message: "If you want to load in a new level simply paste the code in to the level tab."
           });
         });
-        return this.$('#code_buttons .reset_stage').bind('click', function(e) {
-          return _this.resetStage();
+        return this.$('#code_buttons .reset_level').bind('click', function(e) {
+          return _this.resetLevel();
         });
       };
 
@@ -131,16 +130,16 @@
         }
       };
 
-      Home.prototype.resetStage = function() {
+      Home.prototype.resetLevel = function() {
         peanutty.destroyWorld();
-        this.$('.stage_element').remove();
+        this.$('.level_element').remove();
         this.loadCode();
         return Peanutty.runScript();
       };
 
       Home.prototype.loadCode = function() {
         this.loadScript();
-        this.loadStage();
+        this.loadLevel();
         return this.loadEnvironment();
       };
 
@@ -152,67 +151,50 @@
         return this.scriptEditor.getSession().setValue(this.code(this.templates.script));
       };
 
-      Home.prototype.loadStage = function() {
-        return this.stageEditor.getSession().setValue(this.code(this.templates.stage));
+      Home.prototype.loadLevel = function() {
+        return this.levelEditor.getSession().setValue(this.code(this.templates.level));
       };
 
       Home.prototype.loadEnvironment = function() {
         return this.environmentEditor.getSession().setValue(this.code(this.templates.environment));
       };
 
-      Home.prototype.loadNewStage = function(stageName) {
-        var _this = this;
-        return $.ajax({
-          method: 'GET',
-          url: "" + (window.STATIC_SERVER ? 'src/client/' : '') + "templates/" + stageName + "_stage.coffee?" + (Math.random()),
-          type: 'html',
-          success: function(text) {
-            _this.data.stage = stageName;
-            _this.templates.stage.html(text);
-            peanutty.destroyWorld();
-            _this.$('.stage_element').remove();
-            _this.loadCode();
-            Peanutty.runScript();
-            return $.route.navigate("stage/" + stageName, false);
-          },
-          error: function(xhr, status, e, data) {
-            return _this.errors.push(['new stage', stageName]);
-          }
-        });
+      Home.prototype.loadNewLevel = function(levelName) {
+        return $.route.navigate("level/" + levelName, true);
       };
 
       return Home;
 
     })();
-    INTERNAL_ROUTES = ['home', 'stages', 'create', 'coding', 'about', 'docs'];
+    INTERNAL_ROUTES = ['home', 'levels', 'create', 'coding', 'about', 'docs'];
     reallyRunRoutes = $.route.run;
-    $.route.run = function(hash) {
-      var _hash;
-      _hash || (_hash = 'stage/hello_world');
+    _hash = 'level/hello_world';
+    handleInternalRoutes = function(hash) {
       if (__indexOf.call(INTERNAL_ROUTES, hash) >= 0) {
         $.route.navigate(hash, false);
         $.timeout(1, function() {
           return $.route.navigate(_hash, false);
         });
       } else {
-        _hash = hash;
+        if (hash.replace(/\s/g, '').length !== 0) _hash = hash;
         reallyRunRoutes(hash);
       }
     };
+    $.route.run = handleInternalRoutes;
     return $.route.add({
       '': function() {
         return $('#content').view({
           name: 'Home',
           data: {
-            stage: 'hello_world'
+            level: 'hello_world'
           }
         });
       },
-      'stage/:name': function(name) {
+      'level/:name': function(name) {
         return $('#content').view({
           name: 'Home',
           data: {
-            stage: name
+            level: name
           }
         });
       }

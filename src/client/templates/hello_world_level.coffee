@@ -1,4 +1,4 @@
-Peanutty.loadEnvironment()
+Peanutty.createEnvironment()
 
 # Create the ground
 peanutty.createGround
@@ -10,7 +10,7 @@ peanutty.createGround
 # Set up the user inputs
 
 instructions = $(document.createElement("DIV"))
-instructions.addClass('stage_element')
+instructions.addClass('level_element')
 instructions.css
     height: '30px'
     width: '360px'
@@ -23,7 +23,7 @@ instructions.html("Type your name:")
 view.$('#canvas_container').append(instructions)
 
 view.nameInput = $(document.createElement('INPUT'))
-view.nameInput.addClass('stage_element')
+view.nameInput.addClass('level_element')
 view.nameInput.css
     width: '360px'
     height: '30px'
@@ -32,11 +32,11 @@ view.nameInput.css
     top: '50px'
     left: "#{(peanutty.canvas.width() / 2) - 180}px"
     
-view.stageLetters = '';
+view.levelLetters = '';
 view.nameInput.bind 'keyup', (e) ->
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '')
-    return if letters == view.stageLetters
-    view.stageLetters = letters
+    return if letters == view.levelLetters
+    view.levelLetters = letters
     view.loadScript()
     if view.destroyInstructions?
         view.destroyInstructions.remove()
@@ -58,7 +58,7 @@ view.nameInput.bind 'keyup', (e) ->
         return if new Date() - view.lastNameInputKey < 1500
         return if view.destroyInstructions?
         view.destroyInstructions = $(document.createElement("DIV"))
-        view.destroyInstructions.addClass('stage_element')
+        view.destroyInstructions.addClass('level_element')
         view.destroyInstructions.css
             height: '30px'
             width: '400px'
@@ -87,9 +87,9 @@ view.nameInput.bind 'keyup', (e) ->
                 if alreadyCollided.length == 2
                     view.destroyInstructions.html(
                         view.destroyInstructions.html() + 
-                        "<br/>Nice job :) When you're ready, head to the <a id='next_stage'>next stage ></a>"
+                        "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>"
                     )
-                    $.timeout 10, () => view.$('#next_stage').bind 'click', () => view.loadNewStage('simple_bucket')
+                    $.timeout 10, () => view.$('#next_level').bind 'click', () => view.loadNewLevel('simple_bucket')
         
             
 view.$('#canvas_container').append(view.nameInput)

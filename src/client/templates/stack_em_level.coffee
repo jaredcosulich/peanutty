@@ -1,4 +1,4 @@
-Peanutty.loadEnvironment()
+Peanutty.createEnvironment()
 
 view.setUpChallenge = (scale=30) =>
     peanutty.destroyWorld()
@@ -51,7 +51,7 @@ instructions.css
     left: 0
 
 header = $(document.createElement("DIV"))
-header.addClass('stage_element')
+header.addClass('level_element')
 header.css
     height: '30px'
     fontSize: '20pt'
@@ -59,7 +59,7 @@ header.html("Build a stable tower that reaches the star.")
 instructions.append(header)
 
 level = $(document.createElement("DIV"))
-level.addClass('stage_element')
+level.addClass('level_element')
 level.css
     height: '20px'
     fontSize: '12pt'
