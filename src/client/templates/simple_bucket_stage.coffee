@@ -52,8 +52,11 @@ bucket = peanutty.createPoly
              path: [{x: 700, y: 280},{x: 710, y: 280},{x: 710, y: 180},{x: 700, y: 180}]
     ]
     static: true
-bucketBottom = peanutty.searchObjectList bucket.GetFixtureList(), (fixture) =>
-    return fixture.GetUserData()? && fixture.GetUserData().bottom
+bucketBottom = peanutty.searchObjectList( 
+    object: bucket.GetFixtureList()
+    searchFunction: (fixture) -> fixture.GetUserData()? && fixture.GetUserData().bottom
+    limit: 1
+)[0]
 
 # Listen for the ball in the bucket
 peanutty.addContactListener
@@ -115,7 +118,7 @@ cannonControl.html(
     <a id='fire_cannon' class="btn error">
         Fire Cannon!
     </a>
-    <a id='reset_stage' class="btn primary" style='display: none;'>
+    <a id='try_again' class="btn primary" style='display: none;'>
         Try Again
     </a>    
     """
@@ -143,15 +146,15 @@ view.$('#fire_cannon').bind 'click', () =>
             """
         time: 0
     view.$('#fire_cannon').hide()
-    view.$('#reset_stage').show()
+    view.$('#try_again').show()
 
-view.$('#reset_stage').bind 'click', () =>
+view.$('#try_again').bind 'click', () =>
     angleVal = view.$('#cannon_angle').val()
     forceVal = view.$('#cannon_force').val()
     view.resetStage()
     view.$('#cannon_angle').val(angleVal)
     view.$('#cannon_force').val(forceVal)
-    view.$('#reset_stage').hide()
+    view.$('#try_again').hide()
     view.$('#fire_cannon').show()
     
 peanutty.sign('@jaredcosulich', 'jaredcosulich')

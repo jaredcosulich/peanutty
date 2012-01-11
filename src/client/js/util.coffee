@@ -16,11 +16,11 @@ window.zeroPad = (n, width) ->
     return s
 
 
-String.prototype.startsWith = (str) -> (@substr(0, str.length) == str)
-String.prototype.endsWith = (str) -> (@substr(@length - str.length, str.length) == str)
-String.prototype.capitalize = () -> (@charAt(0).toUpperCase() + @slice(1).toLowerCase())
+String::startsWith = (str) -> (@substr(0, str.length) == str)
+String::endsWith = (str) -> (@substr(@length - str.length, str.length) == str)
+String::capitalize = () -> (@charAt(0).toUpperCase() + @slice(1).toLowerCase())
 
-String.prototype.toTitleCase = () ->
+String::toTitleCase = () ->
     str = ""
     words = @split(" ")
     for i in [0...words.length]
@@ -29,14 +29,14 @@ String.prototype.toTitleCase = () ->
     return str
 
 
-Date.prototype.longMonths = ["January", "February", "March", "April", "May", "June",
-                             "July", "August", "September", "October", "November", "December"]
-Date.prototype.shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-Date.prototype.longDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-Date.prototype.shortDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+Date::longMonths = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"]
+Date::shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+Date::longDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+Date::shortDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-Date.prototype.strftime = (format) ->
+Date::strftime = (format) ->
     year = @getFullYear()
     month = @getMonth()
     day = @getDate()

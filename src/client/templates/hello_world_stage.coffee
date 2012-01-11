@@ -70,7 +70,10 @@ view.nameInput.bind 'keyup', (e) ->
         view.destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)<br/><br/>")
         view.$('#canvas_container').append(view.destroyInstructions)
         
-    letters = (body for body in peanutty.bodies() when body.GetType() == b2d.Dynamics.b2Body.b2_dynamicBody)
+    letters = peanutty.searchObjectList
+        object: peanutty.world.GetBodyList(), 
+        searchFunction: (body) -> body.GetType() == b2d.Dynamics.b2Body.b2_dynamicBody
+    
     alreadyCollided = []    
     peanutty.addContactListener 
         listener: (contact) =>

@@ -105,9 +105,13 @@
     static: true
   });
 
-  bucketBottom = peanutty.searchObjectList(bucket.GetFixtureList(), function(fixture) {
-    return (fixture.GetUserData() != null) && fixture.GetUserData().bottom;
-  });
+  bucketBottom = peanutty.searchObjectList({
+    object: bucket.GetFixtureList(),
+    searchFunction: function(fixture) {
+      return (fixture.GetUserData() != null) && fixture.GetUserData().bottom;
+    },
+    limit: 1
+  })[0];
 
   peanutty.addContactListener({
     listener: function(contact) {
@@ -156,7 +160,7 @@
     left: "20px"
   });
 
-  cannonControl.html("<h5>Cannon Controls</h5>\n<p>Angle: <input id='cannon_angle' type='text' style='width: 2em' value=45 />&deg;</p>\n<p>Force: <input id='cannon_force' type='text' style='width: 2em' value=10 /></p>\n<a id='fire_cannon' class=\"btn error\">\n    Fire Cannon!\n</a>\n<a id='reset_stage' class=\"btn primary\" style='display: none;'>\n    Try Again\n</a>    ");
+  cannonControl.html("<h5>Cannon Controls</h5>\n<p>Angle: <input id='cannon_angle' type='text' style='width: 2em' value=45 />&deg;</p>\n<p>Force: <input id='cannon_force' type='text' style='width: 2em' value=10 /></p>\n<a id='fire_cannon' class=\"btn error\">\n    Fire Cannon!\n</a>\n<a id='try_again' class=\"btn primary\" style='display: none;'>\n    Try Again\n</a>    ");
 
   view.$('#canvas_container').append(cannonControl);
 
@@ -166,17 +170,17 @@
       time: 0
     });
     view.$('#fire_cannon').hide();
-    return view.$('#reset_stage').show();
+    return view.$('#try_again').show();
   });
 
-  view.$('#reset_stage').bind('click', function() {
+  view.$('#try_again').bind('click', function() {
     var angleVal, forceVal;
     angleVal = view.$('#cannon_angle').val();
     forceVal = view.$('#cannon_force').val();
     view.resetStage();
     view.$('#cannon_angle').val(angleVal);
     view.$('#cannon_force').val(forceVal);
-    view.$('#reset_stage').hide();
+    view.$('#try_again').hide();
     return view.$('#fire_cannon').show();
   });
 

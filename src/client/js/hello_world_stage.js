@@ -45,7 +45,7 @@
   view.stageLetters = '';
 
   view.nameInput.bind('keyup', function(e) {
-    var alreadyCollided, body, letters;
+    var alreadyCollided, letters;
     var _this = this;
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '');
     if (letters === view.stageLetters) return;
@@ -78,18 +78,12 @@
       view.destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)<br/><br/>");
       return view.$('#canvas_container').append(view.destroyInstructions);
     });
-    letters = (function() {
-      var _i, _len, _ref, _results;
-      _ref = peanutty.bodies();
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        body = _ref[_i];
-        if (body.GetType() === b2d.Dynamics.b2Body.b2_dynamicBody) {
-          _results.push(body);
-        }
+    letters = peanutty.searchObjectList({
+      object: peanutty.world.GetBodyList(),
+      searchFunction: function(body) {
+        return body.GetType() === b2d.Dynamics.b2Body.b2_dynamicBody;
       }
-      return _results;
-    })();
+    });
     alreadyCollided = [];
     return peanutty.addContactListener({
       listener: function(contact) {
