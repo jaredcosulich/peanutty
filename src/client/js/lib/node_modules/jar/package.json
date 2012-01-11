@@ -1,6 +1,6 @@
 {
     "name": "jar",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Basic cookie handling",
     "keywords": ["ender", "cookies"],
     "author": "Andrew McCollum <amccollum@gmail.com>",

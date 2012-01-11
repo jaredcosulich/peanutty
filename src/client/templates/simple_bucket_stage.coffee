@@ -37,7 +37,9 @@ ball = peanutty.createBall
     x: 400
     y: 440
     radius: 20
-    drawData: {color: new b2d.Common.b2Color(0, 0, 0.8), alpha: 0.8}
+    drawData: 
+        color: new b2d.Common.b2Color(0, 0, 0.8)
+        alpha: 0.8
 
 
 # Create the bucket
