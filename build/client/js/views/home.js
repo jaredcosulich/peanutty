@@ -10,6 +10,7 @@
       __extends(Home, views.BaseView);
 
       function Home() {
+        this.removeLevelElements = __bind(this.removeLevelElements, this);
         this.loadNewLevel = __bind(this.loadNewLevel, this);
         this.loadEnvironment = __bind(this.loadEnvironment, this);
         this.loadLevel = __bind(this.loadLevel, this);
@@ -101,7 +102,7 @@
         var _this = this;
         this.$('#code_buttons .run_script').bind('click', function(e) {
           peanutty.destroyWorld();
-          _this.$('.level_element').remove();
+          _this.removeLevelElements();
           return Peanutty.runScript();
         });
         this.$('#code_buttons .load_level').bind('click', function(e) {
@@ -132,7 +133,7 @@
 
       Home.prototype.resetLevel = function() {
         peanutty.destroyWorld();
-        this.$('.level_element').remove();
+        this.removeLevelElements();
         this.loadCode();
         return Peanutty.runScript();
       };
@@ -161,6 +162,18 @@
 
       Home.prototype.loadNewLevel = function(levelName) {
         return $.route.navigate("level/" + levelName, true);
+      };
+
+      Home.prototype.levelElements = {};
+
+      Home.prototype.removeLevelElements = function() {
+        var levelElement, name, _ref;
+        _ref = this.levelElements;
+        for (name in _ref) {
+          levelElement = _ref[name];
+          $(levelElement).remove();
+        }
+        return this.levelElements = [];
       };
 
       return Home;

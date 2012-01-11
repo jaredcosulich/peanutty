@@ -132,9 +132,7 @@
     }
   });
 
-  title = $(document.createElement("DIV"));
-
-  title.addClass('level_element');
+  title = view.levelElements.title = $(document.createElement("DIV"));
 
   title.css({
     width: '500px',
@@ -149,9 +147,7 @@
 
   view.$('#canvas_container').append(title);
 
-  cannonControl = $(document.createElement("DIV"));
-
-  cannonControl.addClass('level_element');
+  cannonControl = view.levelElements.cannonControl = $(document.createElement("DIV"));
 
   cannonControl.css({
     fontSize: '12pt',

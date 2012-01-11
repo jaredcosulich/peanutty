@@ -69,7 +69,7 @@
         initTopButtons: () =>
             @$('#code_buttons .run_script').bind 'click', (e) =>
                 peanutty.destroyWorld()
-                @$('.level_element').remove()
+                @removeLevelElements()
                 Peanutty.runScript()
             @$('#code_buttons .load_level').bind 'click', (e) =>
                 peanutty.sendCodeMessage
@@ -95,7 +95,7 @@
         
         resetLevel: () =>
             peanutty.destroyWorld()
-            @$('.level_element').remove()
+            @removeLevelElements()
             @loadCode()
             Peanutty.runScript()
             
@@ -114,6 +114,12 @@
         loadNewLevel: (levelName) =>
             $.route.navigate("level/#{levelName}", true)
         
+        levelElements: {}
+        removeLevelElements: () => 
+            $(levelElement).remove() for name, levelElement of @levelElements
+            @levelElements = []
+       
+            
 
     # Make the internal anchors work with the routing (hacky!)
     INTERNAL_ROUTES = [

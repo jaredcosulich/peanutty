@@ -1,6 +1,6 @@
 (function() {
-  var instructions;
-  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; }, _this = this;
+  var alreadyCollided, instructions;
+  var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   Peanutty.createEnvironment();
 
@@ -45,15 +45,15 @@
   view.levelLetters = '';
 
   view.nameInput.bind('keyup', function(e) {
-    var alreadyCollided, letters;
+    var letters;
     var _this = this;
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '');
     if (letters === view.levelLetters) return;
     view.levelLetters = letters;
     view.loadScript();
-    if (view.destroyInstructions != null) {
-      view.destroyInstructions.remove();
-      view.destroyInstructions = null;
+    if (view.levelElements.destroyInstructions != null) {
+      view.levelElements.destroyInstructions.remove();
+      view.levelElements.destroyInstructions = null;
     }
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
@@ -61,12 +61,12 @@
       time: 0
     });
     view.lastNameInputKey = new Date();
-    $.timeout(1500, function() {
+    return $.timeout(1500, function() {
+      var destroyInstructions;
       if (new Date() - view.lastNameInputKey < 1500) return;
-      if (view.destroyInstructions != null) return;
-      view.destroyInstructions = $(document.createElement("DIV"));
-      view.destroyInstructions.addClass('level_element');
-      view.destroyInstructions.css({
+      if (view.levelElements.destroyInstructions != null) return;
+      destroyInstructions = view.levelElements.destroyInstructions = $(document.createElement("DIV"));
+      destroyInstructions.css({
         height: '30px',
         width: '400px',
         textAlign: 'center',
@@ -75,48 +75,57 @@
         top: '100px',
         left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
       });
-      view.destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)<br/><br/>");
-      return view.$('#canvas_container').append(view.destroyInstructions);
+      destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)");
+      return view.$('#canvas_container').append(destroyInstructions);
     });
-    letters = peanutty.searchObjectList({
-      object: peanutty.world.GetBodyList(),
-      searchFunction: function(body) {
-        return (body.GetUserData() != null) && body.GetUserData().letter;
-      }
-    });
-    alreadyCollided = [];
-    return peanutty.addContactListener({
-      listener: function(contact) {
-        var body, contactedBodies, index, _len, _ref, _results;
-        contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()];
-        _results = [];
-        for (index = 0, _len = contactedBodies.length; index < _len; index++) {
-          body = contactedBodies[index];
-          if (body.m_I === 0) continue;
-          if (__indexOf.call(letters, body) >= 0 || __indexOf.call(alreadyCollided, body) >= 0) {
-            continue;
-          }
-          if (_ref = contactedBodies[1 - index], __indexOf.call(letters, _ref) < 0) {
-            continue;
-          }
-          alreadyCollided.push(body);
-          if (!(alreadyCollided.length > 2)) {
-            view.destroyInstructions.html(view.destroyInstructions.html() + "Bamm! ");
-          }
-          if (alreadyCollided.length === 2) {
-            view.destroyInstructions.html(view.destroyInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>");
-            _results.push($.timeout(10, function() {
-              return view.$('#next_level').bind('click', function() {
-                return view.loadNewLevel('simple_bucket');
-              });
-            }));
-          } else {
-            _results.push(void 0);
-          }
+  });
+
+  alreadyCollided = [];
+
+  peanutty.addContactListener({
+    listener: function(contact) {
+      var body, contactedBodies, index, successInstructions, _len, _results;
+      contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()];
+      _results = [];
+      for (index = 0, _len = contactedBodies.length; index < _len; index++) {
+        body = contactedBodies[index];
+        if (body.m_I === 0) continue;
+        if (((body.GetUserData() != null) && body.GetUserData().letter) || __indexOf.call(alreadyCollided, body) >= 0) {
+          continue;
         }
-        return _results;
+        if (!((body.GetUserData() != null) && body.GetUserData().letter)) {
+          alreadyCollided.push(body);
+        }
+        if (!((successInstructions = view.levelElements.successInstructions) != null)) {
+          successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"));
+          successInstructions.addClass('level_element');
+          successInstructions.css({
+            height: '30px',
+            width: '400px',
+            textAlign: 'center',
+            fontSize: '11pt',
+            position: 'absolute',
+            top: '150px',
+            left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
+          });
+          $('#canvas_container').append(successInstructions);
+        }
+        if (!(alreadyCollided.length > 2)) {
+          successInstructions.html(successInstructions.html() + "Bamm! ");
+        }
+        if (alreadyCollided.length === 2) {
+          successInstructions.html(successInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>");
+          _results.push($.timeout(10, function() {
+            return view.$('#next_level').bind('click', function() {
+              return view.loadNewLevel('simple_bucket');
+            });
+          }));
+        } else {
+          _results.push(void 0);
+        }
       }
-    });
+      return _results;
+    }
   });
 
   view.$('#canvas_container').append(view.nameInput);

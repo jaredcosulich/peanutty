@@ -91,8 +91,7 @@ peanutty.addContactListener
     
     
 # Set up the user inputs
-title = $(document.createElement("DIV"))
-title.addClass('level_element')
+title = view.levelElements.title = $(document.createElement("DIV"))
 title.css
     width: '500px'
     textAlign: 'center'
@@ -104,8 +103,7 @@ title.html("Get the Blue Ball in to the Bucket")
 view.$('#canvas_container').append(title)
 
 
-cannonControl = $(document.createElement("DIV"))
-cannonControl.addClass('level_element')
+cannonControl = view.levelElements.cannonControl = $(document.createElement("DIV"))
 cannonControl.css
     fontSize: '12pt'
     position: 'absolute'
