@@ -2,7 +2,7 @@ view.level = 'simple_bucket'
 Peanutty.createEnvironment()
 
 # Zoom out
-peanutty.setScale(25)
+peanutty.setScale(25 * (peanutty.canvas.width() / 835))
 
 # Create the cannon area
 peanutty.createGround

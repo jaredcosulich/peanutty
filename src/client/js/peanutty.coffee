@@ -306,10 +306,13 @@
         tempShapes: []
         redrawTempShapes: () =>
             for shape in @tempShapes
-                @startFreeformShape(shape.start)
-                for point, index in shape.path
-                    @drawFreeformShape(point)
-                    # if shape.achievement
+                if shape instanceof Function
+                    shape()
+                else
+                    @startFreeformShape(shape.start)
+                    for point, index in shape.path
+                        @drawFreeformShape(point)
+                        # if shape.achievement
                 
             return            
     

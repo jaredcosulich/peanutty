@@ -6,7 +6,7 @@
 
   Peanutty.createEnvironment();
 
-  peanutty.setScale(25);
+  peanutty.setScale(25 * (peanutty.canvas.width() / 835));
 
   peanutty.createGround({
     x: 60,

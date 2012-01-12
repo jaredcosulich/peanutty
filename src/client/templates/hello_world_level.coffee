@@ -1,6 +1,8 @@
 view.level = 'hello_world'
 Peanutty.createEnvironment()
 
+peanutty.setScale(30 * (peanutty.canvas.width() / 835))
+
 # Create the ground
 peanutty.createGround
     x: peanutty.world.dimensions.width / 2
@@ -10,8 +12,7 @@ peanutty.createGround
     
 # Set up the user inputs
 
-instructions = $(document.createElement("DIV"))
-instructions.addClass('level_element')
+instructions = view.levelElements.instructions = $(document.createElement("DIV"))
 instructions.css
     height: '30px'
     width: '360px'
@@ -23,9 +24,8 @@ instructions.css
 instructions.html("Type your name:")
 view.$('#canvas_container').append(instructions)
 
-view.nameInput = $(document.createElement('INPUT'))
-view.nameInput.addClass('level_element')
-view.nameInput.css
+nameInput = view.levelElements.nameInput = $(document.createElement('INPUT'))
+nameInput.css
     width: '360px'
     height: '30px'
     fontSize: '20pt'
@@ -35,7 +35,7 @@ view.nameInput.css
 
 view.alreadyCollided = []        
 view.levelLetters = '';
-view.nameInput.bind 'keyup', (e) ->
+nameInput.bind 'keyup', (e) ->
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '')
     return if letters == view.levelLetters
     view.levelLetters = letters
@@ -47,7 +47,7 @@ view.nameInput.bind 'keyup', (e) ->
         command:
             """
             peanutty.destroyDynamicObjects()
-            view.nameInput.val("#{letters}") if view.nameInput.val() != "#{letters}"
+            view.levelElements.nameInput.val("#{letters}") if view.levelElements.nameInput.val() != "#{letters}"
             peanutty.createLetters
                 x: peanutty.world.dimensions.width / 2
                 y: 55
@@ -70,8 +70,8 @@ view.nameInput.bind 'keyup', (e) ->
         destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)")
         view.$('#canvas_container').append(destroyInstructions)
  
-view.$('#canvas_container').append(view.nameInput)
-view.nameInput[0].focus()
+view.$('#canvas_container').append(nameInput)
+nameInput[0].focus()
        
 peanutty.addContactListener 
     listener: (contact) =>

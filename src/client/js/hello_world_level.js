@@ -1,10 +1,12 @@
 (function() {
-  var instructions;
+  var instructions, nameInput;
   var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   view.level = 'hello_world';
 
   Peanutty.createEnvironment();
+
+  peanutty.setScale(30 * (peanutty.canvas.width() / 835));
 
   peanutty.createGround({
     x: peanutty.world.dimensions.width / 2,
@@ -13,9 +15,7 @@
     height: 10
   });
 
-  instructions = $(document.createElement("DIV"));
-
-  instructions.addClass('level_element');
+  instructions = view.levelElements.instructions = $(document.createElement("DIV"));
 
   instructions.css({
     height: '30px',
@@ -31,11 +31,9 @@
 
   view.$('#canvas_container').append(instructions);
 
-  view.nameInput = $(document.createElement('INPUT'));
+  nameInput = view.levelElements.nameInput = $(document.createElement('INPUT'));
 
-  view.nameInput.addClass('level_element');
-
-  view.nameInput.css({
+  nameInput.css({
     width: '360px',
     height: '30px',
     fontSize: '20pt',
@@ -48,7 +46,7 @@
 
   view.levelLetters = '';
 
-  view.nameInput.bind('keyup', function(e) {
+  nameInput.bind('keyup', function(e) {
     var letters;
     var _this = this;
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '');
@@ -59,7 +57,7 @@
     view.alreadyCollided = [];
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
-      command: "peanutty.destroyDynamicObjects()\nview.nameInput.val(\"" + letters + "\") if view.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
+      command: "peanutty.destroyDynamicObjects()\nview.levelElements.nameInput.val(\"" + letters + "\") if view.levelElements.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
       time: 0
     });
     view.lastNameInputKey = new Date();
@@ -82,9 +80,9 @@
     });
   });
 
-  view.$('#canvas_container').append(view.nameInput);
+  view.$('#canvas_container').append(nameInput);
 
-  view.nameInput[0].focus();
+  nameInput[0].focus();
 
   peanutty.addContactListener({
     listener: function(contact) {

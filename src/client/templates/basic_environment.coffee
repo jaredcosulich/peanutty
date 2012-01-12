@@ -79,6 +79,9 @@ view.getTimeDiff = () =>
     timeDiff = if view.time? then new Date() - view.time else 0
     view.time = new Date() 
     return timeDiff
+    
+# make sure the toolbar is visible
+$('#tools').css(visibility: 'visible')
 
 view.$('#tools #free').bind 'click', () => 
     $('#tools .tool').removeClass('selected')

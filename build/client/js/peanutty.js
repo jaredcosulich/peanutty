@@ -416,11 +416,15 @@
         _ref = this.tempShapes;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           shape = _ref[_i];
-          this.startFreeformShape(shape.start);
-          _ref2 = shape.path;
-          for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
-            point = _ref2[index];
-            this.drawFreeformShape(point);
+          if (shape instanceof Function) {
+            shape();
+          } else {
+            this.startFreeformShape(shape.start);
+            _ref2 = shape.path;
+            for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
+              point = _ref2[index];
+              this.drawFreeformShape(point);
+            }
           }
         }
       };
