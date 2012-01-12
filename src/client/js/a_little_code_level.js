@@ -10,22 +10,22 @@
 
   peanutty.createGround({
     x: 150,
-    y: 20,
-    width: 300,
+    y: 30,
+    width: 400,
     height: 10,
     friction: 0
   });
 
   peanutty.createGround({
     x: 850,
-    y: 20,
+    y: 30,
     width: 300,
     height: 10
   });
 
   ball = peanutty.createBall({
     x: 240,
-    y: 40,
+    y: 50,
     radius: 20,
     drawData: {
       color: new b2d.Common.b2Color(0, 0, 0.8),
@@ -35,7 +35,7 @@
 
   pinball = peanutty.createBall({
     x: 120,
-    y: 40,
+    y: 50,
     radius: 20,
     density: 20,
     drawData: {
@@ -46,7 +46,7 @@
 
   goal = peanutty.createBox({
     x: 980,
-    y: 75,
+    y: 85,
     height: 50,
     width: 10,
     static: true,
@@ -58,7 +58,7 @@
 
   view.striker = peanutty.createBox({
     x: 10,
-    y: 40,
+    y: 50,
     width: 80,
     height: 20,
     density: 30,
@@ -101,7 +101,7 @@
       backgroundImage: '-webkit-radial-gradient(circle, #158515, #62C462)'
     });
     return peanutty.addToScript({
-      command: "clearInterval(view.strikerInterval)\nview.strikerInterval = setInterval((\n        () =>\n            clearInterval(view.strikerInterval) if view.striker.GetPosition().x < -2.5\n            changeVec = new b2d.Common.Math.b2Vec2((view.striker.GetPosition().x + 20) / 2000, 0) \n            view.striker.GetPosition().Subtract(changeVec)  \n    ),\n    10\n)",
+      command: "clearInterval(view.strikerInterval)\nview.strikerInterval = setInterval((\n        () =>\n            clearInterval(view.strikerInterval) if view.striker.GetPosition().x < -2.5\n            changeVec = new b2d.Common.Math.b2Vec2((view.striker.GetPosition().x + 2.5) / 50, 0) \n            view.striker.GetPosition().Subtract(changeVec)  \n    ),\n    10\n)",
       time: view.getTimeDiff()
     });
   });
@@ -174,5 +174,7 @@
   peanutty.canvas.css({
     cursor: 'default'
   });
+
+  peanutty.sign('@jaredcosulich', 'jaredcosulich');
 
 }).call(this);

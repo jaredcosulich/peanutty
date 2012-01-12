@@ -7,15 +7,15 @@ peanutty.setScale(25 * (peanutty.canvas.width() / 835))
 # Create the first ground
 peanutty.createGround
     x: 150
-    y: 20
-    width: 300
+    y: 30
+    width: 400
     height: 10
     friction: 0
 
 # Create the second ground
 peanutty.createGround
     x: 850
-    y: 20
+    y: 30
     width: 300
     height: 10
     
@@ -23,7 +23,7 @@ peanutty.createGround
 # Create the ball 
 ball = peanutty.createBall
     x: 240
-    y: 40
+    y: 50
     radius: 20
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0.8)
@@ -32,7 +32,7 @@ ball = peanutty.createBall
 # Create the pinball
 pinball = peanutty.createBall
     x: 120
-    y: 40
+    y: 50
     radius: 20
     density: 20
     drawData:
@@ -42,7 +42,7 @@ pinball = peanutty.createBall
 # Create the goal
 goal = peanutty.createBox
     x: 980
-    y: 75
+    y: 85
     height: 50
     width: 10
     static: true
@@ -53,7 +53,7 @@ goal = peanutty.createBox
 # Create the striker
 view.striker = peanutty.createBox
     x: 10
-    y: 40
+    y: 50
     width: 80
     height: 20
     density: 30
@@ -95,7 +95,7 @@ launchButton.bind 'mousedown', () =>
             view.strikerInterval = setInterval((
                     () =>
                         clearInterval(view.strikerInterval) if view.striker.GetPosition().x < -2.5
-                        changeVec = new b2d.Common.Math.b2Vec2((view.striker.GetPosition().x + 20) / 2000, 0) 
+                        changeVec = new b2d.Common.Math.b2Vec2((view.striker.GetPosition().x + 2.5) / 50, 0) 
                         view.striker.GetPosition().Subtract(changeVec)  
                 ),
                 10
@@ -190,4 +190,7 @@ view.$('#canvas_container').append(instructions)
 $('#tools').css(visibility: 'hidden')
 peanutty.canvas.unbind 'click'
 peanutty.canvas.css(cursor: 'default')
+
+# Signed
+peanutty.sign('@jaredcosulich', 'jaredcosulich')
 
