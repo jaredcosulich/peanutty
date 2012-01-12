@@ -2473,7 +2473,7 @@ a {
   cursor: pointer;
 }
 .loading {
-  background: url(images/loading.gif) no-repeat center;
+  background: url(/src/client/css/images/loading.gif) no-repeat center;
 }
 .topbar {
   background-color: #4f3526;
