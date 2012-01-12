@@ -72,8 +72,8 @@ peanutty.addContactListener
             success.css
                 textAlign: 'center'
                 position: 'absolute'
-                top: '276px'
-                left: '390px'
+                top: '180px'
+                left: "#{peanutty.canvas.width() * 6/11}"
             success.html(
                 """
                 <h4>Success! Nice Job!</h4>
@@ -82,8 +82,7 @@ peanutty.addContactListener
                     Let me know: 
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
-                <br/><br/><br/><br/><br/>
-                <p>More levels coming soon...</p>
+                 <p>On to the <a href='#level/a_little_code'>next level ></a>...</p>
                 <p>
                     ... or <a href='#create'>create your own level!<a> 
                 </p>

@@ -127,10 +127,10 @@
         success.css({
           textAlign: 'center',
           position: 'absolute',
-          top: '276px',
-          left: '390px'
+          top: '180px',
+          left: "" + (peanutty.canvas.width() * 6 / 11)
         });
-        success.html("<h4>Success! Nice Job!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<br/><br/><br/><br/><br/>\n<p>More levels coming soon...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
+        success.html("<h4>Success! Nice Job!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n <p>On to the <a href='#level/a_little_code'>next level ></a>...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
         return view.$('#canvas_container').append(success);
       }
     }

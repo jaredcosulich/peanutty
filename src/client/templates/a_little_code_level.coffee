@@ -172,9 +172,10 @@ instructions = view.levelElements.instructions = $(document.createElement("DIV")
 instructions.html(
     """
     <h1>Get the blue ball to hit the blue wall.</h1>
-    <p>
-        (hint: the toolbar is gone, so it's going to take a little coding to do it)
-    </p>
+    <div>
+        The toolbar is gone, so it's going to take a little coding to do it.
+    </div>
+    <div>(hint: look at previous levels to get some ideas)</div>
     """
 )
 instructions.css

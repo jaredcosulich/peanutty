@@ -153,7 +153,7 @@
 
   instructions = view.levelElements.instructions = $(document.createElement("DIV"));
 
-  instructions.html("<h1>Get the blue ball to hit the blue wall.</h1>\n<p>\n    (hint: the toolbar is gone, so it's going to take a little coding to do it)\n</p>");
+  instructions.html("<h1>Get the blue ball to hit the blue wall.</h1>\n<div>\n    The toolbar is gone, so it's going to take a little coding to do it.\n</div>\n<div>(hint: look at previous levels to get some ideas)</div>");
 
   instructions.css({
     width: '600px',
