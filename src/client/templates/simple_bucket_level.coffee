@@ -64,9 +64,10 @@ bucketBottom = peanutty.searchObjectList(
 peanutty.addContactListener
     listener: (contact) =>
         return unless view.level == 'simple_bucket'
+        return if view.levelElements.success?
         fixtures = [contact.GetFixtureA(), contact.GetFixtureB()]
         if ball.GetFixtureList() in fixtures and bucketBottom in fixtures
-            success = $(document.createElement("DIV"))
+            success = view.levelElements.success = $(document.createElement("DIV"))
             success.addClass('level_element')
             success.css
                 textAlign: 'center'
