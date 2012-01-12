@@ -13,10 +13,6 @@
             $.route.navigate("level/#{@data.level}", false)
     
         renderView: () ->
-            if window.peanutty?
-                window.peanutty.destroyWorld() 
-                window.peanutty = null
-                
             if navigator.userAgent.indexOf("Chrome") == -1
                 @el.html(@_requireTemplate('templates/chrome_only.html').render())
                 return

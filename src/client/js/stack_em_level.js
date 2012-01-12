@@ -2,6 +2,8 @@
   var header, instructions, level, _fn, _i, _len, _ref;
   var _this = this;
 
+  view.level = 'stack_em';
+
   Peanutty.createEnvironment();
 
   view.setUpChallenge = function(scale) {

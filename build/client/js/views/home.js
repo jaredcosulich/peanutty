@@ -36,10 +36,6 @@
       };
 
       Home.prototype.renderView = function() {
-        if (window.peanutty != null) {
-          window.peanutty.destroyWorld();
-          window.peanutty = null;
-        }
         if (navigator.userAgent.indexOf("Chrome") === -1) {
           this.el.html(this._requireTemplate('templates/chrome_only.html').render());
           return;

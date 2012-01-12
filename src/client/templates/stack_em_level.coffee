@@ -1,3 +1,4 @@
+view.level = 'stack_em'
 Peanutty.createEnvironment()
 
 view.setUpChallenge = (scale=30) =>

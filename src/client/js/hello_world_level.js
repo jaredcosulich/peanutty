@@ -2,6 +2,8 @@
   var instructions;
   var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
+  view.level = 'hello_world';
+
   Peanutty.createEnvironment();
 
   peanutty.createGround({
@@ -87,7 +89,7 @@
   peanutty.addContactListener({
     listener: function(contact) {
       var body, contactedBodies, index, successInstructions, _len, _results;
-      if (view.alreadyCollided == null) return;
+      if (view.level !== 'hello_world') return;
       contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()];
       _results = [];
       for (index = 0, _len = contactedBodies.length; index < _len; index++) {

@@ -1,3 +1,4 @@
+view.level = 'simple_bucket'
 Peanutty.createEnvironment()
 
 # Zoom out
@@ -62,6 +63,7 @@ bucketBottom = peanutty.searchObjectList(
 # Listen for the ball in the bucket
 peanutty.addContactListener
     listener: (contact) =>
+        return unless view.level == 'simple_bucket'
         fixtures = [contact.GetFixtureA(), contact.GetFixtureB()]
         if ball.GetFixtureList() in fixtures and bucketBottom in fixtures
             success = $(document.createElement("DIV"))

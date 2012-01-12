@@ -1,3 +1,4 @@
+view.level = 'hello_world'
 Peanutty.createEnvironment()
 
 # Create the ground
@@ -74,7 +75,7 @@ view.nameInput[0].focus()
        
 peanutty.addContactListener 
     listener: (contact) =>
-        return unless view.alreadyCollided?
+        return unless view.level == 'hello_world'
         contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()] 
         for body, index in contactedBodies
             continue if body.m_I == 0

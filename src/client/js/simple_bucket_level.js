@@ -2,6 +2,8 @@
   var ball, bucket, bucketBottom, cannon, cannonControl, title;
   var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
+  view.level = 'simple_bucket';
+
   Peanutty.createEnvironment();
 
   peanutty.setScale(25);
@@ -116,6 +118,7 @@
   peanutty.addContactListener({
     listener: function(contact) {
       var fixtures, success, _ref;
+      if (view.level !== 'simple_bucket') return;
       fixtures = [contact.GetFixtureA(), contact.GetFixtureB()];
       if ((_ref = ball.GetFixtureList(), __indexOf.call(fixtures, _ref) >= 0) && __indexOf.call(fixtures, bucketBottom) >= 0) {
         success = $(document.createElement("DIV"));
