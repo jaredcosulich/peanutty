@@ -2472,6 +2472,9 @@ body {
 a {
   cursor: pointer;
 }
+.loading {
+  background: url(src/client/images/loading.gif) no-repeat center;
+}
 .topbar {
   background-color: #4f3526;
   padding-left: 45px;
