@@ -68,34 +68,34 @@ view.nameInput.bind 'keyup', (e) ->
             left: "#{(peanutty.canvas.width() / 2) - 200}px"
         destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)")
         view.$('#canvas_container').append(destroyInstructions)
+        
+        peanutty.addContactListener 
+            listener: (contact) =>
+                contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()] 
+                for body, index in contactedBodies
+                    continue if body.m_I == 0
+                    continue if (body.GetUserData()? && body.GetUserData().letter) or body in view.alreadyCollided
+                    view.alreadyCollided.push(body) unless (body.GetUserData()? && body.GetUserData().letter)
+                    if !(successInstructions = view.levelElements.successInstructions)?
+                        successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"))
+                        successInstructions.addClass('level_element')
+                        successInstructions.css
+                            height: '30px'
+                            width: '400px'
+                            textAlign: 'center'
+                            fontSize: '11pt'
+                            position: 'absolute'
+                            top: '150px'
+                            left: "#{(peanutty.canvas.width() / 2) - 200}px"
+                        $('#canvas_container').append(successInstructions)
+                    successInstructions.html(successInstructions.html() + "Bamm! ") unless view.alreadyCollided.length > 2
             
-peanutty.addContactListener 
-    listener: (contact) =>
-        contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()] 
-        for body, index in contactedBodies
-            continue if body.m_I == 0
-            continue if (body.GetUserData()? && body.GetUserData().letter) or body in view.alreadyCollided
-            view.alreadyCollided.push(body) unless (body.GetUserData()? && body.GetUserData().letter)
-            if !(successInstructions = view.levelElements.successInstructions)?
-                successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"))
-                successInstructions.addClass('level_element')
-                successInstructions.css
-                    height: '30px'
-                    width: '400px'
-                    textAlign: 'center'
-                    fontSize: '11pt'
-                    position: 'absolute'
-                    top: '150px'
-                    left: "#{(peanutty.canvas.width() / 2) - 200}px"
-                $('#canvas_container').append(successInstructions)
-            successInstructions.html(successInstructions.html() + "Bamm! ") unless view.alreadyCollided.length > 2
-            
-            if view.alreadyCollided.length == 2
-                successInstructions.html(
-                    successInstructions.html() + 
-                    "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>"
-                )
-                $.timeout 10, () => view.$('#next_level').bind 'click', () => view.loadNewLevel('simple_bucket')
+                    if view.alreadyCollided.length == 2
+                        successInstructions.html(
+                            successInstructions.html() + 
+                            "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>"
+                        )
+                        $.timeout 10, () => view.$('#next_level').bind 'click', () => view.loadNewLevel('simple_bucket')
         
             
 view.$('#canvas_container').append(view.nameInput)

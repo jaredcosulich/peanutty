@@ -3,7 +3,7 @@
     views = require('views')        
             
     class views.Home extends views.BaseView
-        prepare: () ->
+        prepare: () ->            
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
                 script: @_requireTemplate('templates/basic_script.coffee'),
@@ -13,6 +13,10 @@
             $.route.navigate("level/#{@data.level}", false)
     
         renderView: () ->
+            if window.peanutty?
+                window.peanutty.destroyWorld() 
+                window.peanutty = null
+                
             if navigator.userAgent.indexOf("Chrome") == -1
                 @el.html(@_requireTemplate('templates/chrome_only.html').render())
                 return

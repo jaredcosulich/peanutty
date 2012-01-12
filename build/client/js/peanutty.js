@@ -67,6 +67,7 @@
         this.addToScript = __bind(this.addToScript, this);
         this.evaluateDimensions = __bind(this.evaluateDimensions, this);
         this.initDraw = __bind(this.initDraw, this);
+        this.removeContactListeners = __bind(this.removeContactListeners, this);
         this.addContactListener = __bind(this.addContactListener, this);
         this.initContactListeners = __bind(this.initContactListeners, this);
         this.setScale = __bind(this.setScale, this);
@@ -90,12 +91,13 @@
           };
         })();
         update = function() {
+          if (_this.world == null) return;
           _this.world.Step(1 / 60, 10, 10);
           _this.draw();
-          _this.world.ClearForces();
-          requestAnimFrame(update);
           _this.redrawCurrentShape();
-          return _this.redrawTempShapes();
+          _this.redrawTempShapes();
+          _this.world.ClearForces();
+          return requestAnimFrame(update);
         };
         return requestAnimFrame(update);
       };
@@ -144,6 +146,11 @@
         listener = _arg.listener, type = _arg.type;
         type || (type = 'begin');
         return this["" + type + "ContactListeners"].push(listener);
+      };
+
+      Peanutty.prototype.removeContactListeners = function() {
+        this.beginContactListeners = [];
+        return this.endContactListeners = [];
       };
 
       Peanutty.prototype.initDraw = function() {
@@ -712,7 +719,9 @@
           body = body.m_next;
           this.world.DestroyBody(b);
         }
-        return this.tempShapes = [];
+        this.tempShapes = [];
+        this.removeContactListeners();
+        return this.world = null;
       };
 
       return Peanutty;

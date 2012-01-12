@@ -1,6 +1,6 @@
 (function() {
   var instructions;
-  var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
+  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; }, _this = this;
 
   Peanutty.createEnvironment();
 
@@ -76,54 +76,53 @@
         left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
       });
       destroyInstructions.html("Now destroy your name!<br/>(click a few times below this but above your name)");
-      return view.$('#canvas_container').append(destroyInstructions);
+      view.$('#canvas_container').append(destroyInstructions);
+      return peanutty.addContactListener({
+        listener: function(contact) {
+          var body, contactedBodies, index, successInstructions, _len, _results;
+          contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()];
+          _results = [];
+          for (index = 0, _len = contactedBodies.length; index < _len; index++) {
+            body = contactedBodies[index];
+            if (body.m_I === 0) continue;
+            if (((body.GetUserData() != null) && body.GetUserData().letter) || __indexOf.call(view.alreadyCollided, body) >= 0) {
+              continue;
+            }
+            if (!((body.GetUserData() != null) && body.GetUserData().letter)) {
+              view.alreadyCollided.push(body);
+            }
+            if (!((successInstructions = view.levelElements.successInstructions) != null)) {
+              successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"));
+              successInstructions.addClass('level_element');
+              successInstructions.css({
+                height: '30px',
+                width: '400px',
+                textAlign: 'center',
+                fontSize: '11pt',
+                position: 'absolute',
+                top: '150px',
+                left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
+              });
+              $('#canvas_container').append(successInstructions);
+            }
+            if (!(view.alreadyCollided.length > 2)) {
+              successInstructions.html(successInstructions.html() + "Bamm! ");
+            }
+            if (view.alreadyCollided.length === 2) {
+              successInstructions.html(successInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>");
+              _results.push($.timeout(10, function() {
+                return view.$('#next_level').bind('click', function() {
+                  return view.loadNewLevel('simple_bucket');
+                });
+              }));
+            } else {
+              _results.push(void 0);
+            }
+          }
+          return _results;
+        }
+      });
     });
-  });
-
-  peanutty.addContactListener({
-    listener: function(contact) {
-      var body, contactedBodies, index, successInstructions, _len, _results;
-      contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()];
-      _results = [];
-      for (index = 0, _len = contactedBodies.length; index < _len; index++) {
-        body = contactedBodies[index];
-        if (body.m_I === 0) continue;
-        if (((body.GetUserData() != null) && body.GetUserData().letter) || __indexOf.call(view.alreadyCollided, body) >= 0) {
-          continue;
-        }
-        if (!((body.GetUserData() != null) && body.GetUserData().letter)) {
-          view.alreadyCollided.push(body);
-        }
-        if (!((successInstructions = view.levelElements.successInstructions) != null)) {
-          successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"));
-          successInstructions.addClass('level_element');
-          successInstructions.css({
-            height: '30px',
-            width: '400px',
-            textAlign: 'center',
-            fontSize: '11pt',
-            position: 'absolute',
-            top: '150px',
-            left: "" + ((peanutty.canvas.width() / 2) - 200) + "px"
-          });
-          $('#canvas_container').append(successInstructions);
-        }
-        if (!(view.alreadyCollided.length > 2)) {
-          successInstructions.html(successInstructions.html() + "Bamm! ");
-        }
-        if (view.alreadyCollided.length === 2) {
-          successInstructions.html(successInstructions.html() + "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>");
-          _results.push($.timeout(10, function() {
-            return view.$('#next_level').bind('click', function() {
-              return view.loadNewLevel('simple_bucket');
-            });
-          }));
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    }
   });
 
   view.$('#canvas_container').append(view.nameInput);

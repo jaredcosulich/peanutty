@@ -49,6 +49,7 @@
             )()
         
             update = () =>
+                return unless @world?
                 @world.Step(
                       1 / 60,   #frame-rate
                       10,       #velocity iterations
@@ -56,11 +57,10 @@
                 )
             
                 @draw()
-                # @world.DrawDebugData()
-                @world.ClearForces()
-                requestAnimFrame(update)
                 @redrawCurrentShape()
                 @redrawTempShapes()
+                @world.ClearForces()
+                requestAnimFrame(update)
         
             requestAnimFrame(update)
     
@@ -82,7 +82,11 @@
         addContactListener: ({listener, type}) =>
             type or= 'begin'
             @["#{type}ContactListeners"].push(listener)
-    
+
+        removeContactListeners: () =>
+            @beginContactListeners = []
+            @endContactListeners = []
+                
         initDraw: () =>
             #setup debug draw
             @debugDraw = new b2d.Dynamics.b2DebugDraw()
@@ -506,11 +510,12 @@
                 @world.DestroyBody(b)
         
             @tempShapes = []
+            @removeContactListeners()
+            @world = null
     
 
     Peanutty.runCode = (editor) => 
         code = editor.getSession().getValue()
-        
         complete = []
         active = []
         tab = "    "
