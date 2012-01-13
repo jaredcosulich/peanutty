@@ -111,7 +111,7 @@
       backgroundImage: '-webkit-radial-gradient(circle, #CAE6CA, #62C462)'
     });
     return peanutty.addToScript({
-      command: "clearInterval(view.strikerInterval)\nview.striker.SetAwake(true)\nview.striker.SetLinearVelocity(new b2d.Common.Math.b2Vec2(view.striker.GetPosition().x * -10,0))\nview.strikerInterval = setInterval((\n        () =>\n            clearInterval(view.strikerInterval) if view.striker.GetPosition().x < 0\n            if view.striker.GetPosition().x > 1 || !view.striker.IsAwake()\n                view.striker.SetAwake(false)\n                changeVec = new b2d.Common.Math.b2Vec2(0.01, 0) \n                view.striker.GetPosition().Subtract(changeVec)  \n    ),\n    10\n)",
+      command: "clearInterval(view.strikerInterval)\nview.striker.SetAwake(true)\nview.striker.SetLinearVelocity(new b2d.Common.Math.b2Vec2(view.striker.GetPosition().x * -10,0))\nview.strikerInterval = setInterval((\n        () =>\n            clearInterval(view.strikerInterval) if view.striker.GetPosition().x < 0 && !view.striker.IsAwake()\n            if view.striker.GetPosition().x > 1 || !view.striker.IsAwake()\n                view.striker.SetAwake(false)\n                changeVec = new b2d.Common.Math.b2Vec2(0.01, 0) \n                view.striker.GetPosition().Subtract(changeVec)  \n    ),\n    10\n)",
       time: view.getTimeDiff()
     });
   });

@@ -22,6 +22,7 @@
         this.initTopButtons = __bind(this.initTopButtons, this);
         this.initTabs = __bind(this.initTabs, this);
         this.initEditors = __bind(this.initEditors, this);
+        this.initCodeSaving = __bind(this.initCodeSaving, this);
         Home.__super__.constructor.apply(this, arguments);
       }
 
@@ -50,38 +51,45 @@
         window.b2d = Peanutty.b2d;
         window.view = this;
         this.loadCode();
+        this.initCodeSaving();
         return Peanutty.runScript();
       };
 
-      Home.prototype.initEditors = function() {
-        var CoffeeScriptMode, beforeLeave;
+      Home.prototype.initCodeSaving = function() {
+        var editorName, loadCode, _i, _len, _ref, _results;
         var _this = this;
-        beforeLeave = function(set) {
-          var _this = this;
-          if (set) {
-            return $(window).bind('beforeunload', function() {
-              return "You have made changes that will be lost if you leave.";
+        loadCode = false;
+        _ref = ['script', 'level', 'environment'];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          editorName = _ref[_i];
+          _results.push((function(editorName) {
+            var editor, existingScript;
+            editor = _this["" + editorName + "Editor"];
+            existingScript = localStorage.getItem("" + view.levelName + "_" + editorName);
+            if ((existingScript != null) && existingScript.length > 0 && existingScript !== editor.getSession().getValue()) {
+              if (loadCode || confirm('You have some old code for this level.\n\nWould you like to load it?')) {
+                editor.getSession().setValue(existingScript);
+                loadCode = true;
+              }
+            }
+            return editor.getSession().on('change', function() {
+              return localStorage.setItem("" + view.levelName + "_" + editorName, editor.getSession().getValue());
             });
-          } else {
-            return $(window).unbind('beforeunload');
-          }
-        };
+          })(editorName));
+        }
+        return _results;
+      };
+
+      Home.prototype.initEditors = function() {
+        var CoffeeScriptMode;
         CoffeeScriptMode = ace.require("ace/mode/coffee").Mode;
         this.scriptEditor = ace.edit(this.$('#codes .script')[0]);
         this.scriptEditor.getSession().setMode(new CoffeeScriptMode());
-        this.scriptEditor.getSession().on('change', function() {
-          return beforeLeave(_this.scriptEditor.getSession().getValue() !== _this.code(_this.templates.script));
-        });
         this.levelEditor = ace.edit(this.$('#codes .level')[0]);
         this.levelEditor.getSession().setMode(new CoffeeScriptMode());
-        this.levelEditor.getSession().on('change', function() {
-          return beforeLeave(_this.levelEditor.getSession().getValue() !== _this.code(_this.templates.level));
-        });
         this.environmentEditor = ace.edit(this.$('#codes .environment')[0]);
-        this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
-        return this.environmentEditor.getSession().on('change', function() {
-          return beforeLeave(_this.environmentEditor.getSession().getValue() !== _this.code(_this.templates.environment));
-        });
+        return this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
       };
 
       Home.prototype.initTabs = function() {

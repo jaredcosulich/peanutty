@@ -30,31 +30,33 @@
             window.b2d = Peanutty.b2d
             window.view = @
             
-            @loadCode()                
+            @loadCode()
+            @initCodeSaving()                
             Peanutty.runScript()            
         
+        initCodeSaving: () =>
+            loadCode = false
+            for editorName in ['script', 'level', 'environment']
+                do (editorName) =>
+                    editor = @["#{editorName}Editor"]
+                    existingScript = localStorage.getItem("#{view.levelName}_#{editorName}")
+                    if existingScript? && existingScript.length > 0 && existingScript != editor.getSession().getValue()
+                        if loadCode || confirm('You have some old code for this level.\n\nWould you like to load it?')
+                            editor.getSession().setValue(existingScript)
+                            loadCode = true
+                    editor.getSession().on 'change', () => 
+                        localStorage.setItem("#{view.levelName}_#{editorName}", editor.getSession().getValue())
+        
         initEditors: () =>
-            beforeLeave = (set) ->
-                if set
-                    $(window).bind 'beforeunload', () => "You have made changes that will be lost if you leave."
-                else
-                    $(window).unbind 'beforeunload'
-
             CoffeeScriptMode = ace.require("ace/mode/coffee").Mode
             @scriptEditor = ace.edit(@$('#codes .script')[0])
             @scriptEditor.getSession().setMode(new CoffeeScriptMode())
-            @scriptEditor.getSession().on 'change', () =>
-                beforeLeave(@scriptEditor.getSession().getValue() != @code(@templates.script))
             
             @levelEditor = ace.edit(@$('#codes .level')[0])
             @levelEditor.getSession().setMode(new CoffeeScriptMode())
-            @levelEditor.getSession().on 'change', () =>
-                beforeLeave(@levelEditor.getSession().getValue() != @code(@templates.level))
             
             @environmentEditor = ace.edit(@$('#codes .environment')[0])
             @environmentEditor.getSession().setMode(new CoffeeScriptMode())
-            @environmentEditor.getSession().on 'change', () =>
-                beforeLeave(@environmentEditor.getSession().getValue() != @code(@templates.environment))
 
         initTabs: () =>
             @$('.tabs .tab').bind 'click', (e) =>
