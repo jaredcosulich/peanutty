@@ -40,7 +40,13 @@ nameInput.bind 'keyup', (e) ->
     return if letters == view.levelLetters
     view.levelLetters = letters
     view.loadScript()
-    view.removeLevelElements()
+    
+    for name in ['destroyInstructions', 'successInstructions']
+        element = view.levelElements[name]
+        continue unless element?
+        element.remove()
+        view.levelElements[name] = null
+        
     view.alreadyCollided = []
     peanutty.destroyDynamicObjects()
     peanutty.addToScript

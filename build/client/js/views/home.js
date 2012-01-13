@@ -182,7 +182,7 @@
           levelElement = _ref[name];
           $(levelElement).remove();
         }
-        return this.levelElements = [];
+        return this.levelElements = {};
       };
 
       return Home;

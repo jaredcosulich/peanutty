@@ -47,13 +47,20 @@
   view.levelLetters = '';
 
   nameInput.bind('keyup', function(e) {
-    var letters;
+    var element, letters, name, _i, _len, _ref;
     var _this = this;
     letters = $(e.currentTarget).val().replace(/[^A-Za-z\s]/ig, '');
     if (letters === view.levelLetters) return;
     view.levelLetters = letters;
     view.loadScript();
-    view.removeLevelElements();
+    _ref = ['destroyInstructions', 'successInstructions'];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      name = _ref[_i];
+      element = view.levelElements[name];
+      if (element == null) continue;
+      element.remove();
+      view.levelElements[name] = null;
+    }
     view.alreadyCollided = [];
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({

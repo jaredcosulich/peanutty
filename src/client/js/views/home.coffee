@@ -120,7 +120,7 @@
         levelElements: {}
         removeLevelElements: () => 
             $(levelElement).remove() for name, levelElement of @levelElements
-            @levelElements = []
+            @levelElements = {}
        
             
 
