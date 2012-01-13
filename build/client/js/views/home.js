@@ -64,9 +64,10 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           editorName = _ref[_i];
           _results.push((function(editorName) {
-            var editor, existingScript;
+            var editor, existingScript, levelName;
             editor = _this["" + editorName + "Editor"];
-            existingScript = localStorage.getItem("" + view.levelName + "_" + editorName);
+            levelName = _this.level || _this.data.level;
+            existingScript = localStorage.getItem("" + levelName + "_" + editorName);
             if ((existingScript != null) && existingScript.length > 0 && existingScript !== editor.getSession().getValue()) {
               if (loadCode || confirm('You have some old code for this level.\n\nWould you like to load it?')) {
                 editor.getSession().setValue(existingScript);
@@ -74,7 +75,7 @@
               }
             }
             return editor.getSession().on('change', function() {
-              return localStorage.setItem("" + view.levelName + "_" + editorName, editor.getSession().getValue());
+              return localStorage.setItem("" + levelName + "_" + editorName, editor.getSession().getValue());
             });
           })(editorName));
         }

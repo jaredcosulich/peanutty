@@ -39,13 +39,14 @@
             for editorName in ['script', 'level', 'environment']
                 do (editorName) =>
                     editor = @["#{editorName}Editor"]
-                    existingScript = localStorage.getItem("#{view.levelName}_#{editorName}")
+                    levelName = @level or @data.level
+                    existingScript = localStorage.getItem("#{levelName}_#{editorName}")
                     if existingScript? && existingScript.length > 0 && existingScript != editor.getSession().getValue()
                         if loadCode || confirm('You have some old code for this level.\n\nWould you like to load it?')
                             editor.getSession().setValue(existingScript)
                             loadCode = true
                     editor.getSession().on 'change', () => 
-                        localStorage.setItem("#{view.levelName}_#{editorName}", editor.getSession().getValue())
+                        localStorage.setItem("#{levelName}_#{editorName}", editor.getSession().getValue())
         
         initEditors: () =>
             CoffeeScriptMode = ace.require("ace/mode/coffee").Mode
