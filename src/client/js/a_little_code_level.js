@@ -133,12 +133,11 @@
   peanutty.addContactListener({
     listener: function(contact) {
       var fixtures, success, _ref, _ref2;
-      if (view.level !== 'a_little_code') return;
       if (view.levelElements.success != null) return;
       fixtures = [contact.GetFixtureA(), contact.GetFixtureB()];
       if ((_ref = ball.GetFixtureList(), __indexOf.call(fixtures, _ref) >= 0) && (_ref2 = goal.GetFixtureList(), __indexOf.call(fixtures, _ref2) >= 0)) {
         success = view.levelElements.success = $(document.createElement("DIV"));
-        success.html("<h4>Nicely done.</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<p>More levels coming soon...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
+        success.html("<h4>Nicely done.</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<p>How about a <a href='#level/stack_em'>slightly harder level ></a></p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
         success.css({
           width: '400px',
           textAlign: 'center',

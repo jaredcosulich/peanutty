@@ -30,7 +30,8 @@
             @world = new b2d.Dynamics.b2World(
                 gravity or new b2d.Common.Math.b2Vec2(0, 10),
                 true
-            )      
+            )
+            @clearStorage()
         
             @evaluateDimensions()
             @canvas.bind 'resize', @evaluateDimensions
@@ -68,6 +69,11 @@
             @scale = scale
             @debugDraw.SetDrawScale(@scale)
             @evaluateDimensions()
+            
+        clearStorage: () =>
+            @tempShapes = []      
+            @beginContactListeners = []
+            @endContactListeners = []
     
         beginContactListeners: []
         endContactListeners: []
@@ -77,7 +83,7 @@
             class PeanuttyContactListener extends b2d.Dynamics.b2ContactListener
                 BeginContact: beginContact
         
-            @world.m_contactManager.m_contactListener = new PeanuttyContactListener
+            @world.SetContactListener(new PeanuttyContactListener)
     
         addContactListener: ({listener, type}) =>
             type or= 'begin'
@@ -312,29 +318,8 @@
                     @startFreeformShape(shape.start)
                     for point, index in shape.path
                         @drawFreeformShape(point)
-                        # if shape.achievement
-                
             return            
-    
-        createAchievementStar: ({x, y, radius, totalPoints, static}) =>
-            radius or= 20
-            points = (totalPoints or 16) / 4
-            path = []
-            for i in [0..points] 
-                path.push({x: x, y: y})
-                path.push({x: x + (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))})
-                path.push({x: x, y: y})
-                path.push({x: x - (radius * Math.pow(i/points, 0.6)), y: y - (radius * Math.pow((points - i)/points, 0.6))})
-                path.push({x: x, y: y})
-                path.push({x: x - (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))})
-                path.push({x: x, y: y})
-                path.push({x: x + (radius * Math.pow(i/points, 0.6)), y: y + (radius * Math.pow((points - i)/points, 0.6))})
         
-            @tempShapes.push
-                start: {x: x, y: y}
-                achievement: true
-                path: path
-    
         addToFreeformShape: ({x,y}) =>
             if @currentShape?
                 @continueFreeformShape(_arg)

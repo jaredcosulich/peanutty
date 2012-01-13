@@ -63,7 +63,6 @@ bucketBottom = peanutty.searchObjectList(
 # Listen for the ball in the bucket
 peanutty.addContactListener
     listener: (contact) =>
-        return unless view.level == 'simple_bucket'
         return if view.levelElements.success?
         fixtures = [contact.GetFixtureA(), contact.GetFixtureB()]
         if ball.GetFixtureList() in fixtures and bucketBottom in fixtures

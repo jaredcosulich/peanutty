@@ -50,7 +50,6 @@
         this.drawFreeformShape = __bind(this.drawFreeformShape, this);
         this.addTempToFreeformShape = __bind(this.addTempToFreeformShape, this);
         this.addToFreeformShape = __bind(this.addToFreeformShape, this);
-        this.createAchievementStar = __bind(this.createAchievementStar, this);
         this.redrawTempShapes = __bind(this.redrawTempShapes, this);
         this.redrawCurrentShape = __bind(this.redrawCurrentShape, this);
         this.createRandomObjects = __bind(this.createRandomObjects, this);
@@ -70,12 +69,14 @@
         this.removeContactListeners = __bind(this.removeContactListeners, this);
         this.addContactListener = __bind(this.addContactListener, this);
         this.initContactListeners = __bind(this.initContactListeners, this);
+        this.clearStorage = __bind(this.clearStorage, this);
         this.setScale = __bind(this.setScale, this);
         this.runSimulation = __bind(this.runSimulation, this);
         this.context = this.canvas[0].getContext("2d");
         this.scale || (this.scale = 30);
         this.defaultScale = 30;
         this.world = new b2d.Dynamics.b2World(gravity || new b2d.Common.Math.b2Vec2(0, 10), true);
+        this.clearStorage();
         this.evaluateDimensions();
         this.canvas.bind('resize', this.evaluateDimensions);
         this.initDraw();
@@ -108,6 +109,12 @@
         return this.evaluateDimensions();
       };
 
+      Peanutty.prototype.clearStorage = function() {
+        this.tempShapes = [];
+        this.beginContactListeners = [];
+        return this.endContactListeners = [];
+      };
+
       Peanutty.prototype.beginContactListeners = [];
 
       Peanutty.prototype.endContactListeners = [];
@@ -138,7 +145,7 @@
           return PeanuttyContactListener;
 
         })();
-        return this.world.m_contactManager.m_contactListener = new PeanuttyContactListener;
+        return this.world.SetContactListener(new PeanuttyContactListener);
       };
 
       Peanutty.prototype.addContactListener = function(_arg) {
@@ -427,56 +434,6 @@
             }
           }
         }
-      };
-
-      Peanutty.prototype.createAchievementStar = function(_arg) {
-        var i, path, points, radius, static, totalPoints, x, y;
-        x = _arg.x, y = _arg.y, radius = _arg.radius, totalPoints = _arg.totalPoints, static = _arg.static;
-        radius || (radius = 20);
-        points = (totalPoints || 16) / 4;
-        path = [];
-        for (i = 0; 0 <= points ? i <= points : i >= points; 0 <= points ? i++ : i--) {
-          path.push({
-            x: x,
-            y: y
-          });
-          path.push({
-            x: x + (radius * Math.pow(i / points, 0.6)),
-            y: y - (radius * Math.pow((points - i) / points, 0.6))
-          });
-          path.push({
-            x: x,
-            y: y
-          });
-          path.push({
-            x: x - (radius * Math.pow(i / points, 0.6)),
-            y: y - (radius * Math.pow((points - i) / points, 0.6))
-          });
-          path.push({
-            x: x,
-            y: y
-          });
-          path.push({
-            x: x - (radius * Math.pow(i / points, 0.6)),
-            y: y + (radius * Math.pow((points - i) / points, 0.6))
-          });
-          path.push({
-            x: x,
-            y: y
-          });
-          path.push({
-            x: x + (radius * Math.pow(i / points, 0.6)),
-            y: y + (radius * Math.pow((points - i) / points, 0.6))
-          });
-        }
-        return this.tempShapes.push({
-          start: {
-            x: x,
-            y: y
-          },
-          achievement: true,
-          path: path
-        });
       };
 
       Peanutty.prototype.addToFreeformShape = function(_arg) {

@@ -118,7 +118,6 @@
   peanutty.addContactListener({
     listener: function(contact) {
       var fixtures, success, _ref;
-      if (view.level !== 'simple_bucket') return;
       if (view.levelElements.success != null) return;
       fixtures = [contact.GetFixtureA(), contact.GetFixtureB()];
       if ((_ref = ball.GetFixtureList(), __indexOf.call(fixtures, _ref) >= 0) && __indexOf.call(fixtures, bucketBottom) >= 0) {

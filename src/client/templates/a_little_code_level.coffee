@@ -140,7 +140,6 @@ view.$('#canvas_container').append(launchInstructions)
 # Listen for the ball hitting the goal
 peanutty.addContactListener
     listener: (contact) =>
-        return unless view.level == 'a_little_code'
         return if view.levelElements.success?
         fixtures = [contact.GetFixtureA(), contact.GetFixtureB()]
         if ball.GetFixtureList() in fixtures and goal.GetFixtureList() in fixtures
@@ -153,7 +152,7 @@ peanutty.addContactListener
                     Let me know: 
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
-                <p>More levels coming soon...</p>
+                <p>How about a <a href='#level/stack_em'>slightly harder level ></a></p>
                 <p>
                     ... or <a href='#create'>create your own level!<a> 
                 </p>

@@ -94,7 +94,6 @@
   peanutty.addContactListener({
     listener: function(contact) {
       var body, contactedBodies, index, successInstructions, _len, _results;
-      if (view.level !== 'hello_world') return;
       contactedBodies = [contact.GetFixtureA().GetBody(), contact.GetFixtureB().GetBody()];
       _results = [];
       for (index = 0, _len = contactedBodies.length; index < _len; index++) {

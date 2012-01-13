@@ -58,7 +58,7 @@
       Home.prototype.initCodeSaving = function() {
         var editorName, loadCode, _i, _len, _ref, _results;
         var _this = this;
-        loadCode = false;
+        loadCode = null;
         _ref = ['script', 'level', 'environment'];
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -69,9 +69,11 @@
             levelName = _this.level || _this.data.level;
             existingScript = localStorage.getItem("" + levelName + "_" + editorName);
             if ((existingScript != null) && existingScript.length > 0 && existingScript !== editor.getSession().getValue()) {
-              if (loadCode || confirm('You have some old code for this level.\n\nWould you like to load it?')) {
+              if (loadCode || (!(loadCode != null) && confirm('You have some old code for this level.\n\nWould you like to load it?'))) {
                 editor.getSession().setValue(existingScript);
                 loadCode = true;
+              } else {
+                loadCode = false;
               }
             }
             return editor.getSession().on('change', function() {
