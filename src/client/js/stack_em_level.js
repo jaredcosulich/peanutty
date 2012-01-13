@@ -104,46 +104,28 @@
   });
 
   setInterval((function() {
-    var goalAchieved, goalReached, success;
+    var point, _i, _len, _ref, _results;
     if (view.levelElements.success) return;
-    goalReached = peanutty.searchObjectList({
-      object: peanutty.world.GetBodyList(),
-      searchFunction: function(body) {
-        var fixturesContainingGoal;
-        fixturesContainingGoal = peanutty.searchObjectList({
-          object: body.GetFixtureList(),
-          searchFunction: function(fixture) {
-            var point, _i, _len, _ref;
-            _ref = star.path;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              point = _ref[_i];
-              if (fixture.TestPoint({
-                x: point.x / scale,
-                y: point.y / scale
-              })) {
-                return true;
-              }
-            }
-            return false;
-          },
-          limit: 1
+    _ref = star.path;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      point = _ref[_i];
+      _results.push(peanutty.world.QueryPoint((function(fixture) {
+        var success;
+        if (fixture.GetBody().IsAwake()) return true;
+        if (view.levelElements.success) return false;
+        success = view.levelElements.success = $(document.createElement("DIV"));
+        success.html("<h4>Way to go!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<p>More levels coming soon...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
+        success.css({
+          textAlign: 'center',
+          position: 'absolute',
+          top: '100px',
+          left: '10px'
         });
-        return fixturesContainingGoal.length > 0 && (body.GetContactList() != null) && !body.IsAwake();
-      },
-      limit: 1
-    });
-    if (goalReached.length > 0 && !view.levelElements.success) {
-      goalAchieved = true;
-      success = view.levelElements.success = $(document.createElement("DIV"));
-      success.html("<h4>Way to go!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<p>More levels coming soon...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
-      success.css({
-        textAlign: 'center',
-        position: 'absolute',
-        top: '100px',
-        left: '10px'
-      });
-      return view.$('#canvas_container').append(success);
+        return view.$('#canvas_container').append(success);
+      }), new b2d.Common.Math.b2Vec2(point.x / scale, point.y / scale)));
     }
+    return _results;
   }), 100);
 
   instructions = $(document.createElement("DIV"));

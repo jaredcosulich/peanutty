@@ -64,42 +64,35 @@ peanutty.createBox
 setInterval(
     (() =>
         return if view.levelElements.success
-        goalReached = peanutty.searchObjectList
-            object: peanutty.world.GetBodyList()
-            searchFunction: (body) =>
-                fixturesContainingGoal = peanutty.searchObjectList
-                    object: body.GetFixtureList()
-                    searchFunction: (fixture) =>
-                        for point in star.path
-                            return true if fixture.TestPoint(x: point.x/scale, y: point.y/scale)
-                        return false
-                    limit: 1 
-                return fixturesContainingGoal.length > 0 && body.GetContactList()? && !body.IsAwake()
-            limit: 1
-        if goalReached.length > 0 && !view.levelElements.success
-            goalAchieved = true
-            success = view.levelElements.success = $(document.createElement("DIV"))
-            success.html(
-                """
-                <h4>Way to go!</h4>
-                <p>
-                    Got a creative solution? 
-                    Let me know: 
-                    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
-                </p>
-                <p>More levels coming soon...</p>
-                <p>
-                    ... or <a href='#create'>create your own level!<a> 
-                </p>
-                """
-            )
-            success.css
-                textAlign: 'center'
-                position: 'absolute'
-                top: '100px'
-                left: '10px'
-            view.$('#canvas_container').append(success)
-            
+        for point in star.path
+            peanutty.world.QueryPoint(
+                ((fixture) =>
+                    return true if fixture.GetBody().IsAwake()
+                    return false if view.levelElements.success
+                    success = view.levelElements.success = $(document.createElement("DIV"))
+                    success.html(
+                        """
+                        <h4>Way to go!</h4>
+                        <p>
+                            Got a creative solution? 
+                            Let me know: 
+                            <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
+                        </p>
+                        <p>More levels coming soon...</p>
+                        <p>
+                            ... or <a href='#create'>create your own level!<a> 
+                        </p>
+                        """
+                    )
+                    success.css
+                        textAlign: 'center'
+                        position: 'absolute'
+                        top: '100px'
+                        left: '10px'
+                    view.$('#canvas_container').append(success)                    
+                ),
+                new b2d.Common.Math.b2Vec2(point.x/scale, point.y/scale)
+            )           
     ), 100
 )
 
