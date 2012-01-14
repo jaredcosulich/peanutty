@@ -2490,7 +2490,6 @@ a {
   padding-left: 45px;
 }
 #canvas_container {
-  margin-bottom: 60px;
   float: left;
   position: relative;
 }
@@ -2518,6 +2517,13 @@ a {
   font-size: 11px;
   bottom: 5px;
   right: 5px;
+}
+#solutions {
+  clear: both;
+  padding-left: 45px;
+}
+#solutions a {
+  margin-left: 12px;
 }
 #tools {
   width: 45px;

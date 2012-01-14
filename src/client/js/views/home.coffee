@@ -3,13 +3,18 @@
     views = require('views')        
             
     class views.Home extends views.BaseView
-        prepare: () ->            
+        prepare: () ->                        
+            window.Peanutty = Peanutty
+            window.b2d = Peanutty.b2d
+            window.view = @
+            
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
                 script: @_requireTemplate('templates/basic_script.coffee'),
-                level: @_requireTemplate("templates/#{@data.level}_level.coffee"),
+                level: @_requireTemplate("templates/levels/#{@data.level}_level.coffee"),
                 environment: @_requireTemplate('templates/basic_environment.coffee')
             }
+            @_requireScript("templates/levels/solutions/#{@data.level}_solution_list.js")
             $.route.navigate("level/#{@data.level}", false)
     
         renderView: () ->
@@ -26,13 +31,11 @@
             @initTopButtons()
             @initEditors()
             
-            window.Peanutty = Peanutty
-            window.b2d = Peanutty.b2d
-            window.view = @
-            
             @loadCode()
             @initCodeSaving()                
-            Peanutty.runScript()            
+            Peanutty.runScript()  
+        
+            @loadSolutions()
         
         initCodeSaving: () =>
             loadCode = null 
@@ -123,7 +126,25 @@
         removeLevelElements: () => 
             $(levelElement).remove() for name, levelElement of @levelElements
             @levelElements = {}
-       
+            
+        loadSolutions: () =>
+            return unless @solutionList?
+            for solution, index in @solutionList
+                do (solution, index) =>
+                    solutionLink = $(document.createElement("A"))
+                    solutionLink.html("Solution #{index + 1}")
+                    solutionLink.bind 'click', () =>
+                         src = "templates/levels/solutions/#{@data.level}_#{solution}.coffee"
+                         src = "/src/client/#{src}" if window.STATIC_SERVER
+                         $.ajax
+                            method: 'GET'
+                            url: "#{src}?#{Math.random()}"
+                            type: 'html'
+                            success: (solutionCoffee) =>
+                                @resetLevel()
+                                @scriptEditor.getSession().setValue(solutionCoffee)
+                                Peanutty.runScript()
+                    $('#solutions').append(solutionLink)
             
 
     # Make the internal anchors work with the routing (hacky!)

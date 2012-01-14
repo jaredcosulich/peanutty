@@ -10,6 +10,7 @@
       __extends(Home, views.BaseView);
 
       function Home() {
+        this.loadSolutions = __bind(this.loadSolutions, this);
         this.removeLevelElements = __bind(this.removeLevelElements, this);
         this.loadNewLevel = __bind(this.loadNewLevel, this);
         this.loadEnvironment = __bind(this.loadEnvironment, this);
@@ -27,12 +28,16 @@
       }
 
       Home.prototype.prepare = function() {
+        window.Peanutty = Peanutty;
+        window.b2d = Peanutty.b2d;
+        window.view = this;
         this.templates = {
           main: this._requireTemplate('templates/home.html'),
           script: this._requireTemplate('templates/basic_script.coffee'),
-          level: this._requireTemplate("templates/" + this.data.level + "_level.coffee"),
+          level: this._requireTemplate("templates/levels/" + this.data.level + "_level.coffee"),
           environment: this._requireTemplate('templates/basic_environment.coffee')
         };
+        this._requireScript("templates/levels/solutions/" + this.data.level + "_solution_list.js");
         return $.route.navigate("level/" + this.data.level, false);
       };
 
@@ -47,12 +52,10 @@
         this.initTabs();
         this.initTopButtons();
         this.initEditors();
-        window.Peanutty = Peanutty;
-        window.b2d = Peanutty.b2d;
-        window.view = this;
         this.loadCode();
         this.initCodeSaving();
-        return Peanutty.runScript();
+        Peanutty.runScript();
+        return this.loadSolutions();
       };
 
       Home.prototype.initCodeSaving = function() {
@@ -185,6 +188,39 @@
           $(levelElement).remove();
         }
         return this.levelElements = {};
+      };
+
+      Home.prototype.loadSolutions = function() {
+        var index, solution, _len, _ref, _results;
+        var _this = this;
+        if (this.solutionList == null) return;
+        _ref = this.solutionList;
+        _results = [];
+        for (index = 0, _len = _ref.length; index < _len; index++) {
+          solution = _ref[index];
+          _results.push((function(solution, index) {
+            var solutionLink;
+            solutionLink = $(document.createElement("A"));
+            solutionLink.html("Solution " + (index + 1));
+            solutionLink.bind('click', function() {
+              var src;
+              src = "templates/levels/solutions/" + _this.data.level + "_" + solution + ".coffee";
+              if (window.STATIC_SERVER) src = "/src/client/" + src;
+              return $.ajax({
+                method: 'GET',
+                url: "" + src + "?" + (Math.random()),
+                type: 'html',
+                success: function(solutionCoffee) {
+                  _this.resetLevel();
+                  _this.scriptEditor.getSession().setValue(solutionCoffee);
+                  return Peanutty.runScript();
+                }
+              });
+            });
+            return $('#solutions').append(solutionLink);
+          })(solution, index));
+        }
+        return _results;
       };
 
       return Home;
