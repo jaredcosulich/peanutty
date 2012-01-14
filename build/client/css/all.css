@@ -2476,7 +2476,17 @@ a {
   background: url(/src/client/css/images/loading.gif) no-repeat center;
 }
 .topbar {
-  background-color: #4f3526;
+  background-color: #371e10;
+  background-color: #371e10;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#694b34), to(#371e10));
+  background-image: -moz-linear-gradient(top, #694b34, #371e10);
+  background-image: -ms-linear-gradient(top, #694b34, #371e10);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #694b34), color-stop(100%, #371e10));
+  background-image: -webkit-linear-gradient(top, #694b34, #371e10);
+  background-image: -o-linear-gradient(top, #694b34, #371e10);
+  background-image: linear-gradient(top, #694b34, #371e10);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#694b34', endColorstr='#371e10', GradientType=0);
   padding-left: 45px;
 }
 #canvas_container {
@@ -2486,7 +2496,7 @@ a {
 }
 #canvas_container #canvas {
   background-color: #e6e6e6;
-  border: 1px solid #4f3526;
+  border: 1px solid #371e10;
   cursor: pointer;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -2513,19 +2523,19 @@ a {
   width: 45px;
   float: left;
   text-align: center;
-  border-top: 1px solid #4f3526;
+  border-top: 1px solid #371e10;
 }
 #tools .tool, #tools .setting, #tools .tool_spacer {
   line-height: 45px;
   height: 45px;
-  border-bottom: 1px solid #4f3526;
+  border-bottom: 1px solid #371e10;
 }
 #tools .tool, #tools .setting {
-  border-left: 1px solid #4f3526;
+  border-left: 1px solid #371e10;
   cursor: pointer;
 }
 #tools .tool.selected, #tools .setting.selected {
-  background-color: #4f3526;
+  background-color: #371e10;
   color: white;
 }
 #code_buttons {
@@ -2585,7 +2595,7 @@ a {
 }
 .code_message div {
   margin-top: -18px;
-  border: 1px solid #4f3526;
+  border: 1px solid #371e10;
   background-color: white;
   padding: 6px 6px 6px 18px;
   width: 210px;
@@ -2598,8 +2608,8 @@ a {
 }
 .code_message .close_link {
   padding: 0 3px;
-  border-right: 1px solid #4f3526;
-  border-bottom: 1px solid #4f3526;
+  border-right: 1px solid #371e10;
+  border-bottom: 1px solid #371e10;
   margin-right: -240px;
   -webkit-transition: margin-right 1s linear;
   -moz-transition: margin-right 1s linear;

@@ -9,7 +9,8 @@ a {
 .loading { background: url(/src/client/css/images/loading.gif) no-repeat center; }
 
 .topbar {
-    background-color: @brown;
+    background-color: @darkbrown;
+    #gradient > .vertical(@brown, @darkbrown);
     padding-left: 45px;
 }
 
@@ -19,7 +20,7 @@ a {
     position: relative;
     #canvas {
         background-color: @grayLighter;
-        border: 1px solid @brown;
+        border: 1px solid @darkbrown;
         cursor: pointer;
         .no-user-select
     }
@@ -38,17 +39,17 @@ a {
     width: 45px;
     float: left;
     text-align: center;
-    border-top: 1px solid @brown;
+    border-top: 1px solid @darkbrown;
     .tool, .setting, .tool_spacer {
         line-height: 45px;
         height: 45px;
-        border-bottom: 1px solid @brown;
+        border-bottom: 1px solid @darkbrown;
     }
     .tool, .setting {
-        border-left: 1px solid @brown;
+        border-left: 1px solid @darkbrown;
         cursor: pointer;
         &.selected {
-            background-color: @brown;
+            background-color: @darkbrown;
             color: white;
         }
     }
@@ -109,7 +110,7 @@ a {
     overflow: hidden;
     div {
         margin-top: -18px;
-        border: 1px solid @brown;
+        border: 1px solid @darkbrown;
         background-color: white;
         padding: 6px 6px 6px 18px;
         width: 210px;
@@ -118,8 +119,8 @@ a {
     }
     .close_link {
         padding: 0 3px;
-        border-right: 1px solid @brown;
-        border-bottom: 1px solid @brown;
+        border-right: 1px solid @darkbrown;
+        border-bottom: 1px solid @darkbrown;
         margin-right: -240px;
         .transition(margin-right 1s linear);
     }
