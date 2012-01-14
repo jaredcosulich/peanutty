@@ -194,6 +194,11 @@
         var index, solution, _len, _ref, _results;
         var _this = this;
         if (this.solutionList == null) return;
+        if (this.solutionList.length > 0) {
+          $('#solutions').show();
+        } else {
+          $('#solutions').hide();
+        }
         _ref = this.solutionList;
         _results = [];
         for (index = 0, _len = _ref.length; index < _len; index++) {

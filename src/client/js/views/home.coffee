@@ -129,6 +129,7 @@
             
         loadSolutions: () =>
             return unless @solutionList?
+            if @solutionList.length > 0 then $('#solutions').show() else $('#solutions').hide()
             for solution, index in @solutionList
                 do (solution, index) =>
                     solutionLink = $(document.createElement("A"))
