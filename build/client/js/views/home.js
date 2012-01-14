@@ -193,6 +193,7 @@
       Home.prototype.loadSolutions = function() {
         var index, solution, _len, _ref, _results;
         var _this = this;
+        $('#solutions').hide();
         if (this.solutionList == null) return;
         if (this.solutionList.length > 0) {
           $('#solutions').show();
