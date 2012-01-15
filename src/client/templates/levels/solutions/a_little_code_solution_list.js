@@ -1,1 +1,1 @@
-[]
+view.solutionList = ['antigravity', 'ramp']
