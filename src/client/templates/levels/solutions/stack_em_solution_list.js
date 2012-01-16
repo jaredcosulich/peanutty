@@ -1,1 +1,1 @@
-[]
+view.solutionList = ['for_loop']
