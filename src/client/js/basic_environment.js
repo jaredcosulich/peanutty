@@ -42,7 +42,7 @@
       if ((firstPoint != null) && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.canvas.height() - firstPoint.y) - y) < 10) {
         peanutty.endFreeformShape({
           static: static,
-          time: view.getTimeDiff()
+          time: level.getTimeDiff()
         });
         return;
       }
@@ -64,7 +64,7 @@
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
         command: "peanutty.createBox\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale))) + "\n    width: 20\n    height: 20\n    static: " + static,
-        time: view.getTimeDiff()
+        time: level.getTimeDiff()
       });
     });
   };
@@ -74,15 +74,15 @@
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
         command: "peanutty.createBall\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale))) + "\n    radius: 20\n    static: " + static,
-        time: view.getTimeDiff()
+        time: level.getTimeDiff()
       });
     });
   };
 
-  view.getTimeDiff = function() {
+  level.getTimeDiff = function() {
     var timeDiff;
-    timeDiff = view.time != null ? new Date() - view.time : 0;
-    view.time = new Date();
+    timeDiff = level.time != null ? new Date() - level.time : 0;
+    level.time = new Date();
     return timeDiff;
   };
 

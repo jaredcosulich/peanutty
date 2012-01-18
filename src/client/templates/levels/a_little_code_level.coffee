@@ -1,4 +1,4 @@
-view.level = 'a_little_code'
+level.name = 'a_little_code'
 Peanutty.createEnvironment()
 
 # Zoom out
@@ -51,7 +51,7 @@ goal = peanutty.createBox
         alpha: 0.8
         
 # Create the striker
-view.striker = peanutty.createBox
+level.striker = peanutty.createBox
     x: 10
     y: 50
     width: 80
@@ -63,7 +63,7 @@ view.striker = peanutty.createBox
         alpha: 0.8
 
 # Create the launch button
-launchButtonBackground = view.levelElements.launchButton = $(document.createElement("DIV"))
+launchButtonBackground = level.elements.launchButton = $(document.createElement("DIV"))
 launchButtonBackground.css(
     backgroundColor: '#666'
     position: 'absolute'
@@ -73,8 +73,8 @@ launchButtonBackground.css(
     height: '44px'
     borderRadius: '22px'
 )
-view.$('#canvas_container').append(launchButtonBackground)
-launchButton = view.levelElements.launchButton = $(document.createElement("A"))
+level.canvasContainer.append(launchButtonBackground)
+launchButton = level.elements.launchButton = $(document.createElement("A"))
 launchButton.css(
     backgroundColor: '#57A957'
     backgroundImage: '-webkit-radial-gradient(circle, #CAE6CA, #62C462)'
@@ -86,53 +86,61 @@ launchButton.css(
     borderRadius: '20px'
 )
 
+
+level.pullBackStriker = () =>
+    clearInterval(level.strikerInterval)
+    level.strikerInterval = setInterval(
+        (() =>
+            clearInterval(level.strikerInterval) if level.striker.GetPosition().x < -2.5
+            changeVec = new b2d.Common.Math.b2Vec2((level.striker.GetPosition().x + 2.5) / 50, 0) 
+            level.striker.GetPosition().Subtract(changeVec)  
+        ),
+        10
+    )
+    
 launchButton.bind 'mousedown', () =>
     launchButton.css(backgroundImage: '-webkit-radial-gradient(circle, #158515, #62C462)')
     peanutty.addToScript
         command:
             """
-            clearInterval(view.strikerInterval)
-            view.strikerInterval = setInterval((
-                    () =>
-                        clearInterval(view.strikerInterval) if view.striker.GetPosition().x < -2.5
-                        changeVec = new b2d.Common.Math.b2Vec2((view.striker.GetPosition().x + 2.5) / 50, 0) 
-                        view.striker.GetPosition().Subtract(changeVec)  
-                ),
-                10
-            )
+            level.pullBackStriker()
             """
-        time: view.getTimeDiff()
-            
+        time: level.getTimeDiff()
+     
+     
+level.releaseStriker = () =>
+    clearInterval(level.strikerInterval)
+    level.striker.SetAwake(true)
+    level.striker.SetLinearVelocity(new b2d.Common.Math.b2Vec2(level.striker.GetPosition().x * -10,0))
+    level.strikerInterval = setInterval(
+        (() =>
+            clearInterval(level.strikerInterval) if level.striker.GetPosition().x < 0 && !level.striker.IsAwake()
+            if level.striker.GetPosition().x > 1 || !level.striker.IsAwake()
+                level.striker.SetAwake(false)
+                changeVec = new b2d.Common.Math.b2Vec2(0.01, 0) 
+                level.striker.GetPosition().Subtract(changeVec)  
+        ),
+        10
+      )
+
 launchButton.bind 'mouseup', () =>
     launchButton.css(backgroundImage: '-webkit-radial-gradient(circle, #CAE6CA, #62C462)')
     peanutty.addToScript
         command:
             """
-            clearInterval(view.strikerInterval)
-            view.striker.SetAwake(true)
-            view.striker.SetLinearVelocity(new b2d.Common.Math.b2Vec2(view.striker.GetPosition().x * -10,0))
-            view.strikerInterval = setInterval((
-                    () =>
-                        clearInterval(view.strikerInterval) if view.striker.GetPosition().x < 0 && !view.striker.IsAwake()
-                        if view.striker.GetPosition().x > 1 || !view.striker.IsAwake()
-                            view.striker.SetAwake(false)
-                            changeVec = new b2d.Common.Math.b2Vec2(0.01, 0) 
-                            view.striker.GetPosition().Subtract(changeVec)  
-                ),
-                10
-            )
+            level.releaseStriker()
             """
-        time: view.getTimeDiff()
+        time: level.getTimeDiff()
         
-view.$('#canvas_container').append(launchButton)
+level.canvasContainer.append(launchButton)
 
-launchInstructions = view.levelElements.launchInstructions = $(document.createElement("DIV"))
+launchInstructions = level.elements.launchInstructions = $(document.createElement("DIV"))
 launchInstructions.html("<p>Press and hold the button to<br/>pull back the pinball striker.</p>")
 launchInstructions.css
     position: 'absolute'
     top: '360px'
     left: "10px"
-view.$('#canvas_container').append(launchInstructions)
+level.canvasContainer.append(launchInstructions)
 
 
 # pinball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(40,1))       
@@ -140,10 +148,10 @@ view.$('#canvas_container').append(launchInstructions)
 # Listen for the ball hitting the goal
 peanutty.addContactListener
     listener: (contact) =>
-        return if view.levelElements.success?
+        return if level.elements.success?
         fixtures = [contact.GetFixtureA(), contact.GetFixtureB()]
         if ball.GetFixtureList() in fixtures and goal.GetFixtureList() in fixtures
-            success = view.levelElements.success = $(document.createElement("DIV"))
+            success = level.elements.success = $(document.createElement("DIV"))
             success.html(
                 """
                 <h4>Nicely done.</h4>
@@ -164,10 +172,10 @@ peanutty.addContactListener
                 position: 'absolute'
                 top: '200px'
                 left: "#{(peanutty.canvas.width() / 2) - 200}px"
-            view.$('#canvas_container').append(success)
+            level.canvasContainer.append(success)
 
 # instructions
-instructions = view.levelElements.instructions = $(document.createElement("DIV"))
+instructions = level.elements.instructions = $(document.createElement("DIV"))
 instructions.html(
     """
     <h1>Get the blue ball to hit the blue wall.</h1>
@@ -183,7 +191,7 @@ instructions.css
     position: 'absolute'
     top: '20px'
     left: "#{(peanutty.canvas.width() / 2) - 300}px"
-view.$('#canvas_container').append(instructions)
+level.canvasContainer.append(instructions)
 
 # remove the toolbar
 $('#tools').css(visibility: 'hidden')

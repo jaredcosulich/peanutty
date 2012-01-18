@@ -1,4 +1,4 @@
-view.level = 'simple_bucket'
+level.name = 'simple_bucket'
 Peanutty.createEnvironment()
 
 # Zoom out
@@ -63,11 +63,10 @@ bucketBottom = peanutty.searchObjectList(
 # Listen for the ball in the bucket
 peanutty.addContactListener
     listener: (contact) =>
-        return if view.levelElements.success?
+        return if level.elements.success?
         fixtures = [contact.GetFixtureA(), contact.GetFixtureB()]
         if ball.GetFixtureList() in fixtures and bucketBottom in fixtures
-            success = view.levelElements.success = $(document.createElement("DIV"))
-            success.addClass('level_element')
+            success = level.elements.success = $(document.createElement("DIV"))
             success.css
                 textAlign: 'center'
                 position: 'absolute'
@@ -87,12 +86,12 @@ peanutty.addContactListener
                 </p>
                 """
             )
-            view.$('#canvas_container').append(success)
+            level.canvasContainer.append(success)
             
     
     
 # Set up the user inputs
-title = view.levelElements.title = $(document.createElement("DIV"))
+title = level.elements.title = $(document.createElement("DIV"))
 title.css
     width: '500px'
     textAlign: 'center'
@@ -101,10 +100,10 @@ title.css
     top: '20px'
     left: "#{(peanutty.canvas.width() / 2) - 250}px"
 title.html("Get the Blue Ball in to the Bucket")
-view.$('#canvas_container').append(title)
+level.canvasContainer.append(title)
 
 
-cannonControl = view.levelElements.cannonControl = $(document.createElement("DIV"))
+cannonControl = level.elements.cannonControl = $(document.createElement("DIV"))
 cannonControl.css
     fontSize: '12pt'
     position: 'absolute'
@@ -123,39 +122,41 @@ cannonControl.html(
     </a>    
     """
 )
-view.$('#canvas_container').append(cannonControl)
+level.canvasContainer.append(cannonControl)
     
+level.fireCannon = ({angle, force}) =>
+    cannonball = peanutty.createBall
+        x: 125
+        y: 133
+        radius: 10
+        density: 50
+        drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}
+
+    x = Math.cos(Math.PI/(180 / angle)) * force
+    y = -1 * Math.sin(Math.PI/(180 / angle)) * force
+    cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))
     
 # Cannon Firing    
-view.$('#fire_cannon').bind 'click', () =>
+level.elements.cannonControl.find('#fire_cannon').bind 'click', () =>
     peanutty.addToScript
         command:
             """
-            cannonball = peanutty.createBall
-                x: 125
-                y: 133
-                radius: 10
-                density: 50
-                drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}
-
-            angle = #{view.$('#cannon_angle').val()}
-            force = #{view.$('#cannon_force').val()}
-            x = Math.cos(Math.PI/(180 / angle)) * force
-            y = -1 * Math.sin(Math.PI/(180 / angle)) * force
-            cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))
+            level.fireCannon
+                angle: #{level.elements.cannonControl.find('#cannon_angle').val()} 
+                force: #{level.elements.cannonControl.find('#cannon_force').val()}
             """
         time: 0
-    view.$('#fire_cannon').hide()
-    view.$('#try_again').show()
+    level.elements.cannonControl.find('#fire_cannon').hide()
+    level.elements.cannonControl.find('#try_again').show()
 
-view.$('#try_again').bind 'click', () =>
-    angleVal = view.$('#cannon_angle').val()
-    forceVal = view.$('#cannon_force').val()
-    view.resetLevel()
-    view.$('#cannon_angle').val(angleVal)
-    view.$('#cannon_force').val(forceVal)
-    view.$('#try_again').hide()
-    view.$('#fire_cannon').show()
+level.elements.cannonControl.find('#try_again').bind 'click', () =>
+    angleVal = level.elements.cannonControl.find('#cannon_angle').val()
+    forceVal = level.elements.cannonControl.find('#cannon_force').val()
+    level.resetLevel()
+    level.elements.cannonControl.find('#cannon_angle').val(angleVal)
+    level.elements.cannonControl.find('#cannon_force').val(forceVal)
+    level.elements.cannonControl.find('#try_again').hide()
+    level.elements.cannonControl.find('#fire_cannon').show()
     
 peanutty.sign('@jaredcosulich', 'jaredcosulich')
     

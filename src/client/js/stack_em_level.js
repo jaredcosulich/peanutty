@@ -2,7 +2,7 @@
   var createStar, header, instructions, note, scale, star, starInfo;
   var _this = this;
 
-  view.level = 'stack_em';
+  level.name = 'stack_em';
 
   Peanutty.createEnvironment();
 
@@ -105,7 +105,7 @@
 
   setInterval((function() {
     var point, _i, _len, _ref, _results;
-    if (view.levelElements.success) return;
+    if (level.elements.success) return;
     _ref = star.path;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -113,8 +113,8 @@
       _results.push(peanutty.world.QueryPoint((function(fixture) {
         var success;
         if (fixture.GetBody().IsAwake()) return true;
-        if (view.levelElements.success) return false;
-        success = view.levelElements.success = $(document.createElement("DIV"));
+        if (level.elements.success) return false;
+        success = level.elements.success = $(document.createElement("DIV"));
         success.html("<h4>Way to go!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<p>More levels coming soon...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
         success.css({
           textAlign: 'center',
@@ -122,7 +122,7 @@
           top: '100px',
           left: '10px'
         });
-        return view.$('#canvas_container').append(success);
+        return level.canvasContainer.append(success);
       }), new b2d.Common.Math.b2Vec2(point.x / scale, point.y / scale)));
     }
     return _results;
@@ -138,7 +138,7 @@
     left: 0
   });
 
-  header = view.levelElements.header = $(document.createElement("DIV"));
+  header = level.elements.header = $(document.createElement("DIV"));
 
   header.css({
     height: '30px',
@@ -149,13 +149,13 @@
 
   instructions.append(header);
 
-  note = view.levelElements.note = $(document.createElement("DIV"));
+  note = level.elements.note = $(document.createElement("DIV"));
 
   note.html("The tower will turn gray when it is stable (not about to fall over).<br/>Hint: this is a lot easier if you write some code.");
 
   instructions.append(note);
 
-  view.$('#canvas_container').append(instructions);
+  level.canvasContainer.append(instructions);
 
   view.$('#tools #box').click();
 

@@ -31,6 +31,13 @@
         window.Peanutty = Peanutty;
         window.b2d = Peanutty.b2d;
         window.view = this;
+        window.level = {
+          elements: {},
+          removeElements: this.removeLevelElements,
+          reset: this.resetLevel,
+          load: this.loadNewLevel,
+          getTimeDiff: this.getTimeDiff
+        };
         this.templates = {
           main: this._requireTemplate('templates/home.html'),
           script: this._requireTemplate('templates/basic_script.coffee'),
@@ -49,6 +56,7 @@
         this.el.html(this.templates.main.render());
         this.resizeAreas();
         $(window).bind('resize', this.resizeAreas);
+        level.canvasContainer = this.$('#canvas_container');
         this.initTabs();
         this.initTopButtons();
         this.initEditors();
@@ -69,7 +77,7 @@
           _results.push((function(editorName) {
             var editor, existingScript, levelName;
             editor = _this["" + editorName + "Editor"];
-            levelName = _this.level || _this.data.level;
+            levelName = level.name || _this.data.level;
             existingScript = localStorage.getItem("" + levelName + "_" + editorName);
             if ((existingScript != null) && existingScript.length > 0 && existingScript !== editor.getSession().getValue()) {
               if (loadCode || (!(loadCode != null) && confirm('You have some old code for this level.\n\nWould you like to load it?'))) {
@@ -178,27 +186,25 @@
         return $.route.navigate("level/" + levelName, true);
       };
 
-      Home.prototype.levelElements = {};
-
       Home.prototype.removeLevelElements = function() {
-        var levelElement, name, _ref;
-        _ref = this.levelElements;
+        var element, name, _ref;
+        _ref = level.elements;
         for (name in _ref) {
-          levelElement = _ref[name];
-          $(levelElement).remove();
+          element = _ref[name];
+          $(element).remove();
         }
-        return this.levelElements = {};
+        return level.elements = {};
       };
 
       Home.prototype.loadSolutions = function() {
         var index, solution, _len, _ref, _results;
         var _this = this;
-        $('#solutions').hide();
+        this.$('#solutions').hide();
         if (this.solutionList == null) return;
         if (this.solutionList.length > 0) {
-          $('#solutions').show();
+          this.$('#solutions').show();
         } else {
-          $('#solutions').hide();
+          this.$('#solutions').hide();
         }
         _ref = this.solutionList;
         _results = [];
@@ -223,7 +229,7 @@
                 }
               });
             });
-            return $('#solutions').append(solutionLink);
+            return _this.$('#solutions').append(solutionLink);
           })(solution, index));
         }
         return _results;

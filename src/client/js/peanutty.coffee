@@ -471,7 +471,7 @@
                    b = b.GetNext()
     
         sign: (name, twitterHandle='') =>
-            signature = view.levelElements.signature = $(document.createElement("DIV"))     
+            signature = level.elements.signature = $(document.createElement("DIV"))     
             signature.addClass('signature')
             signature.html('This level created by: ')
             signatureLink = $(document.createElement("A"))

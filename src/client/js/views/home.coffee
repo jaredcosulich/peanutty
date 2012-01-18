@@ -7,6 +7,12 @@
             window.Peanutty = Peanutty
             window.b2d = Peanutty.b2d
             window.view = @
+            window.level = 
+                elements: {}
+                removeElements: @removeLevelElements
+                reset: @resetLevel
+                load: @loadNewLevel
+                getTimeDiff: @getTimeDiff
             
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
@@ -27,6 +33,7 @@
             @resizeAreas()
             $(window).bind 'resize', @resizeAreas
 
+            level.canvasContainer = @$('#canvas_container')
             @initTabs()
             @initTopButtons()
             @initEditors()
@@ -42,7 +49,7 @@
             for editorName in ['script', 'level', 'environment']
                 do (editorName) =>
                     editor = @["#{editorName}Editor"]
-                    levelName = @level or @data.level
+                    levelName = level.name or @data.level
                     existingScript = localStorage.getItem("#{levelName}_#{editorName}")
                     if existingScript? && existingScript.length > 0 && existingScript != editor.getSession().getValue()
                         if loadCode || (!loadCode? && confirm('You have some old code for this level.\n\nWould you like to load it?'))
@@ -122,15 +129,14 @@
         loadNewLevel: (levelName) =>
             $.route.navigate("level/#{levelName}", true)
         
-        levelElements: {}
         removeLevelElements: () => 
-            $(levelElement).remove() for name, levelElement of @levelElements
-            @levelElements = {}
+            $(element).remove() for name, element of level.elements
+            level.elements = {}
             
         loadSolutions: () =>
-            $('#solutions').hide()
+            @$('#solutions').hide()
             return unless @solutionList?
-            if @solutionList.length > 0 then $('#solutions').show() else $('#solutions').hide()
+            if @solutionList.length > 0 then @$('#solutions').show() else @$('#solutions').hide()
             for solution, index in @solutionList
                 do (solution, index) =>
                     solutionLink = $(document.createElement("A"))
@@ -146,7 +152,7 @@
                                 @resetLevel()
                                 @scriptEditor.getSession().setValue(solutionCoffee)
                                 Peanutty.runScript()
-                    $('#solutions').append(solutionLink)
+                    @$('#solutions').append(solutionLink)
             
 
     # Make the internal anchors work with the routing (hacky!)

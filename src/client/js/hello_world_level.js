@@ -2,7 +2,7 @@
   var instructions, nameInput;
   var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
-  view.level = 'hello_world';
+  level.name = 'hello_world';
 
   Peanutty.createEnvironment();
 
@@ -15,7 +15,7 @@
     height: 10
   });
 
-  instructions = view.levelElements.instructions = $(document.createElement("DIV"));
+  instructions = level.elements.instructions = $(document.createElement("DIV"));
 
   instructions.css({
     height: '30px',
@@ -29,9 +29,9 @@
 
   instructions.html("Type your name:");
 
-  view.$('#canvas_container').append(instructions);
+  level.canvasContainer.append(instructions);
 
-  nameInput = view.levelElements.nameInput = $(document.createElement('INPUT'));
+  nameInput = level.elements.nameInput = $(document.createElement('INPUT'));
 
   nameInput.css({
     width: '360px',
@@ -56,23 +56,23 @@
     _ref = ['destroyInstructions', 'successInstructions'];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       name = _ref[_i];
-      element = view.levelElements[name];
+      element = level.elements[name];
       if (element == null) continue;
       element.remove();
-      view.levelElements[name] = null;
+      view.level.elements[name] = null;
     }
     view.alreadyCollided = [];
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
-      command: "peanutty.destroyDynamicObjects()\nview.levelElements.nameInput.val(\"" + letters + "\") if view.levelElements.nameInput.val() != \"" + letters + "\"\npeanutty.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
+      command: "peanutty.destroyDynamicObjects()\nlevel.elements.nameInput.val(\"" + letters + "\") if level.elements.nameInput.val() != \"" + letters + "\"\nlevel.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
       time: 0
     });
     view.lastNameInputKey = new Date();
     return $.timeout(1500, function() {
       var destroyInstructions;
       if (new Date() - view.lastNameInputKey < 1500) return;
-      if (view.levelElements.destroyInstructions != null) return;
-      destroyInstructions = view.levelElements.destroyInstructions = $(document.createElement("DIV"));
+      if (level.elements.destroyInstructions != null) return;
+      destroyInstructions = level.elements.destroyInstructions = $(document.createElement("DIV"));
       destroyInstructions.css({
         height: '30px',
         width: '400px',
@@ -105,8 +105,8 @@
         if (!((body.GetUserData() != null) && body.GetUserData().letter)) {
           view.alreadyCollided.push(body);
         }
-        if (!((successInstructions = view.levelElements.successInstructions) != null)) {
-          successInstructions = view.levelElements.successInstructions = $(document.createElement("DIV"));
+        if (!((successInstructions = level.elements.successInstructions) != null)) {
+          successInstructions = level.elements.successInstructions = $(document.createElement("DIV"));
           successInstructions.addClass('level_element');
           successInstructions.css({
             height: '30px',
@@ -147,7 +147,7 @@
     });
   });
 
-  Peanutty.prototype.createLetters = function(_arg) {
+  level.createLetters = function(_arg) {
     var letter, letterWidth, letters, start, width, x, y, _i, _len, _results;
     x = _arg.x, y = _arg.y, letters = _arg.letters;
     width = this.getLettersWidth({
@@ -170,7 +170,7 @@
     return _results;
   };
 
-  Peanutty.prototype.getLettersWidth = function(_arg) {
+  level.getLettersWidth = function(_arg) {
     var baseWidth, letter, letters, totalWidth, _i, _len;
     letters = _arg.letters;
     totalWidth = 0;
@@ -203,14 +203,14 @@
     return totalWidth;
   };
 
-  Peanutty.prototype.createLetter = function(_arg) {
+  level.createLetter = function(_arg) {
     var letter, x, y;
     x = _arg.x, y = _arg.y, letter = _arg.letter;
     switch (letter) {
       case "a":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -226,7 +226,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 26,
@@ -248,9 +248,9 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 40,
@@ -266,7 +266,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 34,
@@ -289,9 +289,9 @@
           }
         });
       case "A":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -307,7 +307,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 26,
@@ -329,9 +329,9 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 48,
@@ -347,7 +347,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 42,
@@ -370,7 +370,7 @@
           }
         });
       case "b":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -379,7 +379,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
@@ -388,7 +388,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 45,
           y: y + 20,
           width: 5,
@@ -397,7 +397,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 35,
           width: 10,
@@ -406,7 +406,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 45,
           y: y + 50,
           width: 5,
@@ -415,7 +415,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -425,7 +425,7 @@
           }
         });
       case "B":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -434,7 +434,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
@@ -443,7 +443,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 55,
           y: y + 25,
           width: 5,
@@ -452,7 +452,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 40,
           y: y + 45,
           width: 15,
@@ -461,7 +461,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 55,
           y: y + 65,
           width: 5,
@@ -470,7 +470,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -480,7 +480,7 @@
           }
         });
       case "c":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -489,7 +489,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 35,
           width: 10,
@@ -498,7 +498,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -507,7 +507,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 74,
           width: 6,
@@ -518,7 +518,7 @@
           density: 10
         });
       case "C":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -527,7 +527,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
@@ -536,7 +536,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -545,7 +545,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 6,
           y: y + 92,
           width: 8,
@@ -556,7 +556,7 @@
           density: 10
         });
       case "d":
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 5,
           width: 20,
@@ -565,7 +565,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
@@ -574,7 +574,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 35,
           width: 5,
@@ -583,7 +583,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 20,
           y: y + 65,
           width: 20,
@@ -593,7 +593,7 @@
           }
         });
       case "D":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -602,7 +602,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 45,
           width: 5,
@@ -611,7 +611,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 55,
           y: y + 45,
           width: 5,
@@ -620,7 +620,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -630,7 +630,7 @@
           }
         });
       case "e":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -639,7 +639,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 20,
           width: 10,
@@ -648,7 +648,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 35,
           width: 20,
@@ -657,7 +657,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 50,
           width: 10,
@@ -666,7 +666,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -675,7 +675,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 74,
           width: 6,
@@ -686,7 +686,7 @@
           density: 10
         });
       case "E":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -695,7 +695,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 25,
           width: 10,
@@ -704,7 +704,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 45,
           width: 20,
@@ -713,7 +713,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 65,
           width: 10,
@@ -722,7 +722,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -731,7 +731,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 91,
           width: 6,
@@ -742,7 +742,7 @@
           density: 10
         });
       case "f":
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 15,
           width: 10,
@@ -752,7 +752,7 @@
           },
           density: 10
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 35,
           width: 20,
@@ -761,7 +761,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 50,
           width: 10,
@@ -770,7 +770,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -779,7 +779,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 74,
           width: 6,
@@ -790,7 +790,7 @@
           density: 10
         });
       case "F":
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 20,
           width: 10,
@@ -800,7 +800,7 @@
           },
           density: 10
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 45,
           width: 20,
@@ -809,7 +809,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 65,
           width: 10,
@@ -818,7 +818,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -827,7 +827,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 91,
           width: 6,
@@ -838,7 +838,7 @@
           density: 10
         });
       case "g":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -847,7 +847,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 7,
           y: y + 35,
           width: 7,
@@ -856,7 +856,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 45,
           y: y + 20,
           width: 5,
@@ -865,7 +865,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 35,
           width: 15,
@@ -874,7 +874,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 45,
           y: y + 40,
           width: 6,
@@ -884,7 +884,7 @@
           },
           density: 10
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -893,7 +893,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 5,
           y: y + 74,
           width: 8,
@@ -904,7 +904,7 @@
           density: 10
         });
       case "G":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -913,7 +913,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
@@ -922,7 +922,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 55,
           y: y + 25,
           width: 5,
@@ -931,7 +931,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 45,
           y: y + 45,
           width: 15,
@@ -940,7 +940,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 55,
           y: y + 52,
           width: 6,
@@ -950,7 +950,7 @@
           },
           density: 10
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -959,7 +959,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 5,
           y: y + 92,
           width: 8,
@@ -970,7 +970,7 @@
           density: 10
         });
       case "h":
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 15,
           width: 5,
@@ -979,7 +979,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 15,
           width: 5,
@@ -988,7 +988,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 35,
           width: 20,
@@ -997,7 +997,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 55,
           width: 5,
@@ -1006,7 +1006,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 35,
           y: y + 55,
           width: 5,
@@ -1016,7 +1016,7 @@
           }
         });
       case "H":
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 20,
           width: 10,
@@ -1025,7 +1025,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 50,
           y: y + 20,
           width: 10,
@@ -1034,7 +1034,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 45,
           width: 30,
@@ -1043,7 +1043,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 70,
           width: 10,
@@ -1052,7 +1052,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 50,
           y: y + 70,
           width: 10,
@@ -1062,7 +1062,7 @@
           }
         });
       case "i":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -1071,7 +1071,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 35,
           width: 5,
@@ -1080,7 +1080,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -1090,7 +1090,7 @@
           }
         });
       case "I":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -1099,7 +1099,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 45,
           width: 5,
@@ -1108,7 +1108,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -1118,7 +1118,7 @@
           }
         });
       case "j":
-        this.createBox({
+        peanutty.createBox({
           x: x + 15,
           y: y + 5,
           width: 15,
@@ -1127,7 +1127,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 4,
           y: y + 18,
           width: 5,
@@ -1136,7 +1136,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 35,
           width: 5,
@@ -1145,7 +1145,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -1155,7 +1155,7 @@
           }
         });
       case "J":
-        this.createBox({
+        peanutty.createBox({
           x: x + 17,
           y: y + 5,
           width: 18,
@@ -1164,7 +1164,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 4,
           y: y + 18,
           width: 5,
@@ -1173,7 +1173,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 40,
           width: 5,
@@ -1182,7 +1182,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -1192,9 +1192,9 @@
           }
         });
       case "k":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1210,7 +1210,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 10,
@@ -1232,7 +1232,7 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           path: [
             {
               x: x + 10,
@@ -1253,9 +1253,9 @@
           }
         });
       case "K":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1271,7 +1271,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 10,
@@ -1293,7 +1293,7 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           path: [
             {
               x: x + 10,
@@ -1314,7 +1314,7 @@
           }
         });
       case "l":
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 5,
           width: 20,
@@ -1323,7 +1323,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
@@ -1333,7 +1333,7 @@
           }
         });
       case "L":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -1342,7 +1342,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 5,
           y: y + 50,
           width: 5,
@@ -1352,9 +1352,9 @@
           }
         });
       case "m":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1370,7 +1370,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 10,
@@ -1392,9 +1392,9 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 40,
@@ -1410,7 +1410,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 25,
@@ -1433,9 +1433,9 @@
           }
         });
       case "M":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1451,7 +1451,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 10,
@@ -1473,9 +1473,9 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 50,
@@ -1491,7 +1491,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
@@ -1514,9 +1514,9 @@
           }
         });
       case "n":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1532,7 +1532,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 10,
@@ -1554,7 +1554,7 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           path: [
             {
               x: x + 40,
@@ -1575,9 +1575,9 @@
           }
         });
       case "N":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1593,7 +1593,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 10,
@@ -1615,7 +1615,7 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           path: [
             {
               x: x + 50,
@@ -1636,7 +1636,7 @@
           }
         });
       case "o":
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 5,
           width: 20,
@@ -1645,7 +1645,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
@@ -1654,7 +1654,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 35,
           width: 5,
@@ -1663,7 +1663,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 20,
           y: y + 65,
           width: 20,
@@ -1673,7 +1673,7 @@
           }
         });
       case "O":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -1682,7 +1682,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 45,
           width: 5,
@@ -1691,7 +1691,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 55,
           y: y + 45,
           width: 5,
@@ -1700,7 +1700,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -1710,7 +1710,7 @@
           }
         });
       case "p":
-        this.createBox({
+        peanutty.createBox({
           x: x + 17,
           y: y + 30,
           width: 5,
@@ -1719,9 +1719,9 @@
             letter: true
           }
         });
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1737,7 +1737,7 @@
                   y: y + 60
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 50,
@@ -1753,7 +1753,7 @@
                   y: y + 60
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 50,
@@ -1775,7 +1775,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 72,
           width: 6,
@@ -1786,7 +1786,7 @@
           density: 10
         });
       case "P":
-        this.createBox({
+        peanutty.createBox({
           x: x + 17,
           y: y + 40,
           width: 5,
@@ -1795,9 +1795,9 @@
             letter: true
           }
         });
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -1813,7 +1813,7 @@
                   y: y + 80
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 60,
@@ -1829,7 +1829,7 @@
                   y: y + 80
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 60,
@@ -1851,7 +1851,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 92,
           width: 6,
@@ -1862,7 +1862,7 @@
           density: 30
         });
       case "q":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -1871,7 +1871,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 35,
           width: 5,
@@ -1880,9 +1880,9 @@
             letter: true
           }
         });
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 40,
@@ -1898,7 +1898,7 @@
                   y: y + 10
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 20,
@@ -1923,7 +1923,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -1933,7 +1933,7 @@
           }
         });
       case "Q":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -1942,7 +1942,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
@@ -1951,9 +1951,9 @@
             letter: true
           }
         });
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 50,
@@ -1969,7 +1969,7 @@
                   y: y + 10
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
@@ -1994,7 +1994,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 75,
           width: 30,
@@ -2004,7 +2004,7 @@
           }
         });
       case "r":
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 20,
           width: 5,
@@ -2013,7 +2013,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 28,
           y: y + 5,
           width: 5,
@@ -2022,7 +2022,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 25,
           width: 15,
@@ -2031,7 +2031,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 40,
           width: 5,
@@ -2040,7 +2040,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 20,
           y: y + 55,
           width: 20,
@@ -2050,7 +2050,7 @@
           }
         });
       case "R":
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
@@ -2059,7 +2059,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 20,
           width: 5,
@@ -2068,7 +2068,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 35,
           y: y + 45,
           width: 25,
@@ -2077,7 +2077,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 55,
           y: y + 65,
           width: 5,
@@ -2086,7 +2086,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -2096,7 +2096,7 @@
           }
         });
       case "s":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -2105,7 +2105,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 40,
           y: y + 20,
           width: 10,
@@ -2114,7 +2114,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 35,
           width: 25,
@@ -2123,7 +2123,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 47,
           y: y + 42,
           width: 6,
@@ -2133,7 +2133,7 @@
           },
           density: 50
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 50,
           width: 10,
@@ -2142,7 +2142,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -2151,7 +2151,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 72,
           width: 6,
@@ -2162,7 +2162,7 @@
           density: 10
         });
       case "S":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -2171,7 +2171,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 50,
           y: y + 25,
           width: 10,
@@ -2180,7 +2180,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 45,
           width: 30,
@@ -2189,7 +2189,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 57,
           y: y + 52,
           width: 6,
@@ -2199,7 +2199,7 @@
           },
           density: 80
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 65,
           width: 10,
@@ -2208,7 +2208,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 85,
           width: 30,
@@ -2217,7 +2217,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 4,
           y: y + 92,
           width: 6,
@@ -2228,7 +2228,7 @@
           density: 10
         });
       case "t":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 30,
           width: 5,
@@ -2237,7 +2237,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 25,
           y: y + 60,
           width: 25,
@@ -2247,7 +2247,7 @@
           }
         });
       case "T":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 40,
           width: 5,
@@ -2256,7 +2256,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 80,
           width: 30,
@@ -2266,7 +2266,7 @@
           }
         });
       case "u":
-        this.createBox({
+        peanutty.createBox({
           x: x + 20,
           y: y + 5,
           width: 20,
@@ -2275,7 +2275,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
@@ -2284,7 +2284,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 35,
           y: y + 40,
           width: 5,
@@ -2294,7 +2294,7 @@
           }
         });
       case "U":
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 5,
           width: 30,
@@ -2303,7 +2303,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 50,
           width: 5,
@@ -2312,7 +2312,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 55,
           y: y + 50,
           width: 5,
@@ -2322,9 +2322,9 @@
           }
         });
       case "v":
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2340,7 +2340,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 25,
@@ -2363,9 +2363,9 @@
           }
         });
       case "V":
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2381,7 +2381,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
@@ -2404,7 +2404,7 @@
           }
         });
       case "w":
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 5,
           width: 25,
@@ -2413,7 +2413,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 5,
           y: y + 40,
           width: 5,
@@ -2422,7 +2422,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 45,
           y: y + 40,
           width: 5,
@@ -2431,7 +2431,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 25,
           y: y + 25,
           width: 5,
@@ -2441,7 +2441,7 @@
           }
         });
       case "W":
-        this.createBox({
+        peanutty.createBox({
           x: x + 40,
           y: y + 5,
           width: 40,
@@ -2450,7 +2450,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 10,
           y: y + 45,
           width: 10,
@@ -2459,7 +2459,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 70,
           y: y + 45,
           width: 10,
@@ -2468,7 +2468,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 40,
           y: y + 20,
           width: 5,
@@ -2478,9 +2478,9 @@
           }
         });
       case "x":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2502,9 +2502,9 @@
             letter: true
           }
         });
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
@@ -2526,9 +2526,9 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2544,7 +2544,7 @@
                   y: y + 35
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 25,
@@ -2567,9 +2567,9 @@
           }
         });
       case "X":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2591,9 +2591,9 @@
             letter: true
           }
         });
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 35,
@@ -2615,9 +2615,9 @@
             letter: true
           }
         });
-        return this.createPoly({
+        return peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2633,7 +2633,7 @@
                   y: y + 45
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
@@ -2656,9 +2656,9 @@
           }
         });
       case "y":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2674,7 +2674,7 @@
                   y: y + 35
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 25,
@@ -2696,7 +2696,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 25,
           y: y + 17,
           width: 5,
@@ -2706,9 +2706,9 @@
           }
         });
       case "Y":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2724,7 +2724,7 @@
                   y: y + 45
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x + 30,
@@ -2746,7 +2746,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 30,
           y: y + 22,
           width: 5,
@@ -2756,9 +2756,9 @@
           }
         });
       case "z":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2774,7 +2774,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2796,7 +2796,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 25,
           y: y + 65,
           width: 25,
@@ -2805,7 +2805,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 47,
           y: y + 72,
           width: 6,
@@ -2816,9 +2816,9 @@
           density: 50
         });
       case "Z":
-        this.createPoly({
+        peanutty.createPoly({
           fixtureDefs: [
-            this.polyFixtureDef({
+            peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2834,7 +2834,7 @@
                   y: y
                 }
               ]
-            }), this.polyFixtureDef({
+            }), peanutty.polyFixtureDef({
               path: [
                 {
                   x: x,
@@ -2856,7 +2856,7 @@
             letter: true
           }
         });
-        this.createBox({
+        peanutty.createBox({
           x: x + 30,
           y: y + 95,
           width: 30,
@@ -2865,7 +2865,7 @@
             letter: true
           }
         });
-        return this.createBox({
+        return peanutty.createBox({
           x: x + 57,
           y: y + 102,
           width: 6,
@@ -2878,7 +2878,7 @@
     }
   };
 
-  peanutty.createLetters({
+  level.createLetters({
     x: peanutty.world.dimensions.width / 2,
     y: 55,
     letters: 'Hello World'

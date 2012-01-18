@@ -33,7 +33,7 @@ initiateFree = (canvas) =>
         if firstPoint? && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.canvas.height() - firstPoint.y) - y) < 10
             peanutty.endFreeformShape
                 static: static
-                time: view.getTimeDiff()
+                time: level.getTimeDiff()
             return
             
         peanutty.addToFreeformShape(x: x, y: y) 
@@ -59,7 +59,7 @@ initiateBox = (canvas) =>
                     height: 20
                     static: #{static}
                 """
-            time: view.getTimeDiff()
+            time: level.getTimeDiff()
 
 initiateBall = (canvas) =>
     unbindMouseEvents(canvas)
@@ -73,11 +73,11 @@ initiateBall = (canvas) =>
                     radius: 20
                     static: #{static}
                 """
-            time: view.getTimeDiff()
+            time: level.getTimeDiff()
     
-view.getTimeDiff = () =>
-    timeDiff = if view.time? then new Date() - view.time else 0
-    view.time = new Date() 
+level.getTimeDiff = () =>
+    timeDiff = if level.time? then new Date() - level.time else 0
+    level.time = new Date() 
     return timeDiff
     
 # make sure the toolbar is visible

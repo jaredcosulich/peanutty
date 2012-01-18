@@ -1,5 +1,3 @@
-(function() {
-  var angle, cannonball, force, x, y;
 
   Peanutty.loadLevel();
 
@@ -21,25 +19,7 @@
     static: true
   });
 
-  cannonball = peanutty.createBall({
-    x: 125,
-    y: 133,
-    radius: 10,
-    density: 50,
-    drawData: {
-      color: new b2d.Common.b2Color(0.1, 0.1, 0.1),
-      alpha: 0.8
-    }
+  level.fireCannon({
+    angle: 70,
+    force: 15
   });
-
-  angle = 70;
-
-  force = 15;
-
-  x = Math.cos(Math.PI / (180 / angle)) * force;
-
-  y = -1 * Math.sin(Math.PI / (180 / angle)) * force;
-
-  cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x, y));
-
-}).call(this);
