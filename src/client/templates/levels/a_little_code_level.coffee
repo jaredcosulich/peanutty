@@ -62,31 +62,8 @@ level.striker = peanutty.createBox
         color: new b2d.Common.b2Color(0, 0, 0)
         alpha: 0.8
 
-# Create the launch button
-launchButtonBackground = level.elements.launchButton = $(document.createElement("DIV"))
-launchButtonBackground.css(
-    backgroundColor: '#666'
-    position: 'absolute'
-    top: '398px'
-    left: '68px'
-    width: '44px'
-    height: '44px'
-    borderRadius: '22px'
-)
-level.canvasContainer.append(launchButtonBackground)
-launchButton = level.elements.launchButton = $(document.createElement("A"))
-launchButton.css(
-    backgroundColor: '#57A957'
-    backgroundImage: '-webkit-radial-gradient(circle, #CAE6CA, #62C462)'
-    position: 'absolute'
-    top: '400px'
-    left: '70px'
-    width: '40px'
-    height: '40px'
-    borderRadius: '20px'
-)
 
-
+# Create the methods to use the striker
 level.pullBackStriker = () =>
     clearInterval(level.strikerInterval)
     level.strikerInterval = setInterval(
@@ -97,17 +74,7 @@ level.pullBackStriker = () =>
         ),
         10
     )
-    
-launchButton.bind 'mousedown', () =>
-    launchButton.css(backgroundImage: '-webkit-radial-gradient(circle, #158515, #62C462)')
-    peanutty.addToScript
-        command:
-            """
-            level.pullBackStriker()
-            """
-        time: level.getTimeDiff()
-     
-     
+          
 level.releaseStriker = () =>
     clearInterval(level.strikerInterval)
     level.striker.SetAwake(true)
@@ -122,6 +89,40 @@ level.releaseStriker = () =>
         ),
         10
       )
+
+# Create the launch button
+launchButtonBackground = level.elements.launchButton = $(document.createElement("DIV"))
+launchButtonBackground.css
+    backgroundColor: '#666'
+    position: 'absolute'
+    top: '398px'
+    left: '68px'
+    width: '44px'
+    height: '44px'
+    borderRadius: '22px'
+
+level.canvasContainer.append(launchButtonBackground)
+launchButton = level.elements.launchButton = $(document.createElement("A"))
+launchButton.css
+    backgroundColor: '#57A957'
+    backgroundImage: '-webkit-radial-gradient(circle, #CAE6CA, #62C462)'
+    position: 'absolute'
+    top: '400px'
+    left: '70px'
+    width: '40px'
+    height: '40px'
+    borderRadius: '20px'
+
+
+# Bind the launch button to the methods for using the striker, with some feedback for pressing the button
+launchButton.bind 'mousedown', () =>
+    launchButton.css(backgroundImage: '-webkit-radial-gradient(circle, #158515, #62C462)')
+    peanutty.addToScript
+        command:
+            """
+            level.pullBackStriker()
+            """
+        time: level.getTimeDiff()
 
 launchButton.bind 'mouseup', () =>
     launchButton.css(backgroundImage: '-webkit-radial-gradient(circle, #CAE6CA, #62C462)')
@@ -143,8 +144,6 @@ launchInstructions.css
 level.canvasContainer.append(launchInstructions)
 
 
-# pinball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(40,1))       
-        
 # Listen for the ball hitting the goal
 peanutty.addContactListener
     listener: (contact) =>

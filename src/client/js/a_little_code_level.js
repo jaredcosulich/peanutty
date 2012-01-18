@@ -69,6 +69,35 @@
     }
   });
 
+  level.pullBackStriker = function() {
+    clearInterval(level.strikerInterval);
+    return level.strikerInterval = setInterval((function() {
+      var changeVec;
+      if (level.striker.GetPosition().x < -2.5) {
+        clearInterval(level.strikerInterval);
+      }
+      changeVec = new b2d.Common.Math.b2Vec2((level.striker.GetPosition().x + 2.5) / 50, 0);
+      return level.striker.GetPosition().Subtract(changeVec);
+    }), 10);
+  };
+
+  level.releaseStriker = function() {
+    clearInterval(level.strikerInterval);
+    level.striker.SetAwake(true);
+    level.striker.SetLinearVelocity(new b2d.Common.Math.b2Vec2(level.striker.GetPosition().x * -10, 0));
+    return level.strikerInterval = setInterval((function() {
+      var changeVec;
+      if (level.striker.GetPosition().x < 0 && !level.striker.IsAwake()) {
+        clearInterval(level.strikerInterval);
+      }
+      if (level.striker.GetPosition().x > 1 || !level.striker.IsAwake()) {
+        level.striker.SetAwake(false);
+        changeVec = new b2d.Common.Math.b2Vec2(0.01, 0);
+        return level.striker.GetPosition().Subtract(changeVec);
+      }
+    }), 10);
+  };
+
   launchButtonBackground = level.elements.launchButton = $(document.createElement("DIV"));
 
   launchButtonBackground.css({
@@ -96,18 +125,6 @@
     borderRadius: '20px'
   });
 
-  level.pullBackStriker = function() {
-    clearInterval(level.strikerInterval);
-    return level.strikerInterval = setInterval((function() {
-      var changeVec;
-      if (level.striker.GetPosition().x < -2.5) {
-        clearInterval(level.strikerInterval);
-      }
-      changeVec = new b2d.Common.Math.b2Vec2((level.striker.GetPosition().x + 2.5) / 50, 0);
-      return level.striker.GetPosition().Subtract(changeVec);
-    }), 10);
-  };
-
   launchButton.bind('mousedown', function() {
     launchButton.css({
       backgroundImage: '-webkit-radial-gradient(circle, #158515, #62C462)'
@@ -117,23 +134,6 @@
       time: level.getTimeDiff()
     });
   });
-
-  level.releaseStriker = function() {
-    clearInterval(level.strikerInterval);
-    level.striker.SetAwake(true);
-    level.striker.SetLinearVelocity(new b2d.Common.Math.b2Vec2(level.striker.GetPosition().x * -10, 0));
-    return level.strikerInterval = setInterval((function() {
-      var changeVec;
-      if (level.striker.GetPosition().x < 0 && !level.striker.IsAwake()) {
-        clearInterval(level.strikerInterval);
-      }
-      if (level.striker.GetPosition().x > 1 || !level.striker.IsAwake()) {
-        level.striker.SetAwake(false);
-        changeVec = new b2d.Common.Math.b2Vec2(0.01, 0);
-        return level.striker.GetPosition().Subtract(changeVec);
-      }
-    }), 10);
-  };
 
   launchButton.bind('mouseup', function() {
     launchButton.css({
