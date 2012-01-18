@@ -2,7 +2,7 @@
   var ball, bucket, bucketBottom, cannon, cannonControl, title;
   var _this = this, __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
-  view.level = 'simple_bucket';
+  level.name = 'simple_bucket';
 
   Peanutty.createEnvironment();
 
@@ -118,11 +118,10 @@
   peanutty.addContactListener({
     listener: function(contact) {
       var fixtures, success, _ref;
-      if (view.levelElements.success != null) return;
+      if (level.elements.success != null) return;
       fixtures = [contact.GetFixtureA(), contact.GetFixtureB()];
       if ((_ref = ball.GetFixtureList(), __indexOf.call(fixtures, _ref) >= 0) && __indexOf.call(fixtures, bucketBottom) >= 0) {
-        success = view.levelElements.success = $(document.createElement("DIV"));
-        success.addClass('level_element');
+        success = level.elements.success = $(document.createElement("DIV"));
         success.css({
           textAlign: 'center',
           position: 'absolute',
@@ -130,12 +129,12 @@
           left: "" + (peanutty.canvas.width() * 6 / 11)
         });
         success.html("<h4>Success! Nice Job!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n <p>On to the <a href='#level/a_little_code'>next level ></a>...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
-        return view.$('#canvas_container').append(success);
+        return level.canvasContainer.append(success);
       }
     }
   });
 
-  title = view.levelElements.title = $(document.createElement("DIV"));
+  title = level.elements.title = $(document.createElement("DIV"));
 
   title.css({
     width: '500px',
@@ -148,9 +147,9 @@
 
   title.html("Get the Blue Ball in to the Bucket");
 
-  view.$('#canvas_container').append(title);
+  level.canvasContainer.append(title);
 
-  cannonControl = view.levelElements.cannonControl = $(document.createElement("DIV"));
+  cannonControl = level.elements.cannonControl = $(document.createElement("DIV"));
 
   cannonControl.css({
     fontSize: '12pt',
@@ -161,26 +160,26 @@
 
   cannonControl.html("<h5>Cannon Controls</h5>\n<p>Angle: <input id='cannon_angle' type='text' style='width: 2em' value=45 />&deg;</p>\n<p>Force: <input id='cannon_force' type='text' style='width: 2em' value=10 /></p>\n<a id='fire_cannon' class=\"btn error\">\n    Fire Cannon!\n</a>\n<a id='try_again' class=\"btn primary\" style='display: none;'>\n    Try Again\n</a>    ");
 
-  view.$('#canvas_container').append(cannonControl);
+  level.canvasContainer.append(cannonControl);
 
-  view.$('#fire_cannon').bind('click', function() {
+  level.find('#fire_cannon').bind('click', function() {
     peanutty.addToScript({
-      command: "cannonball = peanutty.createBall\n    x: 125\n    y: 133\n    radius: 10\n    density: 50\n    drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}\n\nangle = " + (view.$('#cannon_angle').val()) + "\nforce = " + (view.$('#cannon_force').val()) + "\nx = Math.cos(Math.PI/(180 / angle)) * force\ny = -1 * Math.sin(Math.PI/(180 / angle)) * force\ncannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))",
+      command: "cannonball = peanutty.createBall\n    x: 125\n    y: 133\n    radius: 10\n    density: 50\n    drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}\n\nangle = " + (level.find('#cannon_angle').val()) + "\nforce = " + (level.find('#cannon_force').val()) + "\nx = Math.cos(Math.PI/(180 / angle)) * force\ny = -1 * Math.sin(Math.PI/(180 / angle)) * force\ncannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))",
       time: 0
     });
-    view.$('#fire_cannon').hide();
-    return view.$('#try_again').show();
+    level.find('#fire_cannon').hide();
+    return level.find('#try_again').show();
   });
 
-  view.$('#try_again').bind('click', function() {
+  level.find('#try_again').bind('click', function() {
     var angleVal, forceVal;
-    angleVal = view.$('#cannon_angle').val();
-    forceVal = view.$('#cannon_force').val();
+    angleVal = level.find('#cannon_angle').val();
+    forceVal = level.find('#cannon_force').val();
     level.reset();
-    view.$('#cannon_angle').val(angleVal);
-    view.$('#cannon_force').val(forceVal);
-    view.$('#try_again').hide();
-    return view.$('#fire_cannon').show();
+    level.find('#cannon_angle').val(angleVal);
+    level.find('#cannon_force').val(forceVal);
+    level.find('#try_again').hide();
+    return level.find('#fire_cannon').show();
   });
 
   peanutty.sign('@jaredcosulich', 'jaredcosulich');

@@ -36,6 +36,7 @@
           removeElements: this.removeLevelElements,
           reset: this.resetLevel,
           load: this.loadNewLevel,
+          find: this.$,
           getTimeDiff: this.getTimeDiff
         };
         this.templates = {

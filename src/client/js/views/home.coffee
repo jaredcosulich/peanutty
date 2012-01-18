@@ -12,6 +12,7 @@
                 removeElements: @removeLevelElements
                 reset: @resetLevel
                 load: @loadNewLevel
+                find: @$
                 getTimeDiff: @getTimeDiff
             
             @templates = {

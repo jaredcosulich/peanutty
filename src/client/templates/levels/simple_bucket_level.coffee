@@ -124,39 +124,36 @@ cannonControl.html(
 )
 level.canvasContainer.append(cannonControl)
     
-level.fireCannon = ({angle, force}) =>
-    cannonball = peanutty.createBall
-        x: 125
-        y: 133
-        radius: 10
-        density: 50
-        drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}
-
-    x = Math.cos(Math.PI/(180 / angle)) * force
-    y = -1 * Math.sin(Math.PI/(180 / angle)) * force
-    cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))
     
 # Cannon Firing    
-level.elements.cannonControl.find('#fire_cannon').bind 'click', () =>
+level.find('#fire_cannon').bind 'click', () =>
     peanutty.addToScript
         command:
             """
-            level.fireCannon
-                angle: #{level.elements.cannonControl.find('#cannon_angle').val()} 
-                force: #{level.elements.cannonControl.find('#cannon_force').val()}
+            cannonball = peanutty.createBall
+                x: 125
+                y: 133
+                radius: 10
+                density: 50
+                drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}
+
+            angle = #{level.find('#cannon_angle').val()}
+            force = #{level.find('#cannon_force').val()}
+            x = Math.cos(Math.PI/(180 / angle)) * force
+            y = -1 * Math.sin(Math.PI/(180 / angle)) * force
+            cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))
             """
         time: 0
-    level.elements.cannonControl.find('#fire_cannon').hide()
-    level.elements.cannonControl.find('#try_again').show()
+    level.find('#fire_cannon').hide()
+    level.find('#try_again').show()
 
-level.elements.cannonControl.find('#try_again').bind 'click', () =>
-    angleVal = level.elements.cannonControl.find('#cannon_angle').val()
-    forceVal = level.elements.cannonControl.find('#cannon_force').val()
-    level.resetLevel()
-    level.elements.cannonControl.find('#cannon_angle').val(angleVal)
-    level.elements.cannonControl.find('#cannon_force').val(forceVal)
-    level.elements.cannonControl.find('#try_again').hide()
-    level.elements.cannonControl.find('#fire_cannon').show()
+level.find('#try_again').bind 'click', () =>
+    angleVal = level.find('#cannon_angle').val()
+    forceVal = level.find('#cannon_force').val()
+    level.reset()
+    level.find('#cannon_angle').val(angleVal)
+    level.find('#cannon_force').val(forceVal)
+    level.find('#try_again').hide()
+    level.find('#fire_cannon').show()
     
 peanutty.sign('@jaredcosulich', 'jaredcosulich')
-    
