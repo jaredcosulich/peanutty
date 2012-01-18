@@ -162,9 +162,27 @@
 
   level.canvasContainer.append(cannonControl);
 
+  level.fireCannon = function(_arg) {
+    var angle, cannonball, force, x, y;
+    angle = _arg.angle, force = _arg.force;
+    cannonball = peanutty.createBall({
+      x: 125,
+      y: 133,
+      radius: 10,
+      density: 50,
+      drawData: {
+        color: new b2d.Common.b2Color(0.1, 0.1, 0.1),
+        alpha: 0.8
+      }
+    });
+    x = Math.cos(Math.PI / (180 / angle)) * force;
+    y = -1 * Math.sin(Math.PI / (180 / angle)) * force;
+    return cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x, y));
+  };
+
   level.find('#fire_cannon').bind('click', function() {
     peanutty.addToScript({
-      command: "cannonball = peanutty.createBall\n    x: 125\n    y: 133\n    radius: 10\n    density: 50\n    drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}\n\nangle = " + (level.find('#cannon_angle').val()) + "\nforce = " + (level.find('#cannon_force').val()) + "\nx = Math.cos(Math.PI/(180 / angle)) * force\ny = -1 * Math.sin(Math.PI/(180 / angle)) * force\ncannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))",
+      command: "level.fireCannon\n    angle: " + (level.find('#cannon_angle').val()) + "\n    force: " + (level.find('#cannon_force').val()),
       time: 0
     });
     level.find('#fire_cannon').hide();

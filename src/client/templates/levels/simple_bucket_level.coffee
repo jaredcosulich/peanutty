@@ -123,25 +123,28 @@ cannonControl.html(
     """
 )
 level.canvasContainer.append(cannonControl)
-    
-    
+
+            
 # Cannon Firing    
+level.fireCannon = ({angle, force}) =>
+    cannonball = peanutty.createBall
+        x: 125
+        y: 133
+        radius: 10
+        density: 50
+        drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}
+
+    x = Math.cos(Math.PI/(180 / angle)) * force
+    y = -1 * Math.sin(Math.PI/(180 / angle)) * force
+    cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))
+
 level.find('#fire_cannon').bind 'click', () =>
     peanutty.addToScript
         command:
             """
-            cannonball = peanutty.createBall
-                x: 125
-                y: 133
-                radius: 10
-                density: 50
-                drawData: {color: new b2d.Common.b2Color(0.1, 0.1, 0.1), alpha: 0.8}
-
-            angle = #{level.find('#cannon_angle').val()}
-            force = #{level.find('#cannon_force').val()}
-            x = Math.cos(Math.PI/(180 / angle)) * force
-            y = -1 * Math.sin(Math.PI/(180 / angle)) * force
-            cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))
+            level.fireCannon
+                angle: #{level.find('#cannon_angle').val()}
+                force: #{level.find('#cannon_force').val()}
             """
         time: 0
     level.find('#fire_cannon').hide()
