@@ -151,7 +151,7 @@ view.$('#fire_cannon').bind 'click', () =>
 view.$('#try_again').bind 'click', () =>
     angleVal = view.$('#cannon_angle').val()
     forceVal = view.$('#cannon_force').val()
-    view.resetLevel()
+    level.reset()
     view.$('#cannon_angle').val(angleVal)
     view.$('#cannon_force').val(forceVal)
     view.$('#try_again').hide()
