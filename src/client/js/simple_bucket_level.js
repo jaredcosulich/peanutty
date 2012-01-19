@@ -9,30 +9,6 @@
   peanutty.setScale(25 * (peanutty.canvas.width() / 835));
 
   peanutty.createGround({
-    x: 60,
-    y: 20,
-    width: 100,
-    height: 10
-  });
-
-  peanutty.createBall({
-    x: 80,
-    y: 40,
-    radius: 15,
-    static: true
-  });
-
-  cannon = peanutty.createBox({
-    x: 70,
-    y: 80,
-    width: 60,
-    height: 20,
-    static: true
-  });
-
-  cannon.SetPositionAndAngle(cannon.GetPosition(), Math.PI * 3 / 4);
-
-  peanutty.createGround({
     x: 400,
     y: 400,
     width: 100,
@@ -148,6 +124,30 @@
   title.html("Get the Blue Ball in to the Bucket");
 
   level.canvasContainer.append(title);
+
+  peanutty.createGround({
+    x: 60,
+    y: 20,
+    width: 100,
+    height: 10
+  });
+
+  peanutty.createBall({
+    x: 80,
+    y: 40,
+    radius: 15,
+    static: true
+  });
+
+  cannon = peanutty.createBox({
+    x: 70,
+    y: 80,
+    width: 60,
+    height: 20,
+    static: true
+  });
+
+  cannon.SetPositionAndAngle(cannon.GetPosition(), Math.PI * 3 / 4);
 
   cannonControl = level.elements.cannonControl = $(document.createElement("DIV"));
 

@@ -62,7 +62,6 @@
         this.initTopButtons();
         this.initEditors();
         this.loadCode();
-        this.initCodeSaving();
         Peanutty.runScript();
         return this.loadSolutions();
       };
@@ -224,7 +223,8 @@
                 url: "" + src + "?" + (Math.random()),
                 type: 'html',
                 success: function(solutionCoffee) {
-                  _this.resetLevel();
+                  peanutty.destroyWorld();
+                  _this.removeLevelElements();
                   _this.scriptEditor.getSession().setValue(solutionCoffee);
                   return Peanutty.runScript();
                 }

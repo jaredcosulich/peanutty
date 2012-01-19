@@ -4,28 +4,6 @@ Peanutty.createEnvironment()
 # Zoom out
 peanutty.setScale(25 * (peanutty.canvas.width() / 835))
 
-# Create the cannon area
-peanutty.createGround
-    x: 60
-    y: 20
-    width: 100
-    height: 10
-    
-peanutty.createBall
-    x: 80
-    y: 40
-    radius: 15
-    static: true
-    
-cannon = peanutty.createBox
-    x: 70
-    y: 80
-    width: 60
-    height: 20
-    static: true
-cannon.SetPositionAndAngle(cannon.GetPosition(), (Math.PI * 3/4))
-
-
 # Create the ball area
 peanutty.createGround
     x: 400
@@ -90,7 +68,7 @@ peanutty.addContactListener
             
     
     
-# Set up the user inputs
+# Add the instructions
 title = level.elements.title = $(document.createElement("DIV"))
 title.css
     width: '500px'
@@ -102,6 +80,27 @@ title.css
 title.html("Get the Blue Ball in to the Bucket")
 level.canvasContainer.append(title)
 
+
+# Create the cannon and cannon controls
+peanutty.createGround
+    x: 60
+    y: 20
+    width: 100
+    height: 10
+    
+peanutty.createBall
+    x: 80
+    y: 40
+    radius: 15
+    static: true
+    
+cannon = peanutty.createBox
+    x: 70
+    y: 80
+    width: 60
+    height: 20
+    static: true
+cannon.SetPositionAndAngle(cannon.GetPosition(), (Math.PI * 3/4))
 
 cannonControl = level.elements.cannonControl = $(document.createElement("DIV"))
 cannonControl.css
@@ -124,8 +123,7 @@ cannonControl.html(
 )
 level.canvasContainer.append(cannonControl)
 
-            
-# Cannon Firing    
+# Cannon Firing Method  
 level.fireCannon = ({angle, force}) =>
     cannonball = peanutty.createBall
         x: 125
@@ -138,6 +136,7 @@ level.fireCannon = ({angle, force}) =>
     y = -1 * Math.sin(Math.PI/(180 / angle)) * force
     cannonball.SetLinearVelocity(new b2d.Common.Math.b2Vec2(x,y))
 
+# Bind the cannon firing method to the 'Fire Cannon' button
 level.find('#fire_cannon').bind 'click', () =>
     peanutty.addToScript
         command:
@@ -150,6 +149,8 @@ level.find('#fire_cannon').bind 'click', () =>
     level.find('#fire_cannon').hide()
     level.find('#try_again').show()
 
+
+# Set up the 'Try Again' button
 level.find('#try_again').bind 'click', () =>
     angleVal = level.find('#cannon_angle').val()
     forceVal = level.find('#cannon_force').val()
@@ -158,5 +159,6 @@ level.find('#try_again').bind 'click', () =>
     level.find('#cannon_force').val(forceVal)
     level.find('#try_again').hide()
     level.find('#fire_cannon').show()
-    
+  
+  
 peanutty.sign('@jaredcosulich', 'jaredcosulich')

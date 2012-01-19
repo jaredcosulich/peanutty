@@ -4,6 +4,7 @@ Peanutty.createEnvironment()
 scale = 20 * (peanutty.canvas.width() / 835)
 peanutty.setScale(scale)
     
+# Create the star
 createStar = ({x, y, radius, totalPoints}) =>
     path = []
     points = totalPoints / 4
@@ -32,23 +33,31 @@ starInfo =
 
 star = createStar(starInfo)
 
+
+# Create the platform
 peanutty.createGround
     x: peanutty.world.dimensions.width / 2
     y: 50
     width: 600
     height: 10
 
+
+# Add the ball to balance on
 peanutty.createBall
     x: peanutty.world.dimensions.width / 2
     y: 75
     radius: 20   
 
+
+# Add the balancing beam
 peanutty.createBox
     x: peanutty.world.dimensions.width / 2
     y: 100
     width: 150
     height: 5
 
+
+# Add the two boxes on top
 peanutty.createBox
     x: peanutty.world.dimensions.width / 2
     y: 140
@@ -61,6 +70,8 @@ peanutty.createBox
     width: 20
     height: 20
 
+
+# Listen for a stable tower that reaches the star
 setInterval(
     (() =>
         return if level.elements.success
@@ -96,6 +107,8 @@ setInterval(
     ), 100
 )
 
+
+# Add some instructions
 instructions = $(document.createElement("DIV"))
 instructions.css
     width: "#{peanutty.canvas.width()}px"
@@ -117,6 +130,8 @@ note.html("The tower will turn gray when it is stable (not about to fall over).<
 instructions.append(note)
 level.canvasContainer.append(instructions)
 
+
+# Select the 'box' tool as default
 view.$('#tools #box').click()
 
 peanutty.sign('@jaredcosulich', 'jaredcosulich')
