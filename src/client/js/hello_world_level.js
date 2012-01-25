@@ -59,7 +59,7 @@
       element = level.elements[name];
       if (element == null) continue;
       element.remove();
-      view.level.elements[name] = null;
+      level.elements[name] = null;
     }
     view.alreadyCollided = [];
     peanutty.destroyDynamicObjects();

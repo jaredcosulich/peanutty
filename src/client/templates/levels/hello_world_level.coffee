@@ -45,7 +45,7 @@ nameInput.bind 'keyup', (e) ->
         element = level.elements[name]
         continue unless element?
         element.remove()
-        view.level.elements[name] = null
+        level.elements[name] = null
         
     view.alreadyCollided = []
     peanutty.destroyDynamicObjects()
