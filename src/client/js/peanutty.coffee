@@ -225,18 +225,37 @@
                 width: @canvas.width() * @scaleRatio()
                 height: @canvas.height() * @scaleRatio()
             
+        screenToWorld: (point) ->
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
+            vec2.Multiply(1/@defaultScale)
+            vec2.Add(@getCenterAdjustment())
+            return vec2
+            
+        worldToScreen: (point) ->
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
+            vec2.Subtract(@getCenterAdjustment())
+            vec2.Multiply(@defaultScale)
+            return vec2
+            
+        canvasToScreen: (point) ->
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
+            vec2.Multiply(@scaleRatio())
+            return vec2
+
         screenToCanvas: (point) ->
             vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
             vec2.Multiply(1/@scaleRatio())
-            vec2.Add(@getCenterAdjustment())
             return vec2
+            
+        canvasToWorld: (point) ->
+            screenPoint = @canvasToScreen(point)
+            return @screenToWorld(screenPoint)
 
-        descaled: (point) ->
-            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
-            vec2.Multiply(1/@defaultRatio)
-            return vec2
+        worldToCanvas: (point) ->
+            screenPoint = @worldToScreen(point)
+            return @screenToCanvas(screenPoint)
 
- 
+
                 
     class Peanutty
         constructor: ({@canvas, @scriptEditor, @levelEditor, @environmentEditor, scale, gravity}) ->
@@ -504,15 +523,14 @@
     
         tempShapes: []
         addTempShape: (shape) =>
-            path = []
+            adjustedShape = {path: []}
             for point in shape.path
-                path.push(new b2d.Common.Math.b2Vec2(point.x, @screen.dimensions.height - point.y))
+                adjustedPoint = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, @canvas.height() - point.y))
+                adjustedShape.path.push(adjustedPoint)
                 
-            @tempShapes.push(
-                start: new b2d.Common.Math.b2Vec2(shape.start.x, @screen.dimensions.height - shape.start.y)
-                path: path
-            )
-            return @tempShapes[@tempShapes.length - 1]
+            adjustedShape.start = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, @canvas.height() - shape.start.y))
+            @tempShapes.push(adjustedShape)
+            return adjustedShape
                      
             
         redrawTempShapes: () =>
@@ -520,9 +538,9 @@
                 if shape instanceof Function
                     shape()
                 else
-                    @startFreeformShape(@screen.screenToCanvas(shape.start))
+                    @startFreeformShape(@screen.worldToCanvas(shape.start))
                     for point, index in shape.path
-                        @drawFreeformShape(@screen.screenToCanvas(point))
+                        @drawFreeformShape(@screen.worldToCanvas(point))
             return            
         
         addToFreeformShape: ({x,y}) =>

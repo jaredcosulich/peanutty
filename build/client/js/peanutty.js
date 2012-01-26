@@ -294,19 +294,46 @@
         };
       };
 
-      Screen.prototype.screenToCanvas = function(point) {
+      Screen.prototype.screenToWorld = function(point) {
         var vec2;
         vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
-        vec2.Multiply(1 / this.scaleRatio());
+        vec2.Multiply(1 / this.defaultScale);
         vec2.Add(this.getCenterAdjustment());
         return vec2;
       };
 
-      Screen.prototype.descaled = function(point) {
+      Screen.prototype.worldToScreen = function(point) {
         var vec2;
         vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
-        vec2.Multiply(1 / this.defaultRatio);
+        vec2.Subtract(this.getCenterAdjustment());
+        vec2.Multiply(this.defaultScale);
         return vec2;
+      };
+
+      Screen.prototype.canvasToScreen = function(point) {
+        var vec2;
+        vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
+        vec2.Multiply(this.scaleRatio());
+        return vec2;
+      };
+
+      Screen.prototype.screenToCanvas = function(point) {
+        var vec2;
+        vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
+        vec2.Multiply(1 / this.scaleRatio());
+        return vec2;
+      };
+
+      Screen.prototype.canvasToWorld = function(point) {
+        var screenPoint;
+        screenPoint = this.canvasToScreen(point);
+        return this.screenToWorld(screenPoint);
+      };
+
+      Screen.prototype.worldToCanvas = function(point) {
+        var screenPoint;
+        screenPoint = this.worldToScreen(point);
+        return this.screenToCanvas(screenPoint);
       };
 
       return Screen;
@@ -678,18 +705,19 @@
       Peanutty.prototype.tempShapes = [];
 
       Peanutty.prototype.addTempShape = function(shape) {
-        var path, point, _i, _len, _ref;
-        path = [];
+        var adjustedPoint, adjustedShape, point, _i, _len, _ref;
+        adjustedShape = {
+          path: []
+        };
         _ref = shape.path;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           point = _ref[_i];
-          path.push(new b2d.Common.Math.b2Vec2(point.x, this.screen.dimensions.height - point.y));
+          adjustedPoint = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, this.canvas.height() - point.y));
+          adjustedShape.path.push(adjustedPoint);
         }
-        this.tempShapes.push({
-          start: new b2d.Common.Math.b2Vec2(shape.start.x, this.screen.dimensions.height - shape.start.y),
-          path: path
-        });
-        return this.tempShapes[this.tempShapes.length - 1];
+        adjustedShape.start = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, this.canvas.height() - shape.start.y));
+        this.tempShapes.push(adjustedShape);
+        return adjustedShape;
       };
 
       Peanutty.prototype.redrawTempShapes = function() {
@@ -700,11 +728,11 @@
           if (shape instanceof Function) {
             shape();
           } else {
-            this.startFreeformShape(this.screen.screenToCanvas(shape.start));
+            this.startFreeformShape(this.screen.worldToCanvas(shape.start));
             _ref2 = shape.path;
             for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
               point = _ref2[index];
-              this.drawFreeformShape(this.screen.screenToCanvas(point));
+              this.drawFreeformShape(this.screen.worldToCanvas(point));
             }
           }
         }

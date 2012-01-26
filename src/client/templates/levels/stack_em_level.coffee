@@ -26,12 +26,11 @@ createStar = ({x, y, radius, totalPoints}) =>
 
 starInfo = 
     x: peanutty.screen.dimensions.width / 2
-    y: 600
+    y: 400
     radius: 12
     totalPoints: 8
 
 star = createStar(starInfo)
-
 
 # Create the platform
 peanutty.createGround
@@ -75,7 +74,6 @@ setInterval(
     (() =>
         return if level.elements.success
         for point in star.path
-            adjustedPoint = peanutty.screen.descaled(point)
             peanutty.world.QueryPoint(
                 ((fixture) =>
                     return true if fixture.GetBody().IsAwake()
@@ -102,7 +100,7 @@ setInterval(
                         left: '10px'
                     level.canvasContainer.append(success)                    
                 ),
-                adjustedPoint
+                point
             )           
     ), 100
 )

@@ -61,7 +61,7 @@
 
   starInfo = {
     x: peanutty.screen.dimensions.width / 2,
-    y: 600,
+    y: 400,
     radius: 12,
     totalPoints: 8
   };
@@ -103,13 +103,12 @@
   });
 
   setInterval((function() {
-    var adjustedPoint, point, _i, _len, _ref, _results;
+    var point, _i, _len, _ref, _results;
     if (level.elements.success) return;
     _ref = star.path;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       point = _ref[_i];
-      adjustedPoint = peanutty.screen.descaled(point);
       _results.push(peanutty.world.QueryPoint((function(fixture) {
         var success;
         if (fixture.GetBody().IsAwake()) return true;
@@ -123,7 +122,7 @@
           left: '10px'
         });
         return level.canvasContainer.append(success);
-      }), adjustedPoint));
+      }), point));
     }
     return _results;
   }), 100);
