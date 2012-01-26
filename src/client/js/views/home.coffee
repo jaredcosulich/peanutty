@@ -107,7 +107,7 @@
             
             remainingWidth = fullWidth - codeWidth - 90
             $('#canvas')[0].width = remainingWidth
-            peanutty.evaluateDimensions() if peanutty?
+            peanutty.screen.evaluateDimensions() if peanutty?
         
         resetLevel: () =>
             peanutty.destroyWorld()

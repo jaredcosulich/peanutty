@@ -6,10 +6,10 @@
 
   Peanutty.createEnvironment();
 
-  peanutty.setScale(30 * (peanutty.canvas.width() / 835));
+  peanutty.screen.setScale(30 * (peanutty.canvas.width() / 835));
 
   peanutty.createGround({
-    x: peanutty.world.dimensions.width / 2,
+    x: peanutty.screen.dimensions.width / 2,
     y: 50,
     width: 600,
     height: 10
@@ -64,7 +64,7 @@
     view.alreadyCollided = [];
     peanutty.destroyDynamicObjects();
     peanutty.addToScript({
-      command: "peanutty.destroyDynamicObjects()\nlevel.elements.nameInput.val(\"" + letters + "\") if level.elements.nameInput.val() != \"" + letters + "\"\nlevel.createLetters\n    x: peanutty.world.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
+      command: "peanutty.destroyDynamicObjects()\nlevel.elements.nameInput.val(\"" + letters + "\") if level.elements.nameInput.val() != \"" + letters + "\"\nlevel.createLetters\n    x: peanutty.screen.dimensions.width / 2\n    y: 55\n    letters: \"" + letters + "\"",
       time: 0
     });
     view.lastNameInputKey = new Date();
@@ -2879,7 +2879,7 @@
   };
 
   level.createLetters({
-    x: peanutty.world.dimensions.width / 2,
+    x: peanutty.screen.dimensions.width / 2,
     y: 55,
     letters: 'Hello World'
   });

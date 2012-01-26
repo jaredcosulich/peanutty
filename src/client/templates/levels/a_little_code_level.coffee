@@ -2,7 +2,7 @@ level.name = 'a_little_code'
 Peanutty.createEnvironment()
 
 # Zoom out
-peanutty.setScale(25 * (peanutty.canvas.width() / 835))
+peanutty.screen.setScale(25 * (peanutty.canvas.width() / 835))
 
 # Create the first ground
 peanutty.createGround

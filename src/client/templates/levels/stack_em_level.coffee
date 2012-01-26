@@ -2,7 +2,7 @@ level.name = 'stack_em'
 Peanutty.createEnvironment()
 
 scale = 20 * (peanutty.canvas.width() / 835)
-peanutty.setScale(scale)
+peanutty.screen.setScale(scale)
     
 # Create the star
 createStar = ({x, y, radius, totalPoints}) =>
@@ -22,12 +22,11 @@ createStar = ({x, y, radius, totalPoints}) =>
         start: {x: x, y: y}
         path: path
         
-    peanutty.tempShapes.push(star)
-    return star
+    peanutty.addTempShape(star)
 
 starInfo = 
-    x: peanutty.canvas.width() / 2
-    y: 100
+    x: peanutty.screen.dimensions.width / 2
+    y: 600
     radius: 12
     totalPoints: 8
 
@@ -36,7 +35,7 @@ star = createStar(starInfo)
 
 # Create the platform
 peanutty.createGround
-    x: peanutty.world.dimensions.width / 2
+    x: peanutty.screen.dimensions.width / 2
     y: 50
     width: 600
     height: 10
@@ -44,14 +43,14 @@ peanutty.createGround
 
 # Add the ball to balance on
 peanutty.createBall
-    x: peanutty.world.dimensions.width / 2
+    x: peanutty.screen.dimensions.width / 2
     y: 75
     radius: 20   
 
 
 # Add the balancing beam
 peanutty.createBox
-    x: peanutty.world.dimensions.width / 2
+    x: peanutty.screen.dimensions.width / 2
     y: 100
     width: 150
     height: 5
@@ -59,13 +58,13 @@ peanutty.createBox
 
 # Add the two boxes on top
 peanutty.createBox
-    x: peanutty.world.dimensions.width / 2
+    x: peanutty.screen.dimensions.width / 2
     y: 140
     width: 20
     height: 20
 
 peanutty.createBox
-    x: peanutty.world.dimensions.width / 2
+    x: peanutty.screen.dimensions.width / 2
     y: 200
     width: 20
     height: 20
@@ -76,6 +75,7 @@ setInterval(
     (() =>
         return if level.elements.success
         for point in star.path
+            adjustedPoint = peanutty.screen.descaled(point)
             peanutty.world.QueryPoint(
                 ((fixture) =>
                     return true if fixture.GetBody().IsAwake()
@@ -102,7 +102,7 @@ setInterval(
                         left: '10px'
                     level.canvasContainer.append(success)                    
                 ),
-                new b2d.Common.Math.b2Vec2(point.x/scale, point.y/scale)
+                adjustedPoint
             )           
     ), 100
 )

@@ -53,8 +53,8 @@ initiateBox = (canvas) =>
             command:
                 """
                 peanutty.createBox
-                    x: #{e.offsetX * (peanutty.defaultScale / peanutty.scale)}
-                    y: #{(peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale)))}
+                    x: #{(e.offsetX - peanutty.screen.getCenterAdjustment().x) * (peanutty.screen.scaleRatio())}
+                    y: #{(peanutty.screen.dimensions.height - ((e.offsetY - peanutty.screen.getCenterAdjustment().y) * (peanutty.screen.scaleRatio())))}
                     width: 20
                     height: 20
                     static: #{static}
@@ -68,8 +68,8 @@ initiateBall = (canvas) =>
             command: 
                 """
                 peanutty.createBall
-                    x: #{e.offsetX * (peanutty.defaultScale / peanutty.scale)}
-                    y: #{(peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale)))}
+                    x: #{(e.offsetX - peanutty.screen.getCenterAdjustment().x) * (peanutty.screen.scaleRatio())}
+                    y: #{(peanutty.screen.dimensions.height - ((e.offsetY - peanutty.screen.getCenterAdjustment().y) * (peanutty.screen.scaleRatio())))}
                     radius: 20
                     static: #{static}
                 """

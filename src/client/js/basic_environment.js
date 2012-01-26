@@ -63,7 +63,7 @@
     unbindMouseEvents(canvas);
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
-        command: "peanutty.createBox\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale))) + "\n    width: 20\n    height: 20\n    static: " + static,
+        command: "peanutty.createBox\n    x: " + ((e.offsetX - peanutty.screen.getCenterAdjustment().x) * (peanutty.screen.scaleRatio())) + "\n    y: " + (peanutty.screen.dimensions.height - ((e.offsetY - peanutty.screen.getCenterAdjustment().y) * (peanutty.screen.scaleRatio()))) + "\n    width: 20\n    height: 20\n    static: " + static,
         time: level.getTimeDiff()
       });
     });
@@ -73,7 +73,7 @@
     unbindMouseEvents(canvas);
     return canvas.bind('click', function(e) {
       return peanutty.addToScript({
-        command: "peanutty.createBall\n    x: " + (e.offsetX * (peanutty.defaultScale / peanutty.scale)) + "\n    y: " + (peanutty.world.dimensions.height - (e.offsetY * (peanutty.defaultScale / peanutty.scale))) + "\n    radius: 20\n    static: " + static,
+        command: "peanutty.createBall\n    x: " + ((e.offsetX - peanutty.screen.getCenterAdjustment().x) * (peanutty.screen.scaleRatio())) + "\n    y: " + (peanutty.screen.dimensions.height - ((e.offsetY - peanutty.screen.getCenterAdjustment().y) * (peanutty.screen.scaleRatio()))) + "\n    radius: 20\n    static: " + static,
         time: level.getTimeDiff()
       });
     });

@@ -21,22 +21,232 @@
         @drawData or= {}
         @drawData[attr] = drawData[attr] for attr of drawData
 
-    class Peanutty
-        constructor: ({@canvas, @scriptEditor, @levelEditor, @environmentEditor, @scale, gravity}) ->
-            @context = @canvas[0].getContext("2d")
-            @scale or= 30
-            @defaultScale = 30
+    b2d.Dynamics.b2DebugDraw::m_centerAdjustment = new b2d.Common.Math.b2Vec2(0, 0)
+    b2d.Dynamics.b2DebugDraw::SetCenterAdjustment = (centerAdjustment) -> @m_centerAdjustment = centerAdjustment
+    b2d.Dynamics.b2DebugDraw::AdjustCenterX = (adjustment) -> @m_centerAdjustment.Add(new b2d.Common.Math.b2Vec2(adjustment, 0))
+    b2d.Dynamics.b2DebugDraw::AdjustCenterY = (adjustment) -> @m_centerAdjustment.Add(new b2d.Common.Math.b2Vec2(0, adjustment))
+    b2d.Dynamics.b2DebugDraw::GetCenterAdjustment = () -> @m_centerAdjustment
+
+
+    b2d.Dynamics.b2DebugDraw::DrawSolidCircle = (center, radius, axis, color) ->
+        return unless radius?
+        s = @m_ctx
+        drawScale = @m_drawScale
+        centerAdjustment = @m_centerAdjustment.Copy()
+        centerAdjustment.Multiply(1/@m_drawScale)
+        center = center.Copy()
+        center.Add(centerAdjustment)
+        cx = center.x * drawScale
+        cy = center.y * drawScale
+        s.moveTo(0, 0)
+        s.beginPath()
+        s.strokeStyle = @_color(color.color, @m_alpha)
+        s.fillStyle = @_color(color.color, @m_fillAlpha)
+        s.arc(cx, cy, radius * drawScale, 0, Math.PI * 2, true)
+        s.moveTo(cx, cy)
+        s.lineTo((center.x + axis.x * radius) * drawScale, (center.y + axis.y * radius) * drawScale)
+        s.closePath()
+        s.fill()
+        s.stroke()
+
+    # b2d.Dynamics.b2DebugDraw::DrawPolygon = (vertices, vertexCount, color) ->
+        # console.log("polygon")
+
+    b2d.Dynamics.b2DebugDraw::DrawSolidPolygon = (vertices, vertexCount, color) ->
+        return if !vertexCount
+        s = @m_ctx
+        drawScale = @m_drawScale
+        centerAdjustment = @m_centerAdjustment.Copy()
+        centerAdjustment.Multiply(1/@m_drawScale)
+        s.beginPath()
+        s.strokeStyle = @_color(color.color, @m_alpha)
+        s.fillStyle = @_color(color.color, @m_fillAlpha)
+        s.moveTo((vertices[0].x + centerAdjustment.x) * drawScale, (vertices[0].y + centerAdjustment.y) * drawScale)        
+        s.lineTo((vertices[i].x + centerAdjustment.x) * drawScale, (vertices[i].y + centerAdjustment.y) * drawScale) for i in [1...vertexCount]
+        s.lineTo((vertices[0].x + centerAdjustment.x) * drawScale, (vertices[0].y + centerAdjustment.y) * drawScale)
+        s.closePath()
+        s.fill()
+        s.stroke()
         
+    
+    class Screen
+        defaultScale: 30
+        constructor: ({@canvas, scale}) ->
+            #setup debug draw
+            @context = @canvas[0].getContext("2d")
+            @draw = new b2d.Dynamics.b2DebugDraw()
+            @draw.SetSprite(@context)
+            @draw.SetDrawScale(@scale)
+            @draw.SetFillAlpha(0.3)
+            @draw.SetLineThickness(1.0)
+            @draw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit)
+            @setScale(scale or @defaultScale)
+            @evaluateDimensions()
+            @canvas.bind 'resize', @evaluateDimensions
+            @draw.SetCenterAdjustment(new b2d.Common.Math.b2Vec2(0, 0))
+            
+            
+        panDirection: ({distance, time, vertical}) ->
+            time or= 0
+            scaledDistance = distance / @scaleRatio()
+            stepDistance = if time <= 0 then scaledDistance else scaledDistance / time
+            move = () =>
+                $.timeout 1, () =>
+                    if vertical then @draw.AdjustCenterY(stepDistance) else @draw.AdjustCenterX(stepDistance * -1)          
+                    move() if --time >= 0
+            move()
+            
+        pan: ({x, y, time}) ->
+            if x? && x != 0
+                @panDirection
+                    distance: x
+                    time: time
+                    vertical: false
+            
+            if y? && y != 0
+                @panDirection
+                    distance: y
+                    time: time
+                    vertical: true
+        
+        zoom: ({scale, percentage, out, time}) ->
+            time or= 0
+            unless scale?
+                percentage = (1 - percentage/100.0)
+                scale = if out then @draw.GetDrawScale() * percentage else @draw.GetDrawScale() / percentage
+                
+            step = if time == 0 then (scale - @draw.GetDrawScale()) else (scale - @draw.GetDrawScale()) / time
+            adjustScale = () =>
+                $.timeout 1, () =>
+                    @setScale(@draw.GetDrawScale() + step)
+                    adjustScale() if --time >= 0
+            adjustScale()
+        
+        setScale: (scale) -> 
+            @draw.SetDrawScale(scale)
+            @evaluateDimensions()
+            
+        getScale: () -> @draw.GetDrawScale()
+        scaleRatio: () -> @defaultScale / @getScale()
+        
+        getDraw: () -> @draw
+        getContext: () -> @context
+        
+        getCenterAdjustment: () -> @draw.GetCenterAdjustment()
+            
+        render: (world) ->
+            @draw.m_sprite.graphics.clear()
+            flags = @draw.GetFlags()
+            i = 0;
+            invQ = new b2d.b2Vec2
+            x1 = new b2d.b2Vec2
+            x2 = new b2d.b2Vec2
+            b1 = new b2d.b2AABB()
+            b2 = new b2d.b2AABB()
+            vs = [new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2()]
+            color = new b2d.Common.b2Color(0, 0, 0)
+            if flags & b2d.Dynamics.b2DebugDraw.e_shapeBit
+                b = world.GetBodyList()
+                while b?                    
+                    xf = b.m_xf
+                    f = b.GetFixtureList()
+                    while f?
+                        s = f.GetShape()
+                        if (c = f.GetDrawData().color)?
+                            color._r = c._r
+                            color._b = c._b
+                            color._g = c._g
+                        else if b.IsActive() == false
+                            color.Set(0.5, 0.5, 0.3)
+                        else if b.GetType() == b2d.Dynamics.b2Body.b2_staticBody
+                            color.Set(0.5, 0.9, 0.5)
+                        else if b.GetType() == b2d.Dynamics.b2Body.b2_kinematicBody
+                            color.Set(0.5, 0.5, 0.9)
+                        else if (b.IsAwake() == false)
+                            color.Set(0.6, 0.6, 0.6)
+                        else 
+                            color.Set(0.9, 0.7, 0.7)
+                        @draw.SetFillAlpha(f.GetDrawData().alpha or 0.3)
+                        world.DrawShape(s, xf, color)
+                        f = f.GetNext()
+                    b = b.GetNext()
+
+            if flags & b2d.Dynamics.b2DebugDraw.e_jointBit
+                j = world.GetJointList()
+                while j?
+                    world.DrawJoint(j)
+                    j.GetNext()
+
+            if flags & b2d.Dynamics.b2DebugDraw.e_controllerBit
+                c = world.m_controllerList
+                while c?
+                    c.Draw(@draw)
+                    c.GetNext()
+
+            if flags & b2d.Dynamics.b2DebugDraw.e_pairBit
+                color.Set(0.3, 0.9, 0.9) 
+                contact = world.m_contactManager.m_contactList
+                while contact?
+                    fixtureA = contact.GetFixtureA()
+                    fixtureB = contact.GetFixtureB()
+                    cA = fixtureA.GetAABB().GetCenter()
+                    cB = fixtureB.GetAABB().GetCenter()
+                    @draw.DrawSegment(cA, cB, color)
+
+            if flags & b2d.Dynamics.b2DebugDraw.e_aabbBit
+                bp = world.m_contactManager.m_broadPhase;
+                vs = [new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2()]
+                b = world.GetBodyList()
+                while b?
+                    continue if b.IsActive() == false
+                    f = b.GetFixtureList()
+                    while f?
+                        aabb = bp.GetFatAABB(f.m_proxy)
+                        vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y)
+                        vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y)
+                        vs[2].Set(aabb.upperBound.x, aabb.upperBound.y)
+                        vs[3].Set(aabb.lowerBound.x, aabb.upperBound.y)
+                        @draw.DrawPolygon(vs, 4, color)
+                        f = f.GetNext()
+
+                    b = b.GetNext()
+
+            if flags & b2d.Dynamics.b2DebugDraw.e_centerOfMassBit
+               b = world.GetBodyList()
+               while b?
+                   xf = b2World.s_xf
+                   xf.R = b.m_xf.R
+                   xf.position = b.GetWorldCenter()
+                   @draw.DrawTransform(xf)               
+                   b = b.GetNext()
+    
+        evaluateDimensions: () ->
+            @dimensions = 
+                width: @canvas.width() * @scaleRatio()
+                height: @canvas.height() * @scaleRatio()
+            
+        screenToCanvas: (point) ->
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
+            vec2.Multiply(1/@scaleRatio())
+            vec2.Add(@getCenterAdjustment())
+            return vec2
+
+        descaled: (point) ->
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
+            vec2.Multiply(1/@defaultRatio)
+            return vec2
+
+ 
+                
+    class Peanutty
+        constructor: ({@canvas, @scriptEditor, @levelEditor, @environmentEditor, scale, gravity}) ->
             @world = new b2d.Dynamics.b2World(
                 gravity or new b2d.Common.Math.b2Vec2(0, 10),
                 true
             )
             @clearStorage()
-        
-            @evaluateDimensions()
-            @canvas.bind 'resize', @evaluateDimensions
-        
-            @initDraw()
+                
+            @initScreen(scale)
             @initContactListeners()
     
         runSimulation: () =>
@@ -57,7 +267,7 @@
                       10       #position iterations
                 )
             
-                @draw()
+                @screen.render(@world)
                 @redrawCurrentShape()
                 @redrawTempShapes()
                 @world.ClearForces()
@@ -65,11 +275,6 @@
         
             requestAnimFrame(update)
     
-        setScale: (scale) =>
-            @scale = scale
-            @debugDraw.SetDrawScale(@scale)
-            @evaluateDimensions()
-            
         clearStorage: () =>
             @tempShapes = []      
             @beginContactListeners = []
@@ -93,21 +298,10 @@
             @beginContactListeners = []
             @endContactListeners = []
                 
-        initDraw: () =>
-            #setup debug draw
-            @debugDraw = new b2d.Dynamics.b2DebugDraw()
-            @debugDraw.SetSprite(@context)
-            @debugDraw.SetDrawScale(@scale)
-            @debugDraw.SetFillAlpha(0.3)
-            @debugDraw.SetLineThickness(1.0)
-            @debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit)
-            @world.SetDebugDraw(@debugDraw)
-    
-        evaluateDimensions: () =>
-            @world.dimensions = 
-                width: @canvas.width() * (30/@scale)
-                height: @canvas.height() * (30/@scale)
-    
+        initScreen: (scale) =>
+            @screen = new Screen(canvas: @canvas, scale: scale)
+            @world.SetDebugDraw(@screen.getDraw())
+                
         addToScript: ({command, time}) =>  
             CoffeeScript.run(command)
             commandLength = command.split("\n").length
@@ -161,12 +355,12 @@
             fixDef = fixDef = @createFixtureDef()
             fixDef.drawData = options.drawData
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
-            fixDef.shape.SetAsBox((options.width / @defaultScale) / 2, (options.height / @defaultScale) / 2)
+            fixDef.shape.SetAsBox((options.width / @screen.defaultScale) / 2, (options.height / @screen.defaultScale) / 2)
         
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody
-            bodyDef.position.x = options.x / @defaultScale
-            bodyDef.position.y = (@world.dimensions.height - options.y) / @defaultScale
+            bodyDef.position.x = options.x / @screen.defaultScale
+            bodyDef.position.y = (@screen.dimensions.height - options.y) / @screen.defaultScale
         
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
     
@@ -183,10 +377,10 @@
             fixDef = @createFixtureDef(options)
             fixDef.drawData = options.drawData
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape            
-            fixDef.shape.SetAsBox(((options.width)/@defaultScale), ((options.height)/@defaultScale))
+            fixDef.shape.SetAsBox(((options.width)/@screen.defaultScale), ((options.height)/@screen.defaultScale))
         
-            bodyDef.position.x = (options.x/@defaultScale)
-            bodyDef.position.y = ((@world.dimensions.height - options.y)/@defaultScale)
+            bodyDef.position.x = (options.x/@screen.defaultScale)
+            bodyDef.position.y = ((@screen.dimensions.height - options.y)/@screen.defaultScale)
         
             body = @world.CreateBody(bodyDef)
             body.CreateFixture(fixDef)
@@ -204,12 +398,11 @@
             fixDef = @createFixtureDef(options)
             fixDef.drawData = options.drawData
             fixDef.shape = new b2d.Collision.Shapes.b2CircleShape
-            fixDef.shape.SetRadius(options.radius/@defaultScale)
+            fixDef.shape.SetRadius(options.radius/@screen.defaultScale)
         
-            bodyDef.position.x = (options.x/@defaultScale)
-            bodyDef.position.y = ((@world.dimensions.height - options.y)/@defaultScale)
+            bodyDef.position.x = (options.x/@screen.defaultScale)
+            bodyDef.position.y = ((@screen.dimensions.height - options.y)/@screen.defaultScale)
             
-        
             body = @world.CreateBody(bodyDef)
             body.CreateFixture(fixDef)
             return body
@@ -224,8 +417,8 @@
         
             scaledPath = (
                 new b2d.Common.Math.b2Vec2(
-                    point.x/@defaultScale, 
-                    (@world.dimensions.height - point.y)/@defaultScale
+                    point.x/@screen.defaultScale, 
+                    (@screen.dimensions.height - point.y)/@screen.defaultScale
                 ) for point in path
             )
         
@@ -310,14 +503,26 @@
             return
     
         tempShapes: []
+        addTempShape: (shape) =>
+            path = []
+            for point in shape.path
+                path.push(new b2d.Common.Math.b2Vec2(point.x, @screen.dimensions.height - point.y))
+                
+            @tempShapes.push(
+                start: new b2d.Common.Math.b2Vec2(shape.start.x, @screen.dimensions.height - shape.start.y)
+                path: path
+            )
+            return @tempShapes[@tempShapes.length - 1]
+                     
+            
         redrawTempShapes: () =>
             for shape in @tempShapes
                 if shape instanceof Function
                     shape()
                 else
-                    @startFreeformShape(shape.start)
+                    @startFreeformShape(@screen.screenToCanvas(shape.start))
                     for point, index in shape.path
-                        @drawFreeformShape(point)
+                        @drawFreeformShape(@screen.screenToCanvas(point))
             return            
         
         addToFreeformShape: ({x,y}) =>
@@ -330,35 +535,40 @@
             @tempPoint = {x:x, y:y}
     
         drawFreeformShape: ({x, y}) =>
-            @context.lineWidth = 0.25
-            @context.lineTo(x, y)
-            @context.stroke()
+            @screen.getContext().lineWidth = 0.25
+            @screen.getContext().lineTo(x , y)
+            @screen.getContext().stroke()
     
         initFreeformShape: ({x, y}) =>
-            @currentShape = {start: {x:x, y:(@canvas.height() - y)}, path: [{x:x, y:(@canvas.height() - y)}]}
+            @currentShape = 
+                start: {x:x, y:(@canvas.height() - y)}
+                path: [{x:x, y:(@canvas.height() - y)}]
             @startFreeformShape(_arg)
     
         startFreeformShape: ({x, y}) =>
             @startShape()
-            @context.strokeStyle = '#000000'
-            @context.moveTo(x, y)
+            @screen.getContext().strokeStyle = '#000000'
+            @screen.getContext().moveTo(x, y)
     
         startShape: () =>
-            @context.strokeStyle = '#ffffff'
-            @context.fillStyle = "black"
-            @context.beginPath()
+            @screen.getContext().strokeStyle = '#ffffff'
+            @screen.getContext().fillStyle = "black"
+            @screen.getContext().beginPath()
             return
     
         continueFreeformShape: ({x, y}) =>
             return unless @currentShape?
             @tempPoint = null
-            @currentShape.path.push({x: x, y: (@canvas.height() - y)})
+            @currentShape.path.push(
+                x: x
+                y: @canvas.height() - y
+            )
             return
     
         endFreeformShape: (options={}) =>
             path = for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10)
-                "{x: #{point.x * (@defaultScale / @scale)}, y: #{(@canvas.height() - point.y) * (@defaultScale / @scale)}}"
-        
+                "{x: #{(point.x - @screen.getCenterAdjustment().x) * @screen.scaleRatio()}, y: #{(@canvas.height() - point.y  + @screen.getCenterAdjustment().y) * @screen.scaleRatio()}}" 
+
             @addToScript
                 command:
                     """
@@ -368,9 +578,6 @@
                     """
                 time: options.time
         
-            firstPoint = @currentShape.path[0]
-            @currentShape.path.push(firstPoint)
-            @drawFreeformShape(firstPoint.x, firstPoint.y)
             @endShape()
             @tempPoint = null
             @currentShape = null
@@ -379,96 +586,10 @@
             return if @currentShape? then @currentShape.path else [] 
     
         endShape: () =>
-            @context.fill()
-            @context.stroke()
+            @screen.getContext().fill()
+            @screen.getContext().stroke()
             return    
     
-        draw: () =>
-            return unless @world.m_debugDraw?
-            @world.m_debugDraw.m_sprite.graphics.clear()
-            flags = @world.m_debugDraw.GetFlags()
-            i = 0;
-            invQ = new b2d.b2Vec2
-            x1 = new b2d.b2Vec2
-            x2 = new b2d.b2Vec2
-            b1 = new b2d.b2AABB()
-            b2 = new b2d.b2AABB()
-            vs = [new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2()]
-            color = new b2d.Common.b2Color(0, 0, 0)
-            if flags & b2d.Dynamics.b2DebugDraw.e_shapeBit
-                b = @world.GetBodyList()
-                while b?                    
-                    xf = b.m_xf
-                    f = b.GetFixtureList()
-                    while f?
-                        s = f.GetShape()
-                        if (c = f.GetDrawData().color)?
-                            color._r = c._r
-                            color._b = c._b
-                            color._g = c._g
-                        else if b.IsActive() == false
-                            color.Set(0.5, 0.5, 0.3)
-                        else if b.GetType() == b2d.Dynamics.b2Body.b2_staticBody
-                            color.Set(0.5, 0.9, 0.5)
-                        else if b.GetType() == b2d.Dynamics.b2Body.b2_kinematicBody
-                            color.Set(0.5, 0.5, 0.9)
-                        else if (b.IsAwake() == false)
-                            color.Set(0.6, 0.6, 0.6)
-                        else 
-                            color.Set(0.9, 0.7, 0.7)
-                        @debugDraw.SetFillAlpha(f.GetDrawData().alpha or 0.3)
-                        @world.DrawShape(s, xf, color)
-                        f = f.GetNext()
-                    b = b.GetNext()
-        
-            if flags & b2d.Dynamics.b2DebugDraw.e_jointBit
-                j = @world.GetJointList()
-                while j?
-                    @world.DrawJoint(j)
-                    j.GetNext()
-            
-            if flags & b2d.Dynamics.b2DebugDraw.e_controllerBit
-                c = @world.m_controllerList
-                while c?
-                    c.Draw(@m_debugDraw)
-                    c.GetNext()
-                
-            if flags & b2d.Dynamics.b2DebugDraw.e_pairBit
-                color.Set(0.3, 0.9, 0.9) 
-                contact = @m_contactManager.m_contactList
-                while contact?
-                    fixtureA = contact.GetFixtureA()
-                    fixtureB = contact.GetFixtureB()
-                    cA = fixtureA.GetAABB().GetCenter()
-                    cB = fixtureB.GetAABB().GetCenter()
-                    @world.m_debugDraw.DrawSegment(cA, cB, color)
-                
-            if flags & b2d.Dynamics.b2DebugDraw.e_aabbBit
-                bp = @world.m_contactManager.m_broadPhase;
-                vs = [new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2()]
-                b = @world.GetBodyList()
-                while b?
-                    continue if b.IsActive() == false
-                    f = b.GetFixtureList()
-                    while f?
-                        aabb = bp.GetFatAABB(f.m_proxy)
-                        vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y)
-                        vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y)
-                        vs[2].Set(aabb.upperBound.x, aabb.upperBound.y)
-                        vs[3].Set(aabb.lowerBound.x, aabb.upperBound.y)
-                        @world.m_debugDraw.DrawPolygon(vs, 4, color)
-                        f = f.GetNext()
-            
-                    b = b.GetNext()
-                
-            if flags & b2d.Dynamics.b2DebugDraw.e_centerOfMassBit
-               b = @world.GetBodyList()
-               while b?
-                   xf = b2World.s_xf
-                   xf.R = b.m_xf.R
-                   xf.position = b.GetWorldCenter()
-                   @world.m_debugDraw.DrawTransform(xf)               
-                   b = b.GetNext()
     
         sign: (name, twitterHandle='') =>
             signature = level.elements.signature = $(document.createElement("DIV"))     

@@ -2,7 +2,7 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   (function($) {
-    var Peanutty, b2d;
+    var Peanutty, Screen, b2d;
     var _this = this;
     b2d = require('coffeebox2d');
     CoffeeScript.require = require;
@@ -31,15 +31,295 @@
       }
       return _results;
     };
+    b2d.Dynamics.b2DebugDraw.prototype.m_centerAdjustment = new b2d.Common.Math.b2Vec2(0, 0);
+    b2d.Dynamics.b2DebugDraw.prototype.SetCenterAdjustment = function(centerAdjustment) {
+      return this.m_centerAdjustment = centerAdjustment;
+    };
+    b2d.Dynamics.b2DebugDraw.prototype.AdjustCenterX = function(adjustment) {
+      return this.m_centerAdjustment.Add(new b2d.Common.Math.b2Vec2(adjustment, 0));
+    };
+    b2d.Dynamics.b2DebugDraw.prototype.AdjustCenterY = function(adjustment) {
+      return this.m_centerAdjustment.Add(new b2d.Common.Math.b2Vec2(0, adjustment));
+    };
+    b2d.Dynamics.b2DebugDraw.prototype.GetCenterAdjustment = function() {
+      return this.m_centerAdjustment;
+    };
+    b2d.Dynamics.b2DebugDraw.prototype.DrawSolidCircle = function(center, radius, axis, color) {
+      var centerAdjustment, cx, cy, drawScale, s;
+      if (radius == null) return;
+      s = this.m_ctx;
+      drawScale = this.m_drawScale;
+      centerAdjustment = this.m_centerAdjustment.Copy();
+      centerAdjustment.Multiply(1 / this.m_drawScale);
+      center = center.Copy();
+      center.Add(centerAdjustment);
+      cx = center.x * drawScale;
+      cy = center.y * drawScale;
+      s.moveTo(0, 0);
+      s.beginPath();
+      s.strokeStyle = this._color(color.color, this.m_alpha);
+      s.fillStyle = this._color(color.color, this.m_fillAlpha);
+      s.arc(cx, cy, radius * drawScale, 0, Math.PI * 2, true);
+      s.moveTo(cx, cy);
+      s.lineTo((center.x + axis.x * radius) * drawScale, (center.y + axis.y * radius) * drawScale);
+      s.closePath();
+      s.fill();
+      return s.stroke();
+    };
+    b2d.Dynamics.b2DebugDraw.prototype.DrawSolidPolygon = function(vertices, vertexCount, color) {
+      var centerAdjustment, drawScale, i, s;
+      if (!vertexCount) return;
+      s = this.m_ctx;
+      drawScale = this.m_drawScale;
+      centerAdjustment = this.m_centerAdjustment.Copy();
+      centerAdjustment.Multiply(1 / this.m_drawScale);
+      s.beginPath();
+      s.strokeStyle = this._color(color.color, this.m_alpha);
+      s.fillStyle = this._color(color.color, this.m_fillAlpha);
+      s.moveTo((vertices[0].x + centerAdjustment.x) * drawScale, (vertices[0].y + centerAdjustment.y) * drawScale);
+      for (i = 1; 1 <= vertexCount ? i < vertexCount : i > vertexCount; 1 <= vertexCount ? i++ : i--) {
+        s.lineTo((vertices[i].x + centerAdjustment.x) * drawScale, (vertices[i].y + centerAdjustment.y) * drawScale);
+      }
+      s.lineTo((vertices[0].x + centerAdjustment.x) * drawScale, (vertices[0].y + centerAdjustment.y) * drawScale);
+      s.closePath();
+      s.fill();
+      return s.stroke();
+    };
+    Screen = (function() {
+
+      Screen.prototype.defaultScale = 30;
+
+      function Screen(_arg) {
+        var scale;
+        this.canvas = _arg.canvas, scale = _arg.scale;
+        this.context = this.canvas[0].getContext("2d");
+        this.draw = new b2d.Dynamics.b2DebugDraw();
+        this.draw.SetSprite(this.context);
+        this.draw.SetDrawScale(this.scale);
+        this.draw.SetFillAlpha(0.3);
+        this.draw.SetLineThickness(1.0);
+        this.draw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit);
+        this.setScale(scale || this.defaultScale);
+        this.evaluateDimensions();
+        this.canvas.bind('resize', this.evaluateDimensions);
+        this.draw.SetCenterAdjustment(new b2d.Common.Math.b2Vec2(0, 0));
+      }
+
+      Screen.prototype.panDirection = function(_arg) {
+        var distance, move, scaledDistance, stepDistance, time, vertical;
+        var _this = this;
+        distance = _arg.distance, time = _arg.time, vertical = _arg.vertical;
+        time || (time = 0);
+        scaledDistance = distance / this.scaleRatio();
+        stepDistance = time <= 0 ? scaledDistance : scaledDistance / time;
+        move = function() {
+          return $.timeout(1, function() {
+            if (vertical) {
+              _this.draw.AdjustCenterY(stepDistance);
+            } else {
+              _this.draw.AdjustCenterX(stepDistance * -1);
+            }
+            if (--time >= 0) return move();
+          });
+        };
+        return move();
+      };
+
+      Screen.prototype.pan = function(_arg) {
+        var time, x, y;
+        x = _arg.x, y = _arg.y, time = _arg.time;
+        if ((x != null) && x !== 0) {
+          this.panDirection({
+            distance: x,
+            time: time,
+            vertical: false
+          });
+        }
+        if ((y != null) && y !== 0) {
+          return this.panDirection({
+            distance: y,
+            time: time,
+            vertical: true
+          });
+        }
+      };
+
+      Screen.prototype.zoom = function(_arg) {
+        var adjustScale, out, percentage, scale, step, time;
+        var _this = this;
+        scale = _arg.scale, percentage = _arg.percentage, out = _arg.out, time = _arg.time;
+        time || (time = 0);
+        if (scale == null) {
+          percentage = 1 - percentage / 100.0;
+          scale = out ? this.draw.GetDrawScale() * percentage : this.draw.GetDrawScale() / percentage;
+        }
+        step = time === 0 ? scale - this.draw.GetDrawScale() : (scale - this.draw.GetDrawScale()) / time;
+        adjustScale = function() {
+          return $.timeout(1, function() {
+            _this.setScale(_this.draw.GetDrawScale() + step);
+            if (--time >= 0) return adjustScale();
+          });
+        };
+        return adjustScale();
+      };
+
+      Screen.prototype.setScale = function(scale) {
+        this.draw.SetDrawScale(scale);
+        return this.evaluateDimensions();
+      };
+
+      Screen.prototype.getScale = function() {
+        return this.draw.GetDrawScale();
+      };
+
+      Screen.prototype.scaleRatio = function() {
+        return this.defaultScale / this.getScale();
+      };
+
+      Screen.prototype.getDraw = function() {
+        return this.draw;
+      };
+
+      Screen.prototype.getContext = function() {
+        return this.context;
+      };
+
+      Screen.prototype.getCenterAdjustment = function() {
+        return this.draw.GetCenterAdjustment();
+      };
+
+      Screen.prototype.render = function(world) {
+        var aabb, b, b1, b2, bp, c, cA, cB, color, contact, f, fixtureA, fixtureB, flags, i, invQ, j, s, vs, x1, x2, xf, _results;
+        this.draw.m_sprite.graphics.clear();
+        flags = this.draw.GetFlags();
+        i = 0;
+        invQ = new b2d.b2Vec2;
+        x1 = new b2d.b2Vec2;
+        x2 = new b2d.b2Vec2;
+        b1 = new b2d.b2AABB();
+        b2 = new b2d.b2AABB();
+        vs = [new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2()];
+        color = new b2d.Common.b2Color(0, 0, 0);
+        if (flags & b2d.Dynamics.b2DebugDraw.e_shapeBit) {
+          b = world.GetBodyList();
+          while (b != null) {
+            xf = b.m_xf;
+            f = b.GetFixtureList();
+            while (f != null) {
+              s = f.GetShape();
+              if ((c = f.GetDrawData().color) != null) {
+                color._r = c._r;
+                color._b = c._b;
+                color._g = c._g;
+              } else if (b.IsActive() === false) {
+                color.Set(0.5, 0.5, 0.3);
+              } else if (b.GetType() === b2d.Dynamics.b2Body.b2_staticBody) {
+                color.Set(0.5, 0.9, 0.5);
+              } else if (b.GetType() === b2d.Dynamics.b2Body.b2_kinematicBody) {
+                color.Set(0.5, 0.5, 0.9);
+              } else if (b.IsAwake() === false) {
+                color.Set(0.6, 0.6, 0.6);
+              } else {
+                color.Set(0.9, 0.7, 0.7);
+              }
+              this.draw.SetFillAlpha(f.GetDrawData().alpha || 0.3);
+              world.DrawShape(s, xf, color);
+              f = f.GetNext();
+            }
+            b = b.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_jointBit) {
+          j = world.GetJointList();
+          while (j != null) {
+            world.DrawJoint(j);
+            j.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_controllerBit) {
+          c = world.m_controllerList;
+          while (c != null) {
+            c.Draw(this.draw);
+            c.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_pairBit) {
+          color.Set(0.3, 0.9, 0.9);
+          contact = world.m_contactManager.m_contactList;
+          while (contact != null) {
+            fixtureA = contact.GetFixtureA();
+            fixtureB = contact.GetFixtureB();
+            cA = fixtureA.GetAABB().GetCenter();
+            cB = fixtureB.GetAABB().GetCenter();
+            this.draw.DrawSegment(cA, cB, color);
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_aabbBit) {
+          bp = world.m_contactManager.m_broadPhase;
+          vs = [new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2()];
+          b = world.GetBodyList();
+          while (b != null) {
+            if (b.IsActive() === false) continue;
+            f = b.GetFixtureList();
+            while (f != null) {
+              aabb = bp.GetFatAABB(f.m_proxy);
+              vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y);
+              vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y);
+              vs[2].Set(aabb.upperBound.x, aabb.upperBound.y);
+              vs[3].Set(aabb.lowerBound.x, aabb.upperBound.y);
+              this.draw.DrawPolygon(vs, 4, color);
+              f = f.GetNext();
+            }
+            b = b.GetNext();
+          }
+        }
+        if (flags & b2d.Dynamics.b2DebugDraw.e_centerOfMassBit) {
+          b = world.GetBodyList();
+          _results = [];
+          while (b != null) {
+            xf = b2World.s_xf;
+            xf.R = b.m_xf.R;
+            xf.position = b.GetWorldCenter();
+            this.draw.DrawTransform(xf);
+            _results.push(b = b.GetNext());
+          }
+          return _results;
+        }
+      };
+
+      Screen.prototype.evaluateDimensions = function() {
+        return this.dimensions = {
+          width: this.canvas.width() * this.scaleRatio(),
+          height: this.canvas.height() * this.scaleRatio()
+        };
+      };
+
+      Screen.prototype.screenToCanvas = function(point) {
+        var vec2;
+        vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
+        vec2.Multiply(1 / this.scaleRatio());
+        vec2.Add(this.getCenterAdjustment());
+        return vec2;
+      };
+
+      Screen.prototype.descaled = function(point) {
+        var vec2;
+        vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
+        vec2.Multiply(1 / this.defaultRatio);
+        return vec2;
+      };
+
+      return Screen;
+
+    })();
     Peanutty = (function() {
 
       function Peanutty(_arg) {
-        var gravity;
-        this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.levelEditor = _arg.levelEditor, this.environmentEditor = _arg.environmentEditor, this.scale = _arg.scale, gravity = _arg.gravity;
+        var gravity, scale;
+        this.canvas = _arg.canvas, this.scriptEditor = _arg.scriptEditor, this.levelEditor = _arg.levelEditor, this.environmentEditor = _arg.environmentEditor, scale = _arg.scale, gravity = _arg.gravity;
         this.destroyWorld = __bind(this.destroyWorld, this);
         this.destroyDynamicObjects = __bind(this.destroyDynamicObjects, this);
         this.sign = __bind(this.sign, this);
-        this.draw = __bind(this.draw, this);
         this.endShape = __bind(this.endShape, this);
         this.getFreeformShape = __bind(this.getFreeformShape, this);
         this.endFreeformShape = __bind(this.endFreeformShape, this);
@@ -51,6 +331,7 @@
         this.addTempToFreeformShape = __bind(this.addTempToFreeformShape, this);
         this.addToFreeformShape = __bind(this.addToFreeformShape, this);
         this.redrawTempShapes = __bind(this.redrawTempShapes, this);
+        this.addTempShape = __bind(this.addTempShape, this);
         this.redrawCurrentShape = __bind(this.redrawCurrentShape, this);
         this.createRandomObjects = __bind(this.createRandomObjects, this);
         this.createFixtureDef = __bind(this.createFixtureDef, this);
@@ -64,22 +345,15 @@
         this.sendCodeMessage = __bind(this.sendCodeMessage, this);
         this.searchObjectList = __bind(this.searchObjectList, this);
         this.addToScript = __bind(this.addToScript, this);
-        this.evaluateDimensions = __bind(this.evaluateDimensions, this);
-        this.initDraw = __bind(this.initDraw, this);
+        this.initScreen = __bind(this.initScreen, this);
         this.removeContactListeners = __bind(this.removeContactListeners, this);
         this.addContactListener = __bind(this.addContactListener, this);
         this.initContactListeners = __bind(this.initContactListeners, this);
         this.clearStorage = __bind(this.clearStorage, this);
-        this.setScale = __bind(this.setScale, this);
         this.runSimulation = __bind(this.runSimulation, this);
-        this.context = this.canvas[0].getContext("2d");
-        this.scale || (this.scale = 30);
-        this.defaultScale = 30;
         this.world = new b2d.Dynamics.b2World(gravity || new b2d.Common.Math.b2Vec2(0, 10), true);
         this.clearStorage();
-        this.evaluateDimensions();
-        this.canvas.bind('resize', this.evaluateDimensions);
-        this.initDraw();
+        this.initScreen(scale);
         this.initContactListeners();
       }
 
@@ -94,19 +368,13 @@
         update = function() {
           if (_this.world == null) return;
           _this.world.Step(1 / 60, 10, 10);
-          _this.draw();
+          _this.screen.render(_this.world);
           _this.redrawCurrentShape();
           _this.redrawTempShapes();
           _this.world.ClearForces();
           return requestAnimFrame(update);
         };
         return requestAnimFrame(update);
-      };
-
-      Peanutty.prototype.setScale = function(scale) {
-        this.scale = scale;
-        this.debugDraw.SetDrawScale(this.scale);
-        return this.evaluateDimensions();
       };
 
       Peanutty.prototype.clearStorage = function() {
@@ -160,21 +428,12 @@
         return this.endContactListeners = [];
       };
 
-      Peanutty.prototype.initDraw = function() {
-        this.debugDraw = new b2d.Dynamics.b2DebugDraw();
-        this.debugDraw.SetSprite(this.context);
-        this.debugDraw.SetDrawScale(this.scale);
-        this.debugDraw.SetFillAlpha(0.3);
-        this.debugDraw.SetLineThickness(1.0);
-        this.debugDraw.SetFlags(b2d.Dynamics.b2DebugDraw.e_shapeBit | b2d.Dynamics.b2DebugDraw.e_jointBit);
-        return this.world.SetDebugDraw(this.debugDraw);
-      };
-
-      Peanutty.prototype.evaluateDimensions = function() {
-        return this.world.dimensions = {
-          width: this.canvas.width() * (30 / this.scale),
-          height: this.canvas.height() * (30 / this.scale)
-        };
+      Peanutty.prototype.initScreen = function(scale) {
+        this.screen = new Screen({
+          canvas: this.canvas,
+          scale: scale
+        });
+        return this.world.SetDebugDraw(this.screen.getDraw());
       };
 
       Peanutty.prototype.addToScript = function(_arg) {
@@ -249,11 +508,11 @@
         fixDef = fixDef = this.createFixtureDef();
         fixDef.drawData = options.drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        fixDef.shape.SetAsBox((options.width / this.defaultScale) / 2, (options.height / this.defaultScale) / 2);
+        fixDef.shape.SetAsBox((options.width / this.screen.defaultScale) / 2, (options.height / this.screen.defaultScale) / 2);
         bodyDef = new b2d.Dynamics.b2BodyDef;
         bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody;
-        bodyDef.position.x = options.x / this.defaultScale;
-        bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
+        bodyDef.position.x = options.x / this.screen.defaultScale;
+        bodyDef.position.y = (this.screen.dimensions.height - options.y) / this.screen.defaultScale;
         return this.world.CreateBody(bodyDef).CreateFixture(fixDef);
       };
 
@@ -270,9 +529,9 @@
         fixDef = this.createFixtureDef(options);
         fixDef.drawData = options.drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
-        fixDef.shape.SetAsBox(options.width / this.defaultScale, options.height / this.defaultScale);
-        bodyDef.position.x = options.x / this.defaultScale;
-        bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
+        fixDef.shape.SetAsBox(options.width / this.screen.defaultScale, options.height / this.screen.defaultScale);
+        bodyDef.position.x = options.x / this.screen.defaultScale;
+        bodyDef.position.y = (this.screen.dimensions.height - options.y) / this.screen.defaultScale;
         body = this.world.CreateBody(bodyDef);
         body.CreateFixture(fixDef);
         return body;
@@ -290,9 +549,9 @@
         fixDef = this.createFixtureDef(options);
         fixDef.drawData = options.drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2CircleShape;
-        fixDef.shape.SetRadius(options.radius / this.defaultScale);
-        bodyDef.position.x = options.x / this.defaultScale;
-        bodyDef.position.y = (this.world.dimensions.height - options.y) / this.defaultScale;
+        fixDef.shape.SetRadius(options.radius / this.screen.defaultScale);
+        bodyDef.position.x = options.x / this.screen.defaultScale;
+        bodyDef.position.y = (this.screen.dimensions.height - options.y) / this.screen.defaultScale;
         body = this.world.CreateBody(bodyDef);
         body.CreateFixture(fixDef);
         return body;
@@ -311,7 +570,7 @@
           _results = [];
           for (_i = 0, _len = path.length; _i < _len; _i++) {
             point = path[_i];
-            _results.push(new b2d.Common.Math.b2Vec2(point.x / this.defaultScale, (this.world.dimensions.height - point.y) / this.defaultScale));
+            _results.push(new b2d.Common.Math.b2Vec2(point.x / this.screen.defaultScale, (this.screen.dimensions.height - point.y) / this.screen.defaultScale));
           }
           return _results;
         }).call(this);
@@ -418,6 +677,21 @@
 
       Peanutty.prototype.tempShapes = [];
 
+      Peanutty.prototype.addTempShape = function(shape) {
+        var path, point, _i, _len, _ref;
+        path = [];
+        _ref = shape.path;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          point = _ref[_i];
+          path.push(new b2d.Common.Math.b2Vec2(point.x, this.screen.dimensions.height - point.y));
+        }
+        this.tempShapes.push({
+          start: new b2d.Common.Math.b2Vec2(shape.start.x, this.screen.dimensions.height - shape.start.y),
+          path: path
+        });
+        return this.tempShapes[this.tempShapes.length - 1];
+      };
+
       Peanutty.prototype.redrawTempShapes = function() {
         var index, point, shape, _i, _len, _len2, _ref, _ref2;
         _ref = this.tempShapes;
@@ -426,11 +700,11 @@
           if (shape instanceof Function) {
             shape();
           } else {
-            this.startFreeformShape(shape.start);
+            this.startFreeformShape(this.screen.screenToCanvas(shape.start));
             _ref2 = shape.path;
             for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
               point = _ref2[index];
-              this.drawFreeformShape(point);
+              this.drawFreeformShape(this.screen.screenToCanvas(point));
             }
           }
         }
@@ -458,9 +732,9 @@
       Peanutty.prototype.drawFreeformShape = function(_arg) {
         var x, y;
         x = _arg.x, y = _arg.y;
-        this.context.lineWidth = 0.25;
-        this.context.lineTo(x, y);
-        return this.context.stroke();
+        this.screen.getContext().lineWidth = 0.25;
+        this.screen.getContext().lineTo(x, y);
+        return this.screen.getContext().stroke();
       };
 
       Peanutty.prototype.initFreeformShape = function(_arg) {
@@ -485,14 +759,14 @@
         var x, y;
         x = _arg.x, y = _arg.y;
         this.startShape();
-        this.context.strokeStyle = '#000000';
-        return this.context.moveTo(x, y);
+        this.screen.getContext().strokeStyle = '#000000';
+        return this.screen.getContext().moveTo(x, y);
       };
 
       Peanutty.prototype.startShape = function() {
-        this.context.strokeStyle = '#ffffff';
-        this.context.fillStyle = "black";
-        this.context.beginPath();
+        this.screen.getContext().strokeStyle = '#ffffff';
+        this.screen.getContext().fillStyle = "black";
+        this.screen.getContext().beginPath();
       };
 
       Peanutty.prototype.continueFreeformShape = function(_arg) {
@@ -507,7 +781,7 @@
       };
 
       Peanutty.prototype.endFreeformShape = function(options) {
-        var firstPoint, path, point;
+        var path, point;
         if (options == null) options = {};
         path = (function() {
           var _i, _len, _ref, _results, _step;
@@ -515,7 +789,7 @@
           _results = [];
           for (_i = 0, _len = _ref.length, _step = Math.ceil(this.currentShape.path.length / 10); _i < _len; _i += _step) {
             point = _ref[_i];
-            _results.push("{x: " + (point.x * (this.defaultScale / this.scale)) + ", y: " + ((this.canvas.height() - point.y) * (this.defaultScale / this.scale)) + "}");
+            _results.push("{x: " + ((point.x - this.screen.getCenterAdjustment().x) * this.screen.scaleRatio()) + ", y: " + ((this.canvas.height() - point.y + this.screen.getCenterAdjustment().y) * this.screen.scaleRatio()) + "}");
           }
           return _results;
         }).call(this);
@@ -523,9 +797,6 @@
           command: "peanutty.createPoly\n    path: [" + path + "]\n    static: " + options.static,
           time: options.time
         });
-        firstPoint = this.currentShape.path[0];
-        this.currentShape.path.push(firstPoint);
-        this.drawFreeformShape(firstPoint.x, firstPoint.y);
         this.endShape();
         this.tempPoint = null;
         return this.currentShape = null;
@@ -540,108 +811,8 @@
       };
 
       Peanutty.prototype.endShape = function() {
-        this.context.fill();
-        this.context.stroke();
-      };
-
-      Peanutty.prototype.draw = function() {
-        var aabb, b, b1, b2, bp, c, cA, cB, color, contact, f, fixtureA, fixtureB, flags, i, invQ, j, s, vs, x1, x2, xf, _results;
-        if (this.world.m_debugDraw == null) return;
-        this.world.m_debugDraw.m_sprite.graphics.clear();
-        flags = this.world.m_debugDraw.GetFlags();
-        i = 0;
-        invQ = new b2d.b2Vec2;
-        x1 = new b2d.b2Vec2;
-        x2 = new b2d.b2Vec2;
-        b1 = new b2d.b2AABB();
-        b2 = new b2d.b2AABB();
-        vs = [new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2(), new b2d.b2Vec2()];
-        color = new b2d.Common.b2Color(0, 0, 0);
-        if (flags & b2d.Dynamics.b2DebugDraw.e_shapeBit) {
-          b = this.world.GetBodyList();
-          while (b != null) {
-            xf = b.m_xf;
-            f = b.GetFixtureList();
-            while (f != null) {
-              s = f.GetShape();
-              if ((c = f.GetDrawData().color) != null) {
-                color._r = c._r;
-                color._b = c._b;
-                color._g = c._g;
-              } else if (b.IsActive() === false) {
-                color.Set(0.5, 0.5, 0.3);
-              } else if (b.GetType() === b2d.Dynamics.b2Body.b2_staticBody) {
-                color.Set(0.5, 0.9, 0.5);
-              } else if (b.GetType() === b2d.Dynamics.b2Body.b2_kinematicBody) {
-                color.Set(0.5, 0.5, 0.9);
-              } else if (b.IsAwake() === false) {
-                color.Set(0.6, 0.6, 0.6);
-              } else {
-                color.Set(0.9, 0.7, 0.7);
-              }
-              this.debugDraw.SetFillAlpha(f.GetDrawData().alpha || 0.3);
-              this.world.DrawShape(s, xf, color);
-              f = f.GetNext();
-            }
-            b = b.GetNext();
-          }
-        }
-        if (flags & b2d.Dynamics.b2DebugDraw.e_jointBit) {
-          j = this.world.GetJointList();
-          while (j != null) {
-            this.world.DrawJoint(j);
-            j.GetNext();
-          }
-        }
-        if (flags & b2d.Dynamics.b2DebugDraw.e_controllerBit) {
-          c = this.world.m_controllerList;
-          while (c != null) {
-            c.Draw(this.m_debugDraw);
-            c.GetNext();
-          }
-        }
-        if (flags & b2d.Dynamics.b2DebugDraw.e_pairBit) {
-          color.Set(0.3, 0.9, 0.9);
-          contact = this.m_contactManager.m_contactList;
-          while (contact != null) {
-            fixtureA = contact.GetFixtureA();
-            fixtureB = contact.GetFixtureB();
-            cA = fixtureA.GetAABB().GetCenter();
-            cB = fixtureB.GetAABB().GetCenter();
-            this.world.m_debugDraw.DrawSegment(cA, cB, color);
-          }
-        }
-        if (flags & b2d.Dynamics.b2DebugDraw.e_aabbBit) {
-          bp = this.world.m_contactManager.m_broadPhase;
-          vs = [new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2(), new bd2.b2Vec2()];
-          b = this.world.GetBodyList();
-          while (b != null) {
-            if (b.IsActive() === false) continue;
-            f = b.GetFixtureList();
-            while (f != null) {
-              aabb = bp.GetFatAABB(f.m_proxy);
-              vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y);
-              vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y);
-              vs[2].Set(aabb.upperBound.x, aabb.upperBound.y);
-              vs[3].Set(aabb.lowerBound.x, aabb.upperBound.y);
-              this.world.m_debugDraw.DrawPolygon(vs, 4, color);
-              f = f.GetNext();
-            }
-            b = b.GetNext();
-          }
-        }
-        if (flags & b2d.Dynamics.b2DebugDraw.e_centerOfMassBit) {
-          b = this.world.GetBodyList();
-          _results = [];
-          while (b != null) {
-            xf = b2World.s_xf;
-            xf.R = b.m_xf.R;
-            xf.position = b.GetWorldCenter();
-            this.world.m_debugDraw.DrawTransform(xf);
-            _results.push(b = b.GetNext());
-          }
-          return _results;
-        }
+        this.screen.getContext().fill();
+        this.screen.getContext().stroke();
       };
 
       Peanutty.prototype.sign = function(name, twitterHandle) {

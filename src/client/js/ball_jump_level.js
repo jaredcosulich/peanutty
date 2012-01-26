@@ -12,7 +12,7 @@
 
   scale = 30 * (peanutty.canvas.width() / 835);
 
-  peanutty.setScale(scale);
+  peanutty.screen.setScale(scale);
 
   peanutty.createGround({
     x: peanutty.world.dimensions.width / 2,

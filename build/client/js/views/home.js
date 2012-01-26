@@ -149,7 +149,7 @@
         remainingWidth = fullWidth - codeWidth - 90;
         $('#canvas')[0].width = remainingWidth;
         if (typeof peanutty !== "undefined" && peanutty !== null) {
-          return peanutty.evaluateDimensions();
+          return peanutty.screen.evaluateDimensions();
         }
       };
 

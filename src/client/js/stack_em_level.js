@@ -8,7 +8,7 @@
 
   scale = 20 * (peanutty.canvas.width() / 835);
 
-  peanutty.setScale(scale);
+  peanutty.screen.setScale(scale);
 
   createStar = function(_arg) {
     var i, path, points, radius, star, totalPoints, x, y;
@@ -56,13 +56,12 @@
       },
       path: path
     };
-    peanutty.tempShapes.push(star);
-    return star;
+    return peanutty.addTempShape(star);
   };
 
   starInfo = {
-    x: peanutty.canvas.width() / 2,
-    y: 100,
+    x: peanutty.screen.dimensions.width / 2,
+    y: 600,
     radius: 12,
     totalPoints: 8
   };
@@ -70,46 +69,47 @@
   star = createStar(starInfo);
 
   peanutty.createGround({
-    x: peanutty.world.dimensions.width / 2,
+    x: peanutty.screen.dimensions.width / 2,
     y: 50,
     width: 600,
     height: 10
   });
 
   peanutty.createBall({
-    x: peanutty.world.dimensions.width / 2,
+    x: peanutty.screen.dimensions.width / 2,
     y: 75,
     radius: 20
   });
 
   peanutty.createBox({
-    x: peanutty.world.dimensions.width / 2,
+    x: peanutty.screen.dimensions.width / 2,
     y: 100,
     width: 150,
     height: 5
   });
 
   peanutty.createBox({
-    x: peanutty.world.dimensions.width / 2,
+    x: peanutty.screen.dimensions.width / 2,
     y: 140,
     width: 20,
     height: 20
   });
 
   peanutty.createBox({
-    x: peanutty.world.dimensions.width / 2,
+    x: peanutty.screen.dimensions.width / 2,
     y: 200,
     width: 20,
     height: 20
   });
 
   setInterval((function() {
-    var point, _i, _len, _ref, _results;
+    var adjustedPoint, point, _i, _len, _ref, _results;
     if (level.elements.success) return;
     _ref = star.path;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       point = _ref[_i];
+      adjustedPoint = peanutty.screen.descaled(point);
       _results.push(peanutty.world.QueryPoint((function(fixture) {
         var success;
         if (fixture.GetBody().IsAwake()) return true;
@@ -123,7 +123,7 @@
           left: '10px'
         });
         return level.canvasContainer.append(success);
-      }), new b2d.Common.Math.b2Vec2(point.x / scale, point.y / scale)));
+      }), adjustedPoint));
     }
     return _results;
   }), 100);

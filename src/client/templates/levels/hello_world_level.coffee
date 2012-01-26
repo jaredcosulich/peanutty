@@ -1,11 +1,11 @@
 level.name = 'hello_world'
 Peanutty.createEnvironment()
 
-peanutty.setScale(30 * (peanutty.canvas.width() / 835))
+peanutty.screen.setScale(30 * (peanutty.canvas.width() / 835))
 
 # Create the ground
 peanutty.createGround
-    x: peanutty.world.dimensions.width / 2
+    x: peanutty.screen.dimensions.width / 2
     y: 50
     width: 600
     height: 10
@@ -55,7 +55,7 @@ nameInput.bind 'keyup', (e) ->
             peanutty.destroyDynamicObjects()
             level.elements.nameInput.val("#{letters}") if level.elements.nameInput.val() != "#{letters}"
             level.createLetters
-                x: peanutty.world.dimensions.width / 2
+                x: peanutty.screen.dimensions.width / 2
                 y: 55
                 letters: "#{letters}"
             """
@@ -542,7 +542,7 @@ level.createLetter = ({x, y, letter}) ->
 # Display Hello World
 
 level.createLetters
-    x: peanutty.world.dimensions.width / 2
+    x: peanutty.screen.dimensions.width / 2
     y: 55
     letters: 'Hello World'
 
