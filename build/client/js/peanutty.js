@@ -106,9 +106,9 @@
       }
 
       Screen.prototype.panDirection = function(_arg) {
-        var distance, move, scaledDistance, stepDistance, time, vertical;
+        var callback, distance, move, scaledDistance, stepDistance, time, vertical;
         var _this = this;
-        distance = _arg.distance, time = _arg.time, vertical = _arg.vertical;
+        distance = _arg.distance, time = _arg.time, vertical = _arg.vertical, callback = _arg.callback;
         time || (time = 0);
         scaledDistance = distance / this.scaleRatio();
         stepDistance = time <= 0 ? scaledDistance : scaledDistance / time;
@@ -119,35 +119,42 @@
             } else {
               _this.draw.AdjustCenterX(stepDistance * -1);
             }
-            if (--time >= 0) return move();
+            _this.evaluateDimensions();
+            if (--time >= 0) {
+              return move();
+            } else {
+              return callback();
+            }
           });
         };
         return move();
       };
 
       Screen.prototype.pan = function(_arg) {
-        var time, x, y;
-        x = _arg.x, y = _arg.y, time = _arg.time;
+        var callback, time, x, y;
+        x = _arg.x, y = _arg.y, time = _arg.time, callback = _arg.callback;
         if ((x != null) && x !== 0) {
           this.panDirection({
             distance: x,
             time: time,
-            vertical: false
+            vertical: false,
+            callback: callback
           });
         }
         if ((y != null) && y !== 0) {
           return this.panDirection({
             distance: y,
             time: time,
-            vertical: true
+            vertical: true,
+            callback: callback
           });
         }
       };
 
       Screen.prototype.zoom = function(_arg) {
-        var adjustScale, out, percentage, scale, step, time;
+        var adjustScale, callback, out, percentage, scale, step, time;
         var _this = this;
-        scale = _arg.scale, percentage = _arg.percentage, out = _arg.out, time = _arg.time;
+        scale = _arg.scale, percentage = _arg.percentage, out = _arg.out, time = _arg.time, callback = _arg.callback;
         time || (time = 0);
         if (scale == null) {
           percentage = 1 - percentage / 100.0;
@@ -157,7 +164,11 @@
         adjustScale = function() {
           return $.timeout(1, function() {
             _this.setScale(_this.draw.GetDrawScale() + step);
-            if (--time >= 0) return adjustScale();
+            if (--time >= 0) {
+              return adjustScale();
+            } else {
+              return callback();
+            }
           });
         };
         return adjustScale();
@@ -288,31 +299,38 @@
       };
 
       Screen.prototype.evaluateDimensions = function() {
-        return this.dimensions = {
+        var x, y;
+        this.dimensions = {
           width: this.canvas.width() * this.scaleRatio(),
           height: this.canvas.height() * this.scaleRatio()
+        };
+        y = (this.getCenterAdjustment().y * this.scaleRatio()) * -1;
+        x = (this.getCenterAdjustment().x * this.scaleRatio()) * -1;
+        return this.viewPort = {
+          bottom: y,
+          top: y + this.dimensions.height,
+          left: x,
+          right: x + this.dimensions.width
         };
       };
 
       Screen.prototype.screenToWorld = function(point) {
         var vec2;
-        vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
+        vec2 = new b2d.Common.Math.b2Vec2(point.x, this.dimensions.height - point.y);
         vec2.Multiply(1 / this.defaultScale);
-        vec2.Add(this.getCenterAdjustment());
         return vec2;
       };
 
       Screen.prototype.worldToScreen = function(point) {
         var vec2;
         vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
-        vec2.Subtract(this.getCenterAdjustment());
         vec2.Multiply(this.defaultScale);
-        return vec2;
+        return new b2d.Common.Math.b2Vec2(vec2.x, this.dimensions.height - vec2.y);
       };
 
       Screen.prototype.canvasToScreen = function(point) {
         var vec2;
-        vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
+        vec2 = new b2d.Common.Math.b2Vec2(point.x, this.canvas.height() - point.y);
         vec2.Multiply(this.scaleRatio());
         return vec2;
       };
@@ -321,7 +339,7 @@
         var vec2;
         vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
         vec2.Multiply(1 / this.scaleRatio());
-        return vec2;
+        return new b2d.Common.Math.b2Vec2(vec2.x, this.canvas.height() - vec2.y);
       };
 
       Screen.prototype.canvasToWorld = function(point) {
@@ -500,7 +518,7 @@
       };
 
       Peanutty.prototype.sendCodeMessage = function(_arg) {
-        var activeEditor, closeLink, editor, message, _i, _len, _ref;
+        var activeEditor, closeLink, editor, message;
         var _this = this;
         message = _arg.message;
         if (this.codeMessage == null) {
@@ -517,11 +535,16 @@
           this.codeMessage.append(document.createElement('DIV'));
         }
         this.codeMessage.find('div').html(message);
-        _ref = [this.scriptEditor, this.levelEditor, this.environmentEditor];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          editor = _ref[_i];
-          if (editor.container.offsetLeft !== 0) activeEditor = editor.container;
-        }
+        activeEditor = (function() {
+          var _i, _len, _ref, _results;
+          _ref = [this.scriptEditor, this.levelEditor, this.environmentEditor];
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            editor = _ref[_i];
+            if (editor.container.offsetLeft !== 0) _results.push(editor.container);
+          }
+          return _results;
+        }).call(this);
         this.codeMessage.css({
           top: activeEditor.offsetTop,
           right: $(document.body).width() - activeEditor.offsetLeft + (parseInt($(document.body).css('paddingRight')) * 2)
@@ -712,10 +735,10 @@
         _ref = shape.path;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           point = _ref[_i];
-          adjustedPoint = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, this.canvas.height() - point.y));
+          adjustedPoint = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, point.y));
           adjustedShape.path.push(adjustedPoint);
         }
-        adjustedShape.start = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, this.canvas.height() - shape.start.y));
+        adjustedShape.start = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, shape.start.y));
         this.tempShapes.push(adjustedShape);
         return adjustedShape;
       };

@@ -26,11 +26,11 @@ createStar = ({x, y, radius, totalPoints}) =>
 
 starInfo = 
     x: peanutty.screen.dimensions.width / 2
-    y: 400
+    y: 600
     radius: 12
     totalPoints: 8
 
-star = createStar(starInfo)
+window.star = createStar(starInfo)
 
 # Create the platform
 peanutty.createGround

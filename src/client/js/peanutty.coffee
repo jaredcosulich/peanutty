@@ -86,30 +86,36 @@
             @draw.SetCenterAdjustment(new b2d.Common.Math.b2Vec2(0, 0))
             
             
-        panDirection: ({distance, time, vertical}) ->
+        panDirection: ({distance, time, vertical, callback}) ->
             time or= 0
             scaledDistance = distance / @scaleRatio()
             stepDistance = if time <= 0 then scaledDistance else scaledDistance / time
             move = () =>
                 $.timeout 1, () =>
-                    if vertical then @draw.AdjustCenterY(stepDistance) else @draw.AdjustCenterX(stepDistance * -1)          
-                    move() if --time >= 0
+                    if vertical then @draw.AdjustCenterY(stepDistance) else @draw.AdjustCenterX(stepDistance * -1)  
+                    @evaluateDimensions()        
+                    if --time >= 0
+                        move()
+                    else
+                        callback()
             move()
             
-        pan: ({x, y, time}) ->
+        pan: ({x, y, time, callback}) ->
             if x? && x != 0
                 @panDirection
                     distance: x
                     time: time
                     vertical: false
+                    callback: callback
             
             if y? && y != 0
                 @panDirection
                     distance: y
                     time: time
                     vertical: true
+                    callback: callback
         
-        zoom: ({scale, percentage, out, time}) ->
+        zoom: ({scale, percentage, out, time, callback}) ->
             time or= 0
             unless scale?
                 percentage = (1 - percentage/100.0)
@@ -119,7 +125,10 @@
             adjustScale = () =>
                 $.timeout 1, () =>
                     @setScale(@draw.GetDrawScale() + step)
-                    adjustScale() if --time >= 0
+                    if --time >= 0
+                        adjustScale()
+                    else
+                        callback()
             adjustScale()
         
         setScale: (scale) -> 
@@ -224,28 +233,34 @@
             @dimensions = 
                 width: @canvas.width() * @scaleRatio()
                 height: @canvas.height() * @scaleRatio()
-            
+                
+            y = (@getCenterAdjustment().y * @scaleRatio()) * -1
+            x = (@getCenterAdjustment().x * @scaleRatio()) * -1
+            @viewPort = 
+                bottom: y
+                top: y + @dimensions.height
+                left: x
+                right: x + @dimensions.width
+                    
         screenToWorld: (point) ->
-            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, @dimensions.height - point.y)
             vec2.Multiply(1/@defaultScale)
-            vec2.Add(@getCenterAdjustment())
             return vec2
             
         worldToScreen: (point) ->
             vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
-            vec2.Subtract(@getCenterAdjustment())
             vec2.Multiply(@defaultScale)
-            return vec2
+            return new b2d.Common.Math.b2Vec2(vec2.x, @dimensions.height - vec2.y)
             
         canvasToScreen: (point) ->
-            vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, @canvas.height() - point.y)
             vec2.Multiply(@scaleRatio())
             return vec2
 
         screenToCanvas: (point) ->
             vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
             vec2.Multiply(1/@scaleRatio())
-            return vec2
+            return new b2d.Common.Math.b2Vec2(vec2.x, @canvas.height() - vec2.y)
             
         canvasToWorld: (point) ->
             screenPoint = @canvasToScreen(point)
@@ -357,11 +372,11 @@
                 @codeMessage.append(closeLink)
                 @codeMessage.append(document.createElement('DIV'))
             @codeMessage.find('div').html(message)
-            activeEditor = editor.container for editor in [
+            activeEditor = (editor.container for editor in [
                 @scriptEditor,
                 @levelEditor,
                 @environmentEditor
-            ] when editor.container.offsetLeft != 0
+            ] when editor.container.offsetLeft != 0)
             @codeMessage.css
                 top: activeEditor.offsetTop
                 right: $(document.body).width() - 
@@ -525,10 +540,10 @@
         addTempShape: (shape) =>
             adjustedShape = {path: []}
             for point in shape.path
-                adjustedPoint = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, @canvas.height() - point.y))
+                adjustedPoint = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, point.y))
                 adjustedShape.path.push(adjustedPoint)
                 
-            adjustedShape.start = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, @canvas.height() - shape.start.y))
+            adjustedShape.start = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, shape.start.y))
             @tempShapes.push(adjustedShape)
             return adjustedShape
                      

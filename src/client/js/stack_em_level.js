@@ -1,5 +1,5 @@
 (function() {
-  var createStar, header, instructions, note, scale, star, starInfo;
+  var createStar, header, instructions, note, scale, starInfo;
   var _this = this;
 
   level.name = 'stack_em';
@@ -61,12 +61,12 @@
 
   starInfo = {
     x: peanutty.screen.dimensions.width / 2,
-    y: 400,
+    y: 600,
     radius: 12,
     totalPoints: 8
   };
 
-  star = createStar(starInfo);
+  window.star = createStar(starInfo);
 
   peanutty.createGround({
     x: peanutty.screen.dimensions.width / 2,
