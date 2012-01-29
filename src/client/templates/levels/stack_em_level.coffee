@@ -87,7 +87,7 @@ setInterval(
                             Let me know: 
                             <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                         </p>
-                        <p>More levels coming soon...</p>
+                        <p>On to the <a href='#level/ball_jump'>next level ></a></p>
                         <p>
                             ... or <a href='#create'>create your own level!<a> 
                         </p>

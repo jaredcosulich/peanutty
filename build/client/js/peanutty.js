@@ -909,6 +909,7 @@
       return Peanutty;
 
     })();
+    Peanutty.executingCode = [];
     Peanutty.runCode = function(editor) {
       var active, code, complete, indent, index, segment, segments, tab, time, _len;
       code = editor.getSession().getValue();
@@ -924,7 +925,7 @@
           active = [];
           if (index < segments.length - 1) {
             time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""));
-            complete.push(indent + ("$.timeout " + time + ", () =>\n"));
+            complete.push(indent + ("Peanutty.executingCode.push $.timeout " + time + ", () =>\n"));
             indent += tab;
           }
         } else {

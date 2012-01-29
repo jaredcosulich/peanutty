@@ -114,7 +114,7 @@
         if (fixture.GetBody().IsAwake()) return true;
         if (level.elements.success) return false;
         success = level.elements.success = $(document.createElement("DIV"));
-        success.html("<h4>Way to go!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<p>More levels coming soon...</p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
+        success.html("<h4>Way to go!</h4>\n<p>\n    Got a creative solution? \n    Let me know: \n    <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>\n</p>\n<p>On to the <a href='#level/ball_jump'>next level ></a></p>\n<p>\n    ... or <a href='#create'>create your own level!<a> \n</p>");
         success.css({
           textAlign: 'center',
           position: 'absolute',

@@ -655,6 +655,7 @@
             @world = null
     
 
+    Peanutty.executingCode = []
     Peanutty.runCode = (editor) => 
         code = editor.getSession().getValue()
         complete = []
@@ -669,7 +670,7 @@
                 active = []
                 if index < segments.length - 1
                     time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""))
-                    complete.push(indent + "$.timeout #{time}, () =>\n")
+                    complete.push(indent + "Peanutty.executingCode.push $.timeout #{time}, () =>\n")
                     indent += tab
             else
                 active.push(indent + segment)

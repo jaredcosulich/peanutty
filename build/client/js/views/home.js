@@ -154,8 +154,14 @@
       };
 
       Home.prototype.resetLevel = function() {
+        var timeout, _i, _len, _ref;
         peanutty.destroyWorld();
         this.removeLevelElements();
+        _ref = Peanutty.executingCode;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          timeout = _ref[_i];
+          clearTimeout(timeout);
+        }
         this.loadCode();
         return Peanutty.runScript();
       };

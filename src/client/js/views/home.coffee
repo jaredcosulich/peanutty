@@ -112,6 +112,7 @@
         resetLevel: () =>
             peanutty.destroyWorld()
             @removeLevelElements()
+            clearTimeout(timeout) for timeout in Peanutty.executingCode
             @loadCode()
             Peanutty.runScript()
             
