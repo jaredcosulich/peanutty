@@ -36,7 +36,10 @@ level.elements.ball = peanutty.createBall
 # Apply force to the ball when certain keys are hit and the ball is in contact with the ground
 ballIsInContactWithGround = () =>
     contactEdge = level.elements.ball.GetContactList()
-    contactEdge? && contactEdge.contact.IsTouching()
+    while contactEdge
+        return true if contactEdge? && contactEdge.contact.IsTouching()
+        contactEdge = contactEdge.next
+    return false
     
 level.pushBall = (x, y) =>
     return if x > 0 and level.elements.ball.GetLinearVelocity().x > 50

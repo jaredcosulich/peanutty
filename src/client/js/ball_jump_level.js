@@ -64,7 +64,11 @@
   ballIsInContactWithGround = function() {
     var contactEdge;
     contactEdge = level.elements.ball.GetContactList();
-    return (contactEdge != null) && contactEdge.contact.IsTouching();
+    while (contactEdge) {
+      if ((contactEdge != null) && contactEdge.contact.IsTouching()) return true;
+      contactEdge = contactEdge.next;
+    }
+    return false;
   };
 
   level.pushBall = function(x, y) {
