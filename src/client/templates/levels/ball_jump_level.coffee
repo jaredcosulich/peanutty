@@ -188,3 +188,4 @@ input.bind 'click', () =>
             """
         time: 0
 
+peanutty.sign('@jaredcosulich', 'jaredcosulich')

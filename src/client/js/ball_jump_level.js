@@ -243,4 +243,6 @@
     });
   });
 
+  peanutty.sign('@jaredcosulich', 'jaredcosulich');
+
 }).call(this);
