@@ -24,8 +24,8 @@
       x: 4200,
       color: new b2d.Common.b2Color(0, 0, 0.6)
     }, {
-      width: 800,
-      x: 7000,
+      width: 1400,
+      x: 8000,
       color: new b2d.Common.b2Color(0.6, 0, 0.6)
     }, {
       width: 2000,
@@ -67,7 +67,7 @@
     return (contactEdge != null) && contactEdge.contact.IsTouching();
   };
 
-  level.applyForce = function(x, y) {
+  level.pushBall = function(x, y) {
     if (x > 0 && level.elements.ball.GetLinearVelocity().x > 50) return;
     if (ballIsInContactWithGround()) {
       return level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(x, y), level.elements.ball.GetWorldCenter());
@@ -75,19 +75,19 @@
   };
 
   upCommand = function() {
-    return "level.applyForce(0, " + (level.elements.ball.GetLinearVelocity().x * -10) + ")";
+    return "level.pushBall(0, " + (level.elements.ball.GetLinearVelocity().x * -10) + ")";
   };
 
   $(window).bind('keydown', function(e) {
     switch (e.keyCode) {
       case 74:
         return peanutty.addToScript({
-          command: "level.applyForce(-40, 0) ",
+          command: "level.pushBall(-40, 0) ",
           time: level.getTimeDiff()
         });
       case 75:
         return peanutty.addToScript({
-          command: "level.applyForce(40, 0) ",
+          command: "level.pushBall(40, 0) ",
           time: level.getTimeDiff()
         });
       case 76:
@@ -115,8 +115,8 @@
 
   goal = peanutty.createBox({
     x: 15040,
-    y: 500,
-    height: 50,
+    y: 600,
+    height: 150,
     width: 10,
     static: true,
     drawData: {
@@ -203,7 +203,7 @@
 
   input.css({
     position: 'absolute',
-    top: 490,
+    top: 420,
     left: 49,
     height: '1px',
     width: '1px',
@@ -232,7 +232,7 @@
       return true;
     };
     return upCommand = function() {
-      return "level.applyForce(0, -50)";
+      return "level.pushBall(0, -50)";
     };
   };
 

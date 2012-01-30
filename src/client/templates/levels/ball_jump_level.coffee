@@ -10,7 +10,7 @@ for groundInfo in [
     {width: 600, x: 300, color: new b2d.Common.b2Color(0, 0.6, 0)},
     {width: 900, x: 1600, color: new b2d.Common.b2Color(0, 0.6, 0.6)},
     {width: 1200, x: 4200, color: new b2d.Common.b2Color(0, 0, 0.6)},
-    {width: 800, x: 7000, color: new b2d.Common.b2Color(0.6, 0, 0.6)},
+    {width: 1400, x: 8000, color: new b2d.Common.b2Color(0.6, 0, 0.6)},
     {width: 2000, x: 10000, color: new b2d.Common.b2Color(0.6, 0.6, 0)},
     {width: 100, x: 15000, color: new b2d.Common.b2Color(0.6, 0, 0)}
 ]
@@ -38,25 +38,25 @@ ballIsInContactWithGround = () =>
     contactEdge = level.elements.ball.GetContactList()
     contactEdge? && contactEdge.contact.IsTouching()
     
-level.applyForce = (x, y) =>
+level.pushBall = (x, y) =>
     return if x > 0 and level.elements.ball.GetLinearVelocity().x > 50
     level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(x, y), level.elements.ball.GetWorldCenter()) if ballIsInContactWithGround()
 
-upCommand = () => "level.applyForce(0, #{level.elements.ball.GetLinearVelocity().x * -10})"
+upCommand = () => "level.pushBall(0, #{level.elements.ball.GetLinearVelocity().x * -10})"
 $(window).bind 'keydown', (e) =>    
     switch e.keyCode
         when 74 #j - left   
             peanutty.addToScript
                 command:
                     """
-                    level.applyForce(-40, 0) 
+                    level.pushBall(-40, 0) 
                     """
                 time: level.getTimeDiff()
         when 75 #k - right
             peanutty.addToScript
                 command:
                     """
-                    level.applyForce(40, 0) 
+                    level.pushBall(40, 0) 
                     """
                 time: level.getTimeDiff()
         when 76 #l - up
@@ -87,8 +87,8 @@ ballForces = setInterval((
 # Create the goal
 goal = peanutty.createBox
     x: 15040
-    y: 500
-    height: 50
+    y: 600
+    height: 150
     width: 10
     static: true
     drawData:
@@ -167,7 +167,7 @@ level.canvasContainer.append(instructions)
 
 # Add an input to take focus away from the code section (there has to be a better solution)
 input = level.elements.input = $(document.createElement("input"))
-input.css(position: 'absolute', top: 490, left: 49, height: '1px', width: '1px', backgroundColor: '#E6E6E6', cursor: 'pointer')
+input.css(position: 'absolute', top: 420, left: 49, height: '1px', width: '1px', backgroundColor: '#E6E6E6', cursor: 'pointer')
 view.el.append(input)
 input[0].focus()
 input[0].blur()
@@ -178,7 +178,7 @@ level.magicPowers = () =>
     secretNote.html("Magic powers! Now you can fly! When you're in the air hit 'l' to keep going up!")
     instructions.append(secretNote)
     ballIsInContactWithGround = () => true
-    upCommand = () => "level.applyForce(0, -50)"
+    upCommand = () => "level.pushBall(0, -50)"
     
 input.bind 'click', () =>
     peanutty.addToScript

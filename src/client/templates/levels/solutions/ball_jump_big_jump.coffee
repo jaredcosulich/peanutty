@@ -2,8 +2,8 @@ Peanutty.loadLevel()
 peanutty.wait(1000)
 
 # Take a giant jump!
-level.applyForce(8000, 0) 
+level.pushBall(8000, 0) 
 
 peanutty.wait(100)
-level.applyForce(0, -345) 
+level.pushBall(0, -360) 
 
