@@ -134,6 +134,7 @@
       Home.prototype.initTopButtons = function() {
         var _this = this;
         this.$('#code_buttons .run_script').bind('click', function(e) {
+          $('.code_message').remove();
           peanutty.destroyWorld();
           _this.removeLevelElements();
           return Peanutty.runScript();

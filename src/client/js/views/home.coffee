@@ -91,6 +91,7 @@
             
         initTopButtons: () =>
             @$('#code_buttons .run_script').bind 'click', (e) =>
+                $('.code_message').remove()
                 peanutty.destroyWorld()
                 @removeLevelElements()
                 Peanutty.runScript()

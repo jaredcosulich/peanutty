@@ -521,19 +521,19 @@
         var activeEditor, closeLink, editor, message;
         var _this = this;
         message = _arg.message;
-        if (this.codeMessage == null) {
-          this.codeMessage = $(document.createElement('DIV'));
-          this.codeMessage.addClass('code_message');
-          $(document.body).append(this.codeMessage);
-          closeLink = $(document.createElement('A'));
-          closeLink.addClass('close_link');
-          closeLink.html('x');
-          closeLink.bind('click', function() {
-            return _this.codeMessage.removeClass('expanded');
-          });
-          this.codeMessage.append(closeLink);
-          this.codeMessage.append(document.createElement('DIV'));
-        }
+        $('.code_message').remove();
+        this.codeMessage = $(document.createElement('DIV'));
+        this.codeMessage.addClass('code_message');
+        $(document.body).append(this.codeMessage);
+        closeLink = $(document.createElement('A'));
+        closeLink.addClass('close_link');
+        closeLink.html('x');
+        closeLink.bind('click', function() {
+          return _this.codeMessage.removeClass('expanded');
+        });
+        this.codeMessage.append(closeLink);
+        this.codeMessage.append(document.createElement('DIV'));
+        message = message.replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
         this.codeMessage.find('div').html(message);
         activeEditor = ((function() {
           var _i, _len, _ref, _results;
@@ -895,15 +895,19 @@
 
       Peanutty.prototype.destroyWorld = function() {
         var b, body;
-        body = this.world.m_bodyList;
-        while (body != null) {
-          b = body;
-          body = body.m_next;
-          this.world.DestroyBody(b);
+        try {
+          body = this.world.m_bodyList;
+          while (body != null) {
+            b = body;
+            body = body.m_next;
+            this.world.DestroyBody(b);
+          }
+          this.tempShapes = [];
+          this.removeContactListeners();
+          return this.world = null;
+        } catch (error) {
+
         }
-        this.tempShapes = [];
-        this.removeContactListeners();
-        return this.world = null;
       };
 
       return Peanutty;
@@ -911,12 +915,13 @@
     })();
     Peanutty.executingCode = [];
     Peanutty.runCode = function(editor) {
-      var active, code, complete, indent, index, segment, segments, tab, time, _len;
+      var active, catches, code, complete, indent, index, segment, segments, tab, time, _len;
       code = editor.getSession().getValue();
-      complete = [];
+      complete = ["try"];
       active = [];
       tab = "    ";
-      indent = "";
+      indent = tab;
+      catches = [];
       segments = code.split(/\n/);
       for (index = 0, _len = segments.length; index < _len; index++) {
         segment = segments[index];
@@ -927,13 +932,23 @@
             time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""));
             complete.push(indent + ("Peanutty.executingCode.push $.timeout " + time + ", () =>\n"));
             indent += tab;
+            complete.push(indent + "try\n");
+            catches.push(indent + "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message)");
+            indent += tab;
           }
         } else {
           active.push(indent + segment);
         }
       }
       complete.push(active.join("\n"));
-      return CoffeeScript.run(complete.join("\n"));
+      complete.push(catches.reverse().join("\n"));
+      try {
+        return CoffeeScript.run(complete.join("\n"));
+      } catch (error) {
+        return peanutty.sendCodeMessage({
+          message: 'Code Error: ' + error.message.replace(/on line \d+/, '')
+        });
+      }
     };
     Peanutty.runScript = function(scriptEditor) {
       if (scriptEditor == null) scriptEditor = view.scriptEditor;

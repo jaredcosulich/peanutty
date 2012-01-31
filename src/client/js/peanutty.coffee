@@ -361,16 +361,18 @@
             return foundObjects
     
         sendCodeMessage: ({message}) =>
-            unless @codeMessage?
-                @codeMessage = $(document.createElement('DIV'))
-                @codeMessage.addClass('code_message')
-                $(document.body).append(@codeMessage)
-                closeLink = $(document.createElement('A'))
-                closeLink.addClass('close_link')
-                closeLink.html('x')
-                closeLink.bind 'click', () => @codeMessage.removeClass('expanded')
-                @codeMessage.append(closeLink)
-                @codeMessage.append(document.createElement('DIV'))
+            $('.code_message').remove()
+            @codeMessage = $(document.createElement('DIV'))
+            @codeMessage.addClass('code_message')
+            $(document.body).append(@codeMessage)
+            closeLink = $(document.createElement('A'))
+            closeLink.addClass('close_link')
+            closeLink.html('x')
+            closeLink.bind 'click', () => @codeMessage.removeClass('expanded')
+            @codeMessage.append(closeLink)
+            @codeMessage.append(document.createElement('DIV'))
+            message = message.replace(/\</g, '&lt;')
+                             .replace(/\>/g, '&gt;')
             @codeMessage.find('div').html(message)
             activeEditor = (editor.container for editor in [
                 @scriptEditor,
@@ -644,24 +646,26 @@
             @tempShapes = []
     
         destroyWorld: () =>
-            body = @world.m_bodyList
-            while body?
-                b = body
-                body = body.m_next
-                @world.DestroyBody(b)
+            try
+                body = @world.m_bodyList
+                while body?
+                    b = body
+                    body = body.m_next
+                    @world.DestroyBody(b)
         
-            @tempShapes = []
-            @removeContactListeners()
-            @world = null
-    
+                @tempShapes = []
+                @removeContactListeners()
+                @world = null
+            catch error
 
     Peanutty.executingCode = []
     Peanutty.runCode = (editor) => 
         code = editor.getSession().getValue()
-        complete = []
+        complete = ["try"]
         active = []
         tab = "    "
-        indent = ""
+        indent = tab
+        catches = []
         
         segments = code.split(/\n/)
         for segment, index in segments
@@ -672,12 +676,19 @@
                     time = parseInt(segment.replace(/peanutty.wait\(/, "").replace(/\)/, ""))
                     complete.push(indent + "Peanutty.executingCode.push $.timeout #{time}, () =>\n")
                     indent += tab
+                    complete.push(indent + "try\n")
+                    catches.push(indent + "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message)")
+                    indent += tab
             else
                 active.push(indent + segment)
         
         complete.push(active.join("\n"))
-        CoffeeScript.run(complete.join("\n"))
-
+        complete.push(catches.reverse().join("\n"))
+        try
+            CoffeeScript.run(complete.join("\n"))
+        catch error
+            peanutty.sendCodeMessage(message: 'Code Error: ' + error.message.replace(/on line \d+/, ''))
+            
     Peanutty.runScript = (scriptEditor = view.scriptEditor) => Peanutty.runCode(scriptEditor)    
     Peanutty.loadLevel = (levelEditor = view.levelEditor) => Peanutty.runCode(levelEditor)
     Peanutty.createEnvironment = (environmentEditor = view.environmentEditor) => Peanutty.runCode(environmentEditor)
