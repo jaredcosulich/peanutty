@@ -88,6 +88,7 @@ a {
         .code {
             height: 466px;
             display: none;
+            background-color: #eee;
             &.selected {
                 display: block;
             }
@@ -106,6 +107,25 @@ a {
                 .transition(background-color 1s linear);
                 &.highlight {
                     background-color: @green;
+                }
+            }
+            
+            .edit_message {
+                position: absolute;
+                top: 180px;
+                left: 120px;
+                width: 150px;
+                padding: 6px;
+                background-color: white;
+                z-index: 999;
+                text-align: center;
+                border: 1px solid #ccc;
+            }
+            
+            &.ace_focus {
+                background-color: white;
+                .edit_message {
+                    display: none;
                 }
             }
         }

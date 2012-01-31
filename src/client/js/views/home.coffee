@@ -40,7 +40,7 @@
             @initEditors()
             
             @loadCode()
-            #@initCodeSaving()                
+            @initCodeSaving()                
             Peanutty.runScript()  
         
             @loadSolutions()
@@ -71,6 +71,13 @@
             
             @environmentEditor = ace.edit(@$('#codes .environment')[0])
             @environmentEditor.getSession().setMode(new CoffeeScriptMode())
+            
+            for editor in @$("#codes .code")
+                editMessage = $(document.createElement("DIV"))
+                editMessage.addClass('edit_message')
+                editMessage.html("Edit this code!<br/><br/>If you make a change, just hit 'Run Script' above to run it.")
+                $(editor).append(editMessage)
+            
 
         initTabs: () =>
             @$('.tabs .tab').bind 'click', (e) =>

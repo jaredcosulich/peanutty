@@ -1669,13 +1669,13 @@ a.menu:after, .dropdown-toggle:after {
   -webkit-border-radius: 4px 4px 0 0;
   -moz-border-radius: 4px 4px 0 0;
   border-radius: 4px 4px 0 0;
-  background-color: #eee;
-  border-color: #eee #eee #ddd;
+  background-color: #ddd;
+  border-color: #ddd #ddd #ccc;
 }
 .tabs > li > a:hover {
   text-decoration: none;
-  background-color: #ddd;
-  border-color: #ddd #ddd #ccc;
+  background-color: #ccc;
+  border-color: #ccc #ccc #bbb;
 }
 .tabs .active > a, .tabs .active > a:hover {
   color: #808080;
@@ -2576,6 +2576,7 @@ a {
 #console #codes .code {
   height: 466px;
   display: none;
+  background-color: #eee;
 }
 #console #codes .code.selected {
   display: block;
@@ -2596,6 +2597,23 @@ a {
 }
 #console #codes .code .ace_line.highlight {
   background-color: #46a546;
+}
+#console #codes .code .edit_message {
+  position: absolute;
+  top: 180px;
+  left: 120px;
+  width: 150px;
+  padding: 6px;
+  background-color: white;
+  z-index: 999;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+#console #codes .code.ace_focus {
+  background-color: white;
+}
+#console #codes .code.ace_focus .edit_message {
+  display: none;
 }
 .code_message {
   position: absolute;

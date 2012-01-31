@@ -62,6 +62,7 @@
         this.initTopButtons();
         this.initEditors();
         this.loadCode();
+        this.initCodeSaving();
         Peanutty.runScript();
         return this.loadSolutions();
       };
@@ -96,14 +97,24 @@
       };
 
       Home.prototype.initEditors = function() {
-        var CoffeeScriptMode;
+        var CoffeeScriptMode, editMessage, editor, _i, _len, _ref, _results;
         CoffeeScriptMode = ace.require("ace/mode/coffee").Mode;
         this.scriptEditor = ace.edit(this.$('#codes .script')[0]);
         this.scriptEditor.getSession().setMode(new CoffeeScriptMode());
         this.levelEditor = ace.edit(this.$('#codes .level')[0]);
         this.levelEditor.getSession().setMode(new CoffeeScriptMode());
         this.environmentEditor = ace.edit(this.$('#codes .environment')[0]);
-        return this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
+        this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
+        _ref = this.$("#codes .code");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          editor = _ref[_i];
+          editMessage = $(document.createElement("DIV"));
+          editMessage.addClass('edit_message');
+          editMessage.html("Edit this code!<br/><br/>If you make a change, just hit 'Run Script' above to run it.");
+          _results.push($(editor).append(editMessage));
+        }
+        return _results;
       };
 
       Home.prototype.initTabs = function() {

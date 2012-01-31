@@ -137,16 +137,6 @@
     }
   });
 
-  view.codeChangeMessageShown || (view.codeChangeMessageShown = false);
-
-  view.$('#codes .code').bind('keypress', function() {
-    if (view.codeChangeMessageShown) return;
-    view.codeChangeMessageShown = true;
-    return peanutty.sendCodeMessage({
-      message: "You've changed the code.\nTo see your changes you'll need to rerun your script by clicking \"Run Script\" above."
-    });
-  });
-
   level.createLetters = function(_arg) {
     var letter, letterWidth, letters, start, width, x, y, _i, _len, _results;
     x = _arg.x, y = _arg.y, letters = _arg.letters;

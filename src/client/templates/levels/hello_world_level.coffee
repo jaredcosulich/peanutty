@@ -108,19 +108,6 @@ peanutty.addContactListener
                 $.timeout 10, () => view.$('#next_level').bind 'click', () => view.loadNewLevel('simple_bucket')
 
 
-# Add an explanation of how to run the code if you change it.
-view.codeChangeMessageShown or= false
-view.$('#codes .code').bind 'keypress', () =>
-    return if view.codeChangeMessageShown
-    view.codeChangeMessageShown = true
-    peanutty.sendCodeMessage
-        message:
-            """
-            You've changed the code.
-            To see your changes you'll need to rerun your script by clicking "Run Script" above.
-            """    
-
-
 # Letter definitions added to Peanutty
 level.createLetters = ({x, y, letters}) ->
     width = @getLettersWidth letters: letters
