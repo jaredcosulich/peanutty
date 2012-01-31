@@ -10,8 +10,8 @@ peanutty.createGround
     width: 600
     height: 10
     
-# Set up the user inputs
 
+# Set up the user inputs
 instructions = level.elements.instructions = $(document.createElement("DIV"))
 instructions.css
     height: '30px'
@@ -106,6 +106,7 @@ peanutty.addContactListener
                     "<br/>Nice job :) When you're ready, head to the <a id='next_level'>next level ></a>"
                 )
                 $.timeout 10, () => view.$('#next_level').bind 'click', () => view.loadNewLevel('simple_bucket')
+
 
 # Add an explanation of how to run the code if you change it.
 view.codeChangeMessageShown or= false
@@ -540,10 +541,10 @@ level.createLetter = ({x, y, letter}) ->
 
 
 # Display Hello World
-
 level.createLetters
     x: peanutty.screen.dimensions.width / 2
     y: 55
     letters: 'Hello World'
 
+# Sign the level
 peanutty.sign('@jaredcosulich', 'jaredcosulich')
