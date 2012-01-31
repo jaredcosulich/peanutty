@@ -129,11 +129,13 @@
         });
         this.$('#code_buttons .load_level').bind('click', function(e) {
           return peanutty.sendCodeMessage({
-            message: "If you want to load in a new level simply paste the code in to the level tab."
+            message: "If you want to load in a new level simply paste the code in to the 'Level Code' tab."
           });
         });
         return this.$('#code_buttons .reset_level').bind('click', function(e) {
-          return _this.resetLevel();
+          if (confirm('Are you sure you want to reset this level?\n\nAll of your code changes will be lost.')) {
+            return _this.resetLevel();
+          }
         });
       };
 

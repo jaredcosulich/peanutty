@@ -91,10 +91,11 @@
                 peanutty.sendCodeMessage
                     message:
                         """
-                            If you want to load in a new level simply paste the code in to the level tab.
+                            If you want to load in a new level simply paste the code in to the 'Level Code' tab.
                         """
             @$('#code_buttons .reset_level').bind 'click', (e) =>
-                @resetLevel()            
+                if (confirm('Are you sure you want to reset this level?\n\nAll of your code changes will be lost.'))
+                    @resetLevel()            
                    
         resizeAreas: () =>
             fullWidth = $(window).width()
