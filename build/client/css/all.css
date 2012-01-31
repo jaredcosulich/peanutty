@@ -1669,11 +1669,13 @@ a.menu:after, .dropdown-toggle:after {
   -webkit-border-radius: 4px 4px 0 0;
   -moz-border-radius: 4px 4px 0 0;
   border-radius: 4px 4px 0 0;
+  background-color: #eee;
+  border-color: #eee #eee #ddd;
 }
 .tabs > li > a:hover {
   text-decoration: none;
-  background-color: #eee;
-  border-color: #eee #eee #ddd;
+  background-color: #ddd;
+  border-color: #ddd #ddd #ccc;
 }
 .tabs .active > a, .tabs .active > a:hover {
   color: #808080;
