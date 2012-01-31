@@ -535,7 +535,7 @@
           this.codeMessage.append(document.createElement('DIV'));
         }
         this.codeMessage.find('div').html(message);
-        activeEditor = (function() {
+        activeEditor = ((function() {
           var _i, _len, _ref, _results;
           _ref = [this.scriptEditor, this.levelEditor, this.environmentEditor];
           _results = [];
@@ -544,7 +544,7 @@
             if (editor.container.offsetLeft !== 0) _results.push(editor.container);
           }
           return _results;
-        }).call(this);
+        }).call(this))[0];
         this.codeMessage.css({
           top: activeEditor.offsetTop,
           right: $(document.body).width() - activeEditor.offsetLeft + (parseInt($(document.body).css('paddingRight')) * 2)

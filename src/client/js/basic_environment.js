@@ -1,5 +1,5 @@
 (function() {
-  var canvas, environmentEditor, initiateBall, initiateBox, initiateFree, scale, scriptEditor, stageEditor, static, unbindMouseEvents;
+  var canvas, environmentEditor, initiateBall, initiateBox, initiateFree, levelEditor, scale, scriptEditor, static, unbindMouseEvents;
   var _this = this;
 
   scale = 30;
@@ -8,14 +8,14 @@
 
   scriptEditor = view.scriptEditor;
 
-  stageEditor = view.stageEditor;
+  levelEditor = view.levelEditor;
 
   environmentEditor = view.environmentEditor;
 
   window.peanutty = new Peanutty({
     canvas: canvas,
     scriptEditor: scriptEditor,
-    stageEditor: stageEditor,
+    levelEditor: levelEditor,
     environmentEditor: environmentEditor,
     scale: scale,
     gravity: new b2d.Common.Math.b2Vec2(0, 10)

@@ -376,7 +376,7 @@
                 @scriptEditor,
                 @levelEditor,
                 @environmentEditor
-            ] when editor.container.offsetLeft != 0)
+            ] when editor.container.offsetLeft != 0)[0]
             @codeMessage.css
                 top: activeEditor.offsetTop
                 right: $(document.body).width() - 

@@ -1,13 +1,13 @@
 scale = 30
 canvas = view.$('#canvas')
 scriptEditor = view.scriptEditor
-stageEditor = view.stageEditor
+levelEditor = view.levelEditor
 environmentEditor = view.environmentEditor
 
 window.peanutty = new Peanutty
     canvas: canvas
     scriptEditor: scriptEditor
-    stageEditor: stageEditor
+    levelEditor: levelEditor
     environmentEditor: environmentEditor
     scale: scale
     gravity: new b2d.Common.Math.b2Vec2(0, 10)
