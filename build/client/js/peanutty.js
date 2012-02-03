@@ -123,7 +123,7 @@
             if (--time >= 0) {
               return move();
             } else {
-              return callback();
+              if (callback != null) return callback();
             }
           });
         };
@@ -167,7 +167,7 @@
             if (--time >= 0) {
               return adjustScale();
             } else {
-              return callback();
+              if (callback != null) return callback();
             }
           });
         };
@@ -179,12 +179,25 @@
         return this.evaluateDimensions();
       };
 
+      Screen.prototype.setLevelScale = function(scale) {
+        this.levelScale = scale;
+        return this.setScale(scale);
+      };
+
       Screen.prototype.getScale = function() {
         return this.draw.GetDrawScale();
       };
 
+      Screen.prototype.getLevelScale = function() {
+        return this.levelScale;
+      };
+
       Screen.prototype.scaleRatio = function() {
         return this.defaultScale / this.getScale();
+      };
+
+      Screen.prototype.levelScaleRatio = function() {
+        return this.defaultScale / this.getLevelScale();
       };
 
       Screen.prototype.getDraw = function() {
@@ -299,16 +312,18 @@
       };
 
       Screen.prototype.evaluateDimensions = function() {
-        var x, y;
+        var screenCenterAdjustment, startingScreenHeight, x, y;
         this.dimensions = {
           width: this.canvas.width() * this.scaleRatio(),
           height: this.canvas.height() * this.scaleRatio()
         };
-        y = (this.getCenterAdjustment().y * this.scaleRatio()) * -1;
-        x = (this.getCenterAdjustment().x * this.scaleRatio()) * -1;
+        startingScreenHeight = this.canvas.height() * this.levelScaleRatio();
+        screenCenterAdjustment = this.canvasToScreen(this.getCenterAdjustment());
+        y = screenCenterAdjustment.y * -1;
+        x = screenCenterAdjustment.x * -1;
         return this.viewPort = {
-          bottom: y,
-          top: y + this.dimensions.height,
+          bottom: startingScreenHeight + y,
+          top: startingScreenHeight + y + this.dimensions.height,
           left: x,
           right: x + this.dimensions.width
         };

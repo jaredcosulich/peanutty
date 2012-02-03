@@ -2,7 +2,7 @@ level.name = 'simple_bucket'
 Peanutty.createEnvironment()
 
 # Zoom out
-peanutty.screen.setScale(25 * (peanutty.canvas.width() / 835))
+peanutty.screen.setLevelScale(25 * (peanutty.canvas.width() / 835))
 
 # Create the ball area
 peanutty.createGround

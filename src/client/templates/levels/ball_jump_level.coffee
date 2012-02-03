@@ -2,7 +2,7 @@ view.level = 'ball_jump'
 Peanutty.createEnvironment()
 
 scale = 15 * (peanutty.canvas.width() / 835)
-peanutty.screen.setScale(scale)
+peanutty.screen.setLevelScale(scale)
     
     
 # Create all the platforms
@@ -131,10 +131,32 @@ peanutty.addContactListener
 # Track the ball and move the screen along with it
 adjustScreen = () =>
     window.adjustScreenRunning = true
+
+    unless level.adjustingZoom
+        ballY = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).y
+        yThreshold = peanutty.screen.viewPort.top - (peanutty.screen.dimensions.height * 0.2)
+        if ballY > yThreshold
+            level.adjustingZoom = true
+            peanutty.screen.zoom
+                percentage: 10
+                out: true
+                time: 100
+                callback: () => level.adjustingZoom = false
+            peanutty.screen.pan(y: 100, time: 100)
+        else if peanutty.screen.getScale() < scale && ballY < yThreshold
+            level.adjustingZoom = true
+            peanutty.screen.zoom
+                percentage: 10
+                out: false
+                time: 100
+                callback: () => level.adjustingZoom = false
+            peanutty.screen.pan(y: -100, time: 100)
+
     maxRight = peanutty.screen.viewPort.right - (peanutty.screen.dimensions.width * 0.8)
     maxLeft = peanutty.screen.viewPort.left + (peanutty.screen.dimensions.width * 0.1)
     
-    ballX = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).x + (level.elements.ball.GetLinearVelocity().x * 10)
+    ballX = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).x + (level.elements.ball.GetLinearVelocity().x);
+    
 
     if ballX > maxRight
         peanutty.screen.pan(x: (ballX - maxRight), time: 50, callback: adjustScreen)

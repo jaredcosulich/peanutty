@@ -1,7 +1,7 @@
 level.name = 'hello_world'
 Peanutty.createEnvironment()
 
-peanutty.screen.setScale(30 * (peanutty.canvas.width() / 835))
+peanutty.screen.setLevelScale(30 * (peanutty.canvas.width() / 835))
 
 # Create the ground
 peanutty.createGround

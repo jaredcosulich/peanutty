@@ -97,7 +97,7 @@
                     if --time >= 0
                         move()
                     else
-                        callback()
+                        callback() if callback?
             move()
             
         pan: ({x, y, time, callback}) ->
@@ -128,15 +128,21 @@
                     if --time >= 0
                         adjustScale()
                     else
-                        callback()
+                        callback() if callback?
             adjustScale()
         
         setScale: (scale) -> 
             @draw.SetDrawScale(scale)
             @evaluateDimensions()
             
+        setLevelScale: (scale) ->
+            @levelScale = scale
+            @setScale(scale)
+                    
         getScale: () -> @draw.GetDrawScale()
+        getLevelScale: () -> @levelScale
         scaleRatio: () -> @defaultScale / @getScale()
+        levelScaleRatio: () -> @defaultScale / @getLevelScale()
         
         getDraw: () -> @draw
         getContext: () -> @context
@@ -233,14 +239,18 @@
             @dimensions = 
                 width: @canvas.width() * @scaleRatio()
                 height: @canvas.height() * @scaleRatio()
-                
-            y = (@getCenterAdjustment().y * @scaleRatio()) * -1
-            x = (@getCenterAdjustment().x * @scaleRatio()) * -1
+            
+            startingScreenHeight = @canvas.height() * @levelScaleRatio()
+
+            screenCenterAdjustment = @canvasToScreen(@getCenterAdjustment())
+            y = screenCenterAdjustment.y * -1
+            x = screenCenterAdjustment.x * -1
             @viewPort = 
-                bottom: y
-                top: y + @dimensions.height
+                bottom: startingScreenHeight + y
+                top: startingScreenHeight + y + @dimensions.height
                 left: x
                 right: x + @dimensions.width
+
                     
         screenToWorld: (point) ->
             vec2 = new b2d.Common.Math.b2Vec2(point.x, @dimensions.height - point.y)

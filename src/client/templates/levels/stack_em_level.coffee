@@ -2,7 +2,7 @@ level.name = 'stack_em'
 Peanutty.createEnvironment()
 
 scale = 20 * (peanutty.canvas.width() / 835)
-peanutty.screen.setScale(scale)
+peanutty.screen.setLevelScale(scale)
     
 # Create the star
 createStar = ({x, y, radius, totalPoints}) =>
