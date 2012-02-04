@@ -322,8 +322,11 @@
         fixDef.drawData = options.drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
         fixDef.shape.SetAsBox(options.width / this.screen.defaultScale, options.height / this.screen.defaultScale);
-        bodyDef.position.x = options.x / this.screen.defaultScale;
-        bodyDef.position.y = (this.screen.dimensions.height - options.y) / this.screen.defaultScale;
+        this.setBodyDefPosition({
+          bodyDef: bodyDef,
+          screenX: options.x,
+          screenY: options.y
+        });
         body = this.world.CreateBody(bodyDef);
         body.CreateFixture(fixDef);
         return body;
@@ -342,8 +345,11 @@
         fixDef.drawData = options.drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2CircleShape;
         fixDef.shape.SetRadius(options.radius / this.screen.defaultScale);
-        bodyDef.position.x = options.x / this.screen.defaultScale;
-        bodyDef.position.y = (this.screen.dimensions.height - options.y) / this.screen.defaultScale;
+        this.setBodyDefPosition({
+          bodyDef: bodyDef,
+          screenX: options.x,
+          screenY: options.y
+        });
         body = this.world.CreateBody(bodyDef);
         body.CreateFixture(fixDef);
         return body;

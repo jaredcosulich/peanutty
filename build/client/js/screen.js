@@ -91,9 +91,16 @@
       };
 
       Screen.prototype.setScale = function(scale) {
+        var viewPortBottom;
         if (this.levelScale == null) this.levelScale = scale;
+        if (this.viewPort != null) viewPortBottom = this.viewPort.bottom;
         this.draw.SetDrawScale(scale);
-        return this.evaluateDimensions();
+        this.evaluateDimensions();
+        if (viewPortBottom != null) {
+          return this.pan({
+            y: viewPortBottom - this.viewPort.bottom
+          });
+        }
       };
 
       Screen.prototype.setLevelScale = function(scale) {

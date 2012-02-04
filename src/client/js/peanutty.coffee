@@ -216,8 +216,7 @@
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape            
             fixDef.shape.SetAsBox(((options.width)/@screen.defaultScale), ((options.height)/@screen.defaultScale))
         
-            bodyDef.position.x = (options.x/@screen.defaultScale)
-            bodyDef.position.y = ((@screen.dimensions.height - options.y)/@screen.defaultScale)
+            @setBodyDefPosition(bodyDef: bodyDef, screenX: options.x, screenY: options.y)
         
             body = @world.CreateBody(bodyDef)
             body.CreateFixture(fixDef)
@@ -237,8 +236,7 @@
             fixDef.shape = new b2d.Collision.Shapes.b2CircleShape
             fixDef.shape.SetRadius(options.radius/@screen.defaultScale)
         
-            bodyDef.position.x = (options.x/@screen.defaultScale)
-            bodyDef.position.y = ((@screen.dimensions.height - options.y)/@screen.defaultScale)
+            @setBodyDefPosition(bodyDef: bodyDef, screenX: options.x, screenY: options.y)
             
             body = @world.CreateBody(bodyDef)
             body.CreateFixture(fixDef)
@@ -271,7 +269,7 @@
         
             body = @world.CreateBody(bodyDef)
             body.CreateFixture(fixtureDef) for fixtureDef in fixtureDefs
-                
+             
             bodyDef.position.x = body.GetWorldCenter().x
             bodyDef.position.y = body.GetWorldCenter().y
         

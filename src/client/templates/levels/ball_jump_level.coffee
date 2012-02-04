@@ -133,8 +133,7 @@ adjustScreen = () =>
     window.adjustScreenRunning = true
 
     unless level.adjustingZoom
-        ballY = (peanutty.screen.canvasToScreen(peanutty.screen.getCenterAdjustment()).y - peanutty.screen.dimensions.height) +
-                peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).y
+        ballY = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).y
                 
         if ballY > peanutty.screen.viewPort.top - (peanutty.screen.dimensions.height * 0.1)
             level.adjustingZoom = true
@@ -143,8 +142,7 @@ adjustScreen = () =>
                 out: true
                 time: 300
                 callback: () => level.adjustingZoom = false
-            peanutty.screen.pan(y: (level.elements.ball.GetLinearVelocity().y * -20), time: 300)
-
+ 
     maxRight = peanutty.screen.viewPort.right - (peanutty.screen.dimensions.width * 0.8)
     maxLeft = peanutty.screen.viewPort.left + (peanutty.screen.dimensions.width * 0.1)
     

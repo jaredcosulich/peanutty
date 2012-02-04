@@ -64,8 +64,10 @@
         
         setScale: (scale) -> 
             @levelScale = scale unless @levelScale?
+            viewPortBottom = @viewPort.bottom if @viewPort?
             @draw.SetDrawScale(scale)
             @evaluateDimensions()
+            @pan(y: viewPortBottom - @viewPort.bottom) if viewPortBottom?
             
         setLevelScale: (scale) ->
             @levelScale = scale
