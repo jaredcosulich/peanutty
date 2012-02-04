@@ -462,12 +462,15 @@
     Peanutty.executingCode = []
     Peanutty.runCode = (editor) => 
         code = editor.getSession().getValue()
+        complete = []
         complete = ["try"]
         active = []
         tab = "    "
+        indent = ""
+        catchCode = () =>
+            "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message)\n" + indent + tab + "throw error"
+        catches = [catchCode()]
         indent = tab
-        catchCode = "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message); throw error"
-        catches = [catchCode]
         
         segments = code.split(/\n/)
         for segment, index in segments
@@ -479,7 +482,7 @@
                     complete.push(indent + "Peanutty.executingCode.push $.timeout #{time}, () =>\n")
                     indent += tab
                     complete.push(indent + "try\n")
-                    catches.push(indent + catchCode)
+                    catches.push(indent + catchCode())
                     indent += tab
             else
                 active.push(indent + segment)
@@ -487,6 +490,7 @@
         complete.push(active.join("\n"))
         complete.push(catches.reverse().join("\n"))
         try
+            console.log(complete.join("\n"))
             CoffeeScript.run(complete.join("\n"))
         catch error
             peanutty.sendCodeMessage(message: 'Code Error: ' + error.message.replace(/on line \d+/, ''))

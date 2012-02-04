@@ -659,12 +659,16 @@
     Peanutty.runCode = function(editor) {
       var active, catchCode, catches, code, complete, indent, index, segment, segments, tab, time, _len;
       code = editor.getSession().getValue();
+      complete = [];
       complete = ["try"];
       active = [];
       tab = "    ";
+      indent = "";
+      catchCode = function() {
+        return "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message)\n" + indent + tab + "throw error";
+      };
+      catches = [catchCode()];
       indent = tab;
-      catchCode = "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message); throw error";
-      catches = [catchCode];
       segments = code.split(/\n/);
       for (index = 0, _len = segments.length; index < _len; index++) {
         segment = segments[index];
@@ -676,7 +680,7 @@
             complete.push(indent + ("Peanutty.executingCode.push $.timeout " + time + ", () =>\n"));
             indent += tab;
             complete.push(indent + "try\n");
-            catches.push(indent + catchCode);
+            catches.push(indent + catchCode());
             indent += tab;
           }
         } else {
@@ -686,6 +690,7 @@
       complete.push(active.join("\n"));
       complete.push(catches.reverse().join("\n"));
       try {
+        console.log(complete.join("\n"));
         return CoffeeScript.run(complete.join("\n"));
       } catch (error) {
         peanutty.sendCodeMessage({
