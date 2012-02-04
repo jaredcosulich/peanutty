@@ -690,7 +690,6 @@
       complete.push(active.join("\n"));
       complete.push(catches.reverse().join("\n"));
       try {
-        console.log(complete.join("\n"));
         return CoffeeScript.run(complete.join("\n"));
       } catch (error) {
         peanutty.sendCodeMessage({

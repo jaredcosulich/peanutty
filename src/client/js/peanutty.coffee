@@ -490,7 +490,6 @@
         complete.push(active.join("\n"))
         complete.push(catches.reverse().join("\n"))
         try
-            console.log(complete.join("\n"))
             CoffeeScript.run(complete.join("\n"))
         catch error
             peanutty.sendCodeMessage(message: 'Code Error: ' + error.message.replace(/on line \d+/, ''))
