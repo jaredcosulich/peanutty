@@ -91,6 +91,7 @@
       };
 
       Screen.prototype.setScale = function(scale) {
+        if (this.levelScale == null) this.levelScale = scale;
         this.draw.SetDrawScale(scale);
         return this.evaluateDimensions();
       };
@@ -227,19 +228,22 @@
         }
       };
 
+      Screen.prototype.startingScreenHeight = function() {
+        return this.canvas.height() * this.levelScaleRatio();
+      };
+
       Screen.prototype.evaluateDimensions = function() {
-        var screenCenterAdjustment, startingScreenHeight, x, y;
+        var screenCenterAdjustment, x, y;
         this.dimensions = {
           width: this.canvas.width() * this.scaleRatio(),
           height: this.canvas.height() * this.scaleRatio()
         };
-        startingScreenHeight = this.canvas.height() * this.levelScaleRatio();
         screenCenterAdjustment = this.canvasToScreen(this.getCenterAdjustment());
         y = screenCenterAdjustment.y * -1;
         x = screenCenterAdjustment.x * -1;
         return this.viewPort = {
-          bottom: startingScreenHeight + y,
-          top: startingScreenHeight + y + this.dimensions.height,
+          bottom: this.startingScreenHeight() + y,
+          top: this.startingScreenHeight() + y + this.dimensions.height,
           left: x,
           right: x + this.dimensions.width
         };
@@ -247,7 +251,7 @@
 
       Screen.prototype.screenToWorld = function(point) {
         var vec2;
-        vec2 = new b2d.Common.Math.b2Vec2(point.x, this.dimensions.height - point.y);
+        vec2 = new b2d.Common.Math.b2Vec2(point.x, this.startingScreenHeight() - point.y);
         vec2.Multiply(1 / this.defaultScale);
         return vec2;
       };
@@ -256,7 +260,7 @@
         var vec2;
         vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y);
         vec2.Multiply(this.defaultScale);
-        return new b2d.Common.Math.b2Vec2(vec2.x, this.dimensions.height - vec2.y);
+        return new b2d.Common.Math.b2Vec2(vec2.x, this.startingScreenHeight() - vec2.y);
       };
 
       Screen.prototype.canvasToScreen = function(point) {

@@ -9,7 +9,7 @@
     CoffeeScript.run = (code, options = {}) ->
         options.bare = on
         Function(CoffeeScript.compile code, options)()
-
+        
     b2d.Dynamics.b2Fixture::Create2 = b2d.Dynamics.b2Fixture::Create
     b2d.Dynamics.b2Fixture::Create = (body, xf, def) ->
         @drawData = def.drawData
@@ -183,6 +183,11 @@
                        (parseInt($(document.body).css('paddingRight')) * 2)
             @codeMessage.addClass('expanded')
         
+        setBodyDefPosition: ({bodyDef, screenX, screenY}) =>
+            screenPosition = new b2d.Common.Math.b2Vec2(screenX, screenY)
+            worldPosition = @screen.screenToWorld(screenPosition)
+            bodyDef.position.x = worldPosition.x
+            bodyDef.position.y = worldPosition.y
     
         createGround: (options={}) =>
             fixDef = fixDef = @createFixtureDef()
@@ -192,8 +197,7 @@
         
             bodyDef = new b2d.Dynamics.b2BodyDef
             bodyDef.type = b2d.Dynamics.b2Body.b2_staticBody
-            bodyDef.position.x = options.x / @screen.defaultScale
-            bodyDef.position.y = (@screen.dimensions.height - options.y) / @screen.defaultScale
+            @setBodyDefPosition(bodyDef: bodyDef, screenX: options.x, screenY: options.y)
         
             @world.CreateBody(bodyDef).CreateFixture(fixDef)
     
@@ -462,7 +466,8 @@
         active = []
         tab = "    "
         indent = tab
-        catches = []
+        catchCode = "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message); throw error"
+        catches = [catchCode]
         
         segments = code.split(/\n/)
         for segment, index in segments
@@ -474,7 +479,7 @@
                     complete.push(indent + "Peanutty.executingCode.push $.timeout #{time}, () =>\n")
                     indent += tab
                     complete.push(indent + "try\n")
-                    catches.push(indent + "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message)")
+                    catches.push(indent + catchCode)
                     indent += tab
             else
                 active.push(indent + segment)
@@ -485,6 +490,7 @@
             CoffeeScript.run(complete.join("\n"))
         catch error
             peanutty.sendCodeMessage(message: 'Code Error: ' + error.message.replace(/on line \d+/, ''))
+            throw error
             
     Peanutty.runScript = (scriptEditor = view.scriptEditor) => Peanutty.runCode(scriptEditor)    
     Peanutty.loadLevel = (levelEditor = view.levelEditor) => Peanutty.runCode(levelEditor)

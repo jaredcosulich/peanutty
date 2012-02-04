@@ -63,6 +63,7 @@
             adjustScale()
         
         setScale: (scale) -> 
+            @levelScale = scale unless @levelScale?
             @draw.SetDrawScale(scale)
             @evaluateDimensions()
             
@@ -166,32 +167,33 @@
                    @draw.DrawTransform(xf)               
                    b = b.GetNext()
     
+        startingScreenHeight: () ->
+            @canvas.height() * @levelScaleRatio()
+        
         evaluateDimensions: () ->
             @dimensions = 
                 width: @canvas.width() * @scaleRatio()
                 height: @canvas.height() * @scaleRatio()
             
-            startingScreenHeight = @canvas.height() * @levelScaleRatio()
-
             screenCenterAdjustment = @canvasToScreen(@getCenterAdjustment())
             y = screenCenterAdjustment.y * -1
             x = screenCenterAdjustment.x * -1
             @viewPort = 
-                bottom: startingScreenHeight + y
-                top: startingScreenHeight + y + @dimensions.height
+                bottom: @startingScreenHeight() + y
+                top: @startingScreenHeight() + y + @dimensions.height
                 left: x
                 right: x + @dimensions.width
 
                     
         screenToWorld: (point) ->
-            vec2 = new b2d.Common.Math.b2Vec2(point.x, @dimensions.height - point.y)
+            vec2 = new b2d.Common.Math.b2Vec2(point.x, @startingScreenHeight() - point.y)
             vec2.Multiply(1/@defaultScale)
             return vec2
             
         worldToScreen: (point) ->
             vec2 = new b2d.Common.Math.b2Vec2(point.x, point.y)
             vec2.Multiply(@defaultScale)
-            return new b2d.Common.Math.b2Vec2(vec2.x, @dimensions.height - vec2.y)
+            return new b2d.Common.Math.b2Vec2(vec2.x, @startingScreenHeight() - vec2.y)
             
         canvasToScreen: (point) ->
             vec2 = new b2d.Common.Math.b2Vec2(point.x, @canvas.height() - point.y)
