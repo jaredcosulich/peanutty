@@ -18,6 +18,7 @@ task 'build:index', 'Build the static index page', ->
     
     scripts = ("#{script}?#{new Date().getTime()}" for script in [
         lib...,
+        "#{target}/js/screen.js"
         "#{target}/js/peanutty.js"
         views...,
         "#{target}/js/init.js",
@@ -232,6 +233,7 @@ buildClientHTML = (source, target, callback) ->
         'lib/ace/ace-uncompressed-noconflict.js',
         'lib/ace/mode-coffee-uncompressed-noconflict.js',
         'lib/coffee-script.js',
+        'screen.js',
         'peanutty.js',
         
         views...,
