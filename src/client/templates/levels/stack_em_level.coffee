@@ -100,7 +100,7 @@ setInterval(
                         left: '10px'
                     level.canvasContainer.append(success)                    
                 ),
-                point
+                peanutty.screen.screenToWorld(point)
             )           
     ), 100
 )

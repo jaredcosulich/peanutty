@@ -26,35 +26,34 @@ unbindMouseEvents = (canvas) =>
 initiateFree = (canvas) =>
     unbindMouseEvents(canvas)
     canvas.bind 'click', (e) => 
-        x = e.offsetX
-        y = (peanutty.canvas.height() - e.offsetY)
+        screenPoint = peanutty.screen.canvasToScreen(new b2d.Common.Math.b2Vec2(e.offsetX, e.offsetY))
         
-        firstPoint = if peanutty.currentShape? then peanutty.currentShape.path[0] else null
-        if firstPoint? && Math.abs(firstPoint.x - x) < 10 && Math.abs((peanutty.canvas.height() - firstPoint.y) - y) < 10
+        firstPoint = if peanutty.currentShape? then peanutty.currentShape.start else null
+        if firstPoint? && Math.abs(firstPoint.x - screenPoint.x) < 10 && Math.abs(firstPoint.y - screenPoint.y) < 10
             peanutty.endFreeformShape
                 static: static
                 time: level.getTimeDiff()
             return
             
-        peanutty.addToFreeformShape(x: x, y: y) 
+        peanutty.addToFreeformShape(screenPoint) 
             
         return
                                
     canvas.bind 'mousemove', (e) =>
-        peanutty.addTempToFreeformShape
-            x: e.offsetX
-            y: e.offsetY
+        screenPoint = peanutty.screen.canvasToScreen(new b2d.Common.Math.b2Vec2(e.offsetX, e.offsetY))
+        peanutty.addTempToFreeformShape(screenPoint)
         return
 
 initiateBox = (canvas) =>
     unbindMouseEvents(canvas)
     canvas.bind 'click', (e) =>
+        screenPoint = peanutty.screen.canvasToScreen(new b2d.Common.Math.b2Vec2(e.offsetX, e.offsetY))
         peanutty.addToScript
             command:
                 """
                 peanutty.createBox
-                    x: #{(e.offsetX - peanutty.screen.getCenterAdjustment().x) * (peanutty.screen.scaleRatio())}
-                    y: #{(peanutty.screen.dimensions.height - ((e.offsetY - peanutty.screen.getCenterAdjustment().y) * (peanutty.screen.scaleRatio())))}
+                    x: #{screenPoint.x}
+                    y: #{screenPoint.y}
                     width: 20
                     height: 20
                     static: #{static}
@@ -64,12 +63,13 @@ initiateBox = (canvas) =>
 initiateBall = (canvas) =>
     unbindMouseEvents(canvas)
     canvas.bind 'click', (e) =>     
+        screenPoint = peanutty.screen.canvasToScreen(new b2d.Common.Math.b2Vec2(e.offsetX, e.offsetY))
         peanutty.addToScript
             command: 
                 """
                 peanutty.createBall
-                    x: #{(e.offsetX - peanutty.screen.getCenterAdjustment().x) * (peanutty.screen.scaleRatio())}
-                    y: #{(peanutty.screen.dimensions.height - ((e.offsetY - peanutty.screen.getCenterAdjustment().y) * (peanutty.screen.scaleRatio())))}
+                    x: #{screenPoint.x}
+                    y: #{screenPoint.y}
                     radius: 20
                     static: #{static}
                 """

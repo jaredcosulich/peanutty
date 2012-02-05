@@ -250,12 +250,7 @@
         
             path = path.reverse() if @_counterClockWise(path)
         
-            scaledPath = (
-                new b2d.Common.Math.b2Vec2(
-                    point.x/@screen.defaultScale, 
-                    (@screen.dimensions.height - point.y)/@screen.defaultScale
-                ) for point in path
-            )
+            scaledPath = (@screen.screenToWorld(point) for point in path)
         
             fixDef.shape.SetAsArray(scaledPath, scaledPath.length)
             return fixDef
@@ -339,24 +334,17 @@
     
         tempShapes: []
         addTempShape: (shape) =>
-            adjustedShape = {path: []}
-            for point in shape.path
-                adjustedPoint = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, point.y))
-                adjustedShape.path.push(adjustedPoint)
-                
-            adjustedShape.start = @screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, shape.start.y))
-            @tempShapes.push(adjustedShape)
-            return adjustedShape
-                     
+            @tempShapes.push(shape)
+            return shape                     
             
         redrawTempShapes: () =>
             for shape in @tempShapes
                 if shape instanceof Function
                     shape()
                 else
-                    @startFreeformShape(@screen.worldToCanvas(shape.start))
+                    @startFreeformShape(shape.start)
                     for point, index in shape.path
-                        @drawFreeformShape(@screen.worldToCanvas(point))
+                        @drawFreeformShape(point)
             return            
         
         addToFreeformShape: ({x,y}) =>
@@ -366,23 +354,26 @@
                 @initFreeformShape(_arg)
     
         addTempToFreeformShape: ({x,y}) =>
-            @tempPoint = {x:x, y:y}
+            @tempPoint = new b2d.Common.Math.b2Vec2(x, y)
     
         drawFreeformShape: ({x, y}) =>
             @screen.getContext().lineWidth = 0.25
-            @screen.getContext().lineTo(x , y)
+            screenPoint = @screen.screenToCanvas(new b2d.Common.Math.b2Vec2(x, y))
+            @screen.getContext().lineTo(screenPoint.x, screenPoint.y)
             @screen.getContext().stroke()
     
         initFreeformShape: ({x, y}) =>
+            point = new b2d.Common.Math.b2Vec2(x, y)
             @currentShape = 
-                start: {x:x, y:(@canvas.height() - y)}
-                path: [{x:x, y:(@canvas.height() - y)}]
+                start: point
+                path: [point]
             @startFreeformShape(_arg)
     
         startFreeformShape: ({x, y}) =>
             @startShape()
             @screen.getContext().strokeStyle = '#000000'
-            @screen.getContext().moveTo(x, y)
+            screenPoint = @screen.screenToCanvas(new b2d.Common.Math.b2Vec2(x, y))
+            @screen.getContext().moveTo(screenPoint.x, screenPoint.y)
     
         startShape: () =>
             @screen.getContext().strokeStyle = '#ffffff'
@@ -393,15 +384,12 @@
         continueFreeformShape: ({x, y}) =>
             return unless @currentShape?
             @tempPoint = null
-            @currentShape.path.push(
-                x: x
-                y: @canvas.height() - y
-            )
+            @currentShape.path.push(new b2d.Common.Math.b2Vec2(x, y))
             return
     
         endFreeformShape: (options={}) =>
             path = for point in @currentShape.path by Math.ceil(@currentShape.path.length / 10)
-                "{x: #{(point.x - @screen.getCenterAdjustment().x) * @screen.scaleRatio()}, y: #{(@canvas.height() - point.y  + @screen.getCenterAdjustment().y) * @screen.scaleRatio()}}" 
+                "{x: #{point.x}, y: #{point.y}}" 
 
             @addToScript
                 command:

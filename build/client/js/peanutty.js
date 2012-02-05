@@ -1,9 +1,11 @@
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   (function($) {
-    var Peanutty, Screen, b2d;
-    var _this = this;
+    var Peanutty, Screen, b2d,
+      _this = this;
     b2d = require('coffeebox2d');
     Screen = require('Screen');
     CoffeeScript.require = require;
@@ -133,8 +135,8 @@
       }
 
       Peanutty.prototype.runSimulation = function() {
-        var requestAnimFrame, update;
-        var _this = this;
+        var requestAnimFrame, update,
+          _this = this;
         requestAnimFrame = (function() {
           return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback, element) {
             return $.timeout(1000 / 60, callback);
@@ -163,8 +165,8 @@
       Peanutty.prototype.endContactListeners = [];
 
       Peanutty.prototype.initContactListeners = function() {
-        var PeanuttyContactListener, beginContact;
-        var _this = this;
+        var PeanuttyContactListener, beginContact,
+          _this = this;
         beginContact = function(contact) {
           var listener, _i, _len, _ref, _results;
           _ref = _this.beginContactListeners;
@@ -175,9 +177,9 @@
           }
           return _results;
         };
-        PeanuttyContactListener = (function() {
+        PeanuttyContactListener = (function(_super) {
 
-          __extends(PeanuttyContactListener, b2d.Dynamics.b2ContactListener);
+          __extends(PeanuttyContactListener, _super);
 
           function PeanuttyContactListener() {
             PeanuttyContactListener.__super__.constructor.apply(this, arguments);
@@ -187,7 +189,7 @@
 
           return PeanuttyContactListener;
 
-        })();
+        })(b2d.Dynamics.b2ContactListener);
         return this.world.SetContactListener(new PeanuttyContactListener);
       };
 
@@ -212,8 +214,8 @@
       };
 
       Peanutty.prototype.addToScript = function(_arg) {
-        var command, commandLength, endLine, time;
-        var _this = this;
+        var command, commandLength, endLine, time,
+          _this = this;
         command = _arg.command, time = _arg.time;
         CoffeeScript.run(command);
         commandLength = command.split("\n").length;
@@ -248,8 +250,8 @@
       };
 
       Peanutty.prototype.sendCodeMessage = function(_arg) {
-        var activeEditor, closeLink, editor, message;
-        var _this = this;
+        var activeEditor, closeLink, editor, message,
+          _this = this;
         message = _arg.message;
         $('.code_message').remove();
         this.codeMessage = $(document.createElement('DIV'));
@@ -368,7 +370,7 @@
           _results = [];
           for (_i = 0, _len = path.length; _i < _len; _i++) {
             point = path[_i];
-            _results.push(new b2d.Common.Math.b2Vec2(point.x / this.screen.defaultScale, (this.screen.dimensions.height - point.y) / this.screen.defaultScale));
+            _results.push(this.screen.screenToWorld(point));
           }
           return _results;
         }).call(this);
@@ -476,19 +478,8 @@
       Peanutty.prototype.tempShapes = [];
 
       Peanutty.prototype.addTempShape = function(shape) {
-        var adjustedPoint, adjustedShape, point, _i, _len, _ref;
-        adjustedShape = {
-          path: []
-        };
-        _ref = shape.path;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          point = _ref[_i];
-          adjustedPoint = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(point.x, point.y));
-          adjustedShape.path.push(adjustedPoint);
-        }
-        adjustedShape.start = this.screen.screenToWorld(new b2d.Common.Math.b2Vec2(shape.start.x, shape.start.y));
-        this.tempShapes.push(adjustedShape);
-        return adjustedShape;
+        this.tempShapes.push(shape);
+        return shape;
       };
 
       Peanutty.prototype.redrawTempShapes = function() {
@@ -499,11 +490,11 @@
           if (shape instanceof Function) {
             shape();
           } else {
-            this.startFreeformShape(this.screen.worldToCanvas(shape.start));
+            this.startFreeformShape(shape.start);
             _ref2 = shape.path;
             for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
               point = _ref2[index];
-              this.drawFreeformShape(this.screen.worldToCanvas(point));
+              this.drawFreeformShape(point);
             }
           }
         }
@@ -522,44 +513,36 @@
       Peanutty.prototype.addTempToFreeformShape = function(_arg) {
         var x, y;
         x = _arg.x, y = _arg.y;
-        return this.tempPoint = {
-          x: x,
-          y: y
-        };
+        return this.tempPoint = new b2d.Common.Math.b2Vec2(x, y);
       };
 
       Peanutty.prototype.drawFreeformShape = function(_arg) {
-        var x, y;
+        var screenPoint, x, y;
         x = _arg.x, y = _arg.y;
         this.screen.getContext().lineWidth = 0.25;
-        this.screen.getContext().lineTo(x, y);
+        screenPoint = this.screen.screenToCanvas(new b2d.Common.Math.b2Vec2(x, y));
+        this.screen.getContext().lineTo(screenPoint.x, screenPoint.y);
         return this.screen.getContext().stroke();
       };
 
       Peanutty.prototype.initFreeformShape = function(_arg) {
-        var x, y;
+        var point, x, y;
         x = _arg.x, y = _arg.y;
+        point = new b2d.Common.Math.b2Vec2(x, y);
         this.currentShape = {
-          start: {
-            x: x,
-            y: this.canvas.height() - y
-          },
-          path: [
-            {
-              x: x,
-              y: this.canvas.height() - y
-            }
-          ]
+          start: point,
+          path: [point]
         };
         return this.startFreeformShape(_arg);
       };
 
       Peanutty.prototype.startFreeformShape = function(_arg) {
-        var x, y;
+        var screenPoint, x, y;
         x = _arg.x, y = _arg.y;
         this.startShape();
         this.screen.getContext().strokeStyle = '#000000';
-        return this.screen.getContext().moveTo(x, y);
+        screenPoint = this.screen.screenToCanvas(new b2d.Common.Math.b2Vec2(x, y));
+        return this.screen.getContext().moveTo(screenPoint.x, screenPoint.y);
       };
 
       Peanutty.prototype.startShape = function() {
@@ -573,10 +556,7 @@
         x = _arg.x, y = _arg.y;
         if (this.currentShape == null) return;
         this.tempPoint = null;
-        this.currentShape.path.push({
-          x: x,
-          y: this.canvas.height() - y
-        });
+        this.currentShape.path.push(new b2d.Common.Math.b2Vec2(x, y));
       };
 
       Peanutty.prototype.endFreeformShape = function(options) {
@@ -588,7 +568,7 @@
           _results = [];
           for (_i = 0, _len = _ref.length, _step = Math.ceil(this.currentShape.path.length / 10); _i < _len; _i += _step) {
             point = _ref[_i];
-            _results.push("{x: " + ((point.x - this.screen.getCenterAdjustment().x) * this.screen.scaleRatio()) + ", y: " + ((this.canvas.height() - point.y + this.screen.getCenterAdjustment().y) * this.screen.scaleRatio()) + "}");
+            _results.push("{x: " + point.x + ", y: " + point.y + "}");
           }
           return _results;
         }).call(this);
