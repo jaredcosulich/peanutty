@@ -13,7 +13,11 @@
                 reset: @resetLevel
                 load: @loadNewLevel
                 find: @$
-                getTimeDiff: @getTimeDiff
+                lastTime: null
+                getTimeDiff: () =>
+                    timeDiff = if level.lastTime? then new Date() - level.lastTime else 0
+                    level.lastTime = new Date() 
+                    return timeDiff
             
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
@@ -119,6 +123,7 @@
             peanutty.screen.evaluateDimensions() if peanutty?
         
         resetLevel: () =>
+            level.lastTime = null
             peanutty.destroyWorld()
             @removeLevelElements()
             clearTimeout(timeout) for timeout in Peanutty.executingCode
