@@ -6,6 +6,6 @@
             @template = @_requireTemplate('templates/main.html')
     
         renderView: () ->
-            @el.html(@template.render())
+            @el.html(@template.render(version: window.VERSION))
             
 )(ender)
