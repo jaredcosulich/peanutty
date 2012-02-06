@@ -20,8 +20,8 @@
     
     <script type='text/javascript' charset="utf-8">
         views = require('views');
-        views.BaseView.prototype._requireTemplate = function(url) {{ return this._requireElement("/build/client/{timestamp}/" + url, 'script', 'text/html'); }}
-        views.BaseView.prototype._requireScript = function(url) {{ return this._requireElement("/build/client/{timestamp}/" + url, 'script', 'text/javascript'); }}
+        views.BaseView.prototype._requireTemplate = function(url) {{ return this._requireElement("/build/client/versions/{timestamp}/" + url, 'script', 'text/html'); }}
+        views.BaseView.prototype._requireScript = function(url) {{ return this._requireElement("/build/client/versions/{timestamp}/" + url, 'script', 'text/javascript'); }}
         window.STATIC_SERVER = true
     </script>
     
