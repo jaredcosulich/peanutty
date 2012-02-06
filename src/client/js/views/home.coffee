@@ -154,7 +154,7 @@
                     solutionLink.html("Solution #{index + 1}")
                     solutionLink.bind 'click', () =>
                         src = "templates/levels/solutions/#{@data.level}_#{solution}.coffee"
-                        src = "/src/client/#{src}" if window.STATIC_SERVER
+                        src = "/build/client/versions/#{window.VERSION}/#{src}" if window.STATIC_SERVER
                         $.ajax
                             method: 'GET'
                             url: "#{src}?#{Math.random()}"
