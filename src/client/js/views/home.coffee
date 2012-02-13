@@ -64,17 +64,35 @@
                             loadCode = false
                     editor.getSession().on 'change', () => 
                         localStorage.setItem("#{levelName}_#{editorName}", editor.getSession().getValue())
-        
+
         initEditors: () =>
+            # editor monkey patch
+            
+            screenToTextCoordinates = (pageX, pageY) ->
+                canvasPos = @scroller.getBoundingClientRect()
+
+                @scrollLeft = @session.$scrollLeft
+                @scrollTop = @session.$scrollTop
+                
+                col = Math.round((pageX + @scrollLeft - canvasPos.left - @$padding - $(window).scrollLeft()) / @characterWidth)
+                row = Math.floor((pageY + @scrollTop - canvasPos.top - $(window).scrollTop()) / @lineHeight)
+
+                @session.screenToDocumentPosition(row, Math.max(col, 0))
+            
+            
             CoffeeScriptMode = ace.require("ace/mode/coffee").Mode
             @scriptEditor = ace.edit(@$('#codes .script')[0])
             @scriptEditor.getSession().setMode(new CoffeeScriptMode())
+            @scriptEditor.renderer.screenToTextCoordinates = screenToTextCoordinates
+            window.scriptEditor = @scriptEditor
             
             @levelEditor = ace.edit(@$('#codes .level')[0])
             @levelEditor.getSession().setMode(new CoffeeScriptMode())
+            @levelEditor.renderer.screenToTextCoordinates = screenToTextCoordinates
             
             @environmentEditor = ace.edit(@$('#codes .environment')[0])
             @environmentEditor.getSession().setMode(new CoffeeScriptMode())
+            @environmentEditor.renderer.screenToTextCoordinates = screenToTextCoordinates
             
             for editor in @$("#codes .code")
                 editMessage = $(document.createElement("DIV"))

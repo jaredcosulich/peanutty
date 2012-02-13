@@ -107,14 +107,27 @@
       };
 
       Home.prototype.initEditors = function() {
-        var CoffeeScriptMode, editMessage, editor, _i, _len, _ref, _results;
+        var CoffeeScriptMode, editMessage, editor, screenToTextCoordinates, _i, _len, _ref, _results;
+        screenToTextCoordinates = function(pageX, pageY) {
+          var canvasPos, col, row;
+          canvasPos = this.scroller.getBoundingClientRect();
+          this.scrollLeft = this.session.$scrollLeft;
+          this.scrollTop = this.session.$scrollTop;
+          col = Math.round((pageX + this.scrollLeft - canvasPos.left - this.$padding - $(window).scrollLeft()) / this.characterWidth);
+          row = Math.floor((pageY + this.scrollTop - canvasPos.top - $(window).scrollTop()) / this.lineHeight);
+          return this.session.screenToDocumentPosition(row, Math.max(col, 0));
+        };
         CoffeeScriptMode = ace.require("ace/mode/coffee").Mode;
         this.scriptEditor = ace.edit(this.$('#codes .script')[0]);
         this.scriptEditor.getSession().setMode(new CoffeeScriptMode());
+        this.scriptEditor.renderer.screenToTextCoordinates = screenToTextCoordinates;
+        window.scriptEditor = this.scriptEditor;
         this.levelEditor = ace.edit(this.$('#codes .level')[0]);
         this.levelEditor.getSession().setMode(new CoffeeScriptMode());
+        this.levelEditor.renderer.screenToTextCoordinates = screenToTextCoordinates;
         this.environmentEditor = ace.edit(this.$('#codes .environment')[0]);
         this.environmentEditor.getSession().setMode(new CoffeeScriptMode());
+        this.environmentEditor.renderer.screenToTextCoordinates = screenToTextCoordinates;
         _ref = this.$("#codes .code");
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
