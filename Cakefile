@@ -14,7 +14,7 @@ task 'build:index', 'Build the static index page', ->
     fs.mkdir("#{target}/versions/#{timestamp}/js")
     fs.mkdir("#{target}/versions/#{timestamp}/js/views")
 
-    require('child_process').spawn('cp', ['-r', "#{client}/templates", "#{target}/versions/#{timestamp}/"])
+    spawn('cp', ['-r', "#{client}/templates", "#{target}/versions/#{timestamp}/"])
 
     scripts = ("#{client}/js/lib/#{name}.js" for name in [
         'ender.min',
@@ -27,21 +27,21 @@ task 'build:index', 'Build the static index page', ->
         source = "#{target}/js/#{script}.js"
         destination = "#{target}/versions/#{timestamp}/js/#{script}.js"
         scripts.push(destination)
-        require('child_process').spawn('cp', ['-r', source, destination])
+        spawn('cp', ['-r', source, destination])
 
     views = (name.replace('.coffee', '') for name in fs.readdirSync("#{client}/js/views"))
     for view in views
         source = "#{target}/js/views/#{view}.js"
         destination = "#{target}/versions/#{timestamp}/js/views/#{view}.js"
         scripts.push(destination)
-        require('child_process').spawn('cp', ['-r', source, destination])
+        spawn('cp', ['-r', source, destination])
 
     stylesheets = []
     for style in ["all"]
         source = "#{target}/css/#{style}.css"
         destination = "#{target}/versions/#{timestamp}/css/#{style}.css"
         stylesheets.push(destination)
-        require('child_process').spawn('cp', ['-r', source, destination])
+        spawn('cp', ['-r', source, destination])
 
     base = wings.renderTemplate(fs.readFileSync("index_template.html", 'utf-8'), {
         timestamp: timestamp
