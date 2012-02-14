@@ -18,6 +18,10 @@
                     timeDiff = if level.lastTime? then new Date() - level.lastTime else 0
                     level.lastTime = new Date() 
                     return timeDiff
+                code:
+                    script: @getScriptCode
+                    level: @getLevelCode
+                    environment: @getEnvironmentCode
             
             @templates = {
                 main: @_requireTemplate('templates/home.html'),
@@ -159,6 +163,9 @@
         loadScript: () => @scriptEditor.getSession().setValue(@code(@templates.script))
         loadLevel: () => @levelEditor.getSession().setValue(@code(@templates.level))
         loadEnvironment: () => @environmentEditor.getSession().setValue(@code(@templates.environment))
+        getScriptCode: () => @scriptEditor.getSession().getValue()
+        getLevelCode: () => @levelEditor.getSession().getValue()
+        getEnvironmentCode: () => @environmentEditor.getSession().getValue()
 
         loadNewLevel: (levelName) =>
             $.route.navigate("level/#{levelName}", true)
