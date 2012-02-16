@@ -34,7 +34,7 @@ task 'build:index', 'Build the static index page', ->
         source = "#{target}/js/views/#{view}.js"
         destination = "#{target}/versions/#{timestamp}/js/views/#{view}.js"
         scripts.push(destination)
-        spawn('cp', ['-r', source, destination])
+        require('child_process').spawn('cp', ['-r', source, destination])
 
     stylesheets = []
     for style in ["all"]
