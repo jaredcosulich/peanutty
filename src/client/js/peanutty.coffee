@@ -176,6 +176,7 @@
                 @levelEditor,
                 @environmentEditor
             ] when editor.container.offsetLeft != 0)[0]
+            activeEditor = @scriptEditor unless activeEditor?
             @codeMessage.css
                 top: activeEditor.offsetTop
                 right: $(document.body).width() - 
@@ -454,7 +455,7 @@
         tab = "    "
         indent = ""
         catchCode = () =>
-            "catch error\n" + indent + tab + "peanutty.sendCodeMessage(message: 'Code Error: ' + error.message)\n" + indent + tab + "throw error"
+            "catch error\n" + indent + tab + "Peanutty.sendCodeMessage(message: 'Code Error: ' + error.message)\n" + indent + tab + "throw error"
         catches = [catchCode()]
         indent = tab
         
@@ -478,9 +479,10 @@
         try
             CoffeeScript.run(complete.join("\n"))
         catch error
-            peanutty.sendCodeMessage(message: 'Code Error: ' + error.message.replace(/on line \d+/, ''))
+            Peanutty.sendCodeMessage(message: 'Code Error: ' + error.message.replace(/on line \d+/, ''))
             throw error
             
+    Peanutty.sendCodeMessage = ({message}) => if window.peanutty? then peanutty.sendCodeMessage(message: message) else alert(message)
     Peanutty.runScript = (scriptEditor = view.scriptEditor) => Peanutty.runCode(scriptEditor)    
     Peanutty.loadLevel = (levelEditor = view.levelEditor) => Peanutty.runCode(levelEditor)
     Peanutty.createEnvironment = (environmentEditor = view.environmentEditor) => Peanutty.runCode(environmentEditor)
