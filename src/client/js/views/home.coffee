@@ -30,7 +30,6 @@
                 environment: @_requireTemplate('templates/basic_environment.coffee')
             }
             @_requireScript("templates/levels/solutions/#{@data.level}_solution_list.js")
-            $.route.navigate("level/#{@data.level}", false)
     
         renderView: () ->
             if navigator.userAgent.indexOf("Chrome") == -1
