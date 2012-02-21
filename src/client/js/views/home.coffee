@@ -206,11 +206,11 @@
         'docs'
     ]
     reallyRunRoutes = $.route.run
-    _hash = 'level/hello_world'
+    _hash = ''
     handleInternalRoutes = (hash) ->
         if hash in INTERNAL_ROUTES 
             $.route.navigate(hash, false)
-            $.timeout 1, () -> $.route.navigate(_hash, false)
+            $.timeout 1, () -> $.route.navigate(_hash, false) if _hash.length
         else
             _hash = hash unless hash.replace(/\s/g, '').length == 0
             reallyRunRoutes(hash)
