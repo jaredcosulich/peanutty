@@ -32,7 +32,7 @@
             move()
             
         pan: ({x, y, time, callback}) ->
-            if x? && x != 0 && y? && y != 0
+            if callback? && x? && x != 0 && y? && y != 0
                 _callback = callback
                 returnCount = 0
                 callback = () =>
