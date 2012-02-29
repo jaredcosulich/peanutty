@@ -32,6 +32,13 @@
             move()
             
         pan: ({x, y, time, callback}) ->
+            if x? && x != 0 && y? && y != 0
+                _callback = callback
+                returnCount = 0
+                callback = () =>
+                    returnCount++
+                    _callback() if returnCount == 2
+            
             if x? && x != 0
                 @panDirection
                     distance: x

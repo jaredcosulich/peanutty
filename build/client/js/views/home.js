@@ -28,6 +28,7 @@
         this.resizeAreas = __bind(this.resizeAreas, this);
         this.initTopButtons = __bind(this.initTopButtons, this);
         this.initTabs = __bind(this.initTabs, this);
+        this.editorHasFocus = __bind(this.editorHasFocus, this);
         this.initEditors = __bind(this.initEditors, this);
         this.initCodeSaving = __bind(this.initCodeSaving, this);
         Home.__super__.constructor.apply(this, arguments);
@@ -51,6 +52,7 @@
             level.lastTime = new Date();
             return timeDiff;
           },
+          editorHasFocus: this.editorHasFocus,
           code: {
             script: this.getScriptCode,
             level: this.getLevelCode,
@@ -145,6 +147,10 @@
           _results.push($(editor).append(editMessage));
         }
         return _results;
+      };
+
+      Home.prototype.editorHasFocus = function() {
+        return this.scriptEditor.isFocused() || this.levelEditor.isFocused() || this.environmentEditor.isFocused();
       };
 
       Home.prototype.initTabs = function() {

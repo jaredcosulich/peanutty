@@ -18,6 +18,7 @@
                     timeDiff = if level.lastTime? then new Date() - level.lastTime else 0
                     level.lastTime = new Date() 
                     return timeDiff
+                editorHasFocus: @editorHasFocus
                 code:
                     script: @getScriptCode
                     level: @getLevelCode
@@ -103,6 +104,8 @@
                 editMessage.html("Edit this code!<br/><br/>If you make a change, just hit 'Run Script' above to run it.")
                 $(editor).append(editMessage)
             
+        editorHasFocus: () =>
+            @scriptEditor.isFocused()  or @levelEditor.isFocused() or @environmentEditor.isFocused() 
 
         initTabs: () =>
             @$('.tabs .tab').bind 'click', (e) =>
