@@ -1,0 +1,1 @@
+view.solutionList = ['big_jump']

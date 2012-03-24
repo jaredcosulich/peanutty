@@ -243,7 +243,7 @@
             return if level.indexOf('&') > -1
             $('#content').view
                 name: 'Home'
-                data: {level: level}
+                data: {level: level, params: {}}
         'level/:level&:params': (level, paramInfo) ->
             params = {}
             params[param[0]] = param[1] for param in (param.split(/\=/) for param in paramInfo.split(/&/))
