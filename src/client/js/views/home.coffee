@@ -238,7 +238,7 @@
         '': () ->
             $('#content').view
                 name: 'Home'
-                data: {level: 'hello_world'} 
+                data: {level: 'hello_world', params: {}} 
         'level/:level': (level) ->
             return if level.indexOf('&') > -1
             $('#content').view
