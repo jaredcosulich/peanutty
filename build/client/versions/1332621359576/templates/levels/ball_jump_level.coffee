@@ -1,33 +1,24 @@
-view.level = 'topsy_turvy_1'
+view.level = 'ball_jump'
 Peanutty.createEnvironment()
 
-scale = 5 * (peanutty.canvas.width() / 835)
+scale = 15 * (peanutty.canvas.width() / 835)
 peanutty.screen.setLevelScale(scale)
-peanutty.world.SetGravity(new b2d.Common.Math.b2Vec2(0,50))
- 
+    
     
 # Create all the platforms
 for groundInfo in [
-    {width: 600,  x: 300,  y: 500  },
-    {width: 900,  x: 800,  y: 1200 },
-    {width: 600,  x: 1000, y: 700  },
-    {width: 800,  x: 1200, y: 1000 },
-    {width: 500,  x: 1800, y: 1600 },
-    {width: 600,  x: 1500, y: 200  },
-    {width: 800,  x: 1300, y: 1400 },
-    {width: 2000, x: 1600, y: 2000 },
-    {width: 900,  x: 2800, y: 800  },
-    {width: 800,  x: 3400, y: 1200 },
-    {width: 400,  x: 3800, y: 400  },
-    {width: 1000, x: 3600, y: 1800 },
-    {width: 1000, x: 3500, y: 2500 },
-    {width: 200,  x: 4000, y: 2200 }
+    {width: 600, x: 300, color: new b2d.Common.b2Color(0, 0.6, 0)},
+    {width: 900, x: 1600, color: new b2d.Common.b2Color(0, 0.6, 0.6)},
+    {width: 1200, x: 4200, color: new b2d.Common.b2Color(0, 0, 0.6)},
+    {width: 1400, x: 8000, color: new b2d.Common.b2Color(0.6, 0, 0.6)},
+    {width: 2000, x: 10000, color: new b2d.Common.b2Color(0.6, 0.6, 0)},
+    {width: 100, x: 15000, color: new b2d.Common.b2Color(0.6, 0, 0)}
 ]
     peanutty.createGround
         x: groundInfo.x
-        y: groundInfo.y
+        y: 400
         width: groundInfo.width
-        height: 10
+        height: 100
         drawData:
             color: groundInfo.color
 
@@ -35,7 +26,7 @@ for groundInfo in [
 # Create the ball
 level.elements.ball = peanutty.createBall
     x: 200
-    y: 600
+    y: 450
     radius: 20   
     density: 0.2
     restitution: 0.2
@@ -54,38 +45,9 @@ level.pushBall = (x, y) =>
     return if x > 0 and level.elements.ball.GetLinearVelocity().x > 50
     level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(x, y), level.elements.ball.GetWorldCenter()) if ballIsInContactWithGround()
 
-level.toggleGravity = () =>
-    gravity = new b2d.Common.Math.b2Vec2(0,50)
-    gravity.y = -50 if peanutty.world.GetGravity().y > 0
-    console.log(gravity)
-    peanutty.world.SetGravity(gravity)
-
-# remove the toolbar
-$('#tools').css(visibility: 'hidden')
-peanutty.canvas.unbind 'click'
-peanutty.canvas.css(cursor: 'default')
-
-peanutty.canvas.css(cursor: 'move')
-    
-peanutty.canvas.bind 'mousedown', (e) =>
-    level.dragPosition = peanutty.screen.canvasToScreen(new b2d.Common.Math.b2Vec2(e.clientX,e.clientY))
-    level.draggingCanvas = true
-    
-$(window).bind 'mouseup', (e) =>
-    level.draggingCanvas = false  
-
-peanutty.canvas.bind 'mousemove', (e) =>
-    return unless level.draggingCanvas
-    currentDragPosition = peanutty.screen.canvasToScreen(new b2d.Common.Math.b2Vec2(e.clientX,e.clientY))
-    peanutty.screen.pan
-        x: level.dragPosition.x - currentDragPosition.x
-        y: level.dragPosition.y - currentDragPosition.y
-    level.dragPosition = currentDragPosition
-
-$(window).bind 'keydown', (e) =>
+upCommand = () => "level.pushBall(0, #{level.elements.ball.GetLinearVelocity().x * -10})"
+$(window).bind 'keydown', (e) =>  
     return if level.editorHasFocus()
-    previousKeyPress = level.lastKeyPress
-    level.lastKeyPress = e.keyCode
     switch e.keyCode
         when 74 #j - left   
             peanutty.addToScript
@@ -105,28 +67,32 @@ $(window).bind 'keydown', (e) =>
             peanutty.addToScript
                 command:
                     """
-                    level.toggleGravity()
+                    #{upCommand()}
                     """
                 time: level.getTimeDiff()
-        when 77 #m - zoom out
-            peanutty.screen.zoom
-                percentage: 10
-                out: true
-                time: 50
-        when 78 #n - zoom in
-            peanutty.screen.zoom
-                percentage: 10
-                out: false
-                time: 50
         else
-            level.lastKeyPress = previousKeyPress
             return
+
+# Apply some force against the ball to slow it down, if it falls off the screen then reset
+ballForces = setInterval((
+    () =>
+        if peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).y < peanutty.screen.viewPort.bottom
+            clearInterval(ballForces)
+            if !level.elements.success? && confirm('Would you like to try again?')
+                $(window).unbind 'keydown'
+                view.resetLevel()
+                return
+            
+        return unless ballIsInContactWithGround() && level.elements.ball.GetLinearVelocity().x > 0
+        level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(-0.2, 0), level.elements.ball.GetWorldCenter()) 
+    ), 20
+)
 
 # Create the goal
 goal = peanutty.createBox
-    x: 4100
-    y: 2250
-    height: 50
+    x: 15040
+    y: 600
+    height: 150
     width: 10
     static: true
     drawData:
@@ -148,7 +114,7 @@ peanutty.addContactListener
                     Let me know: 
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
-                <p>More levels coming soon...</p>
+                <p>How about a <a href='#level/topsy_turvy'>topsy turvy level ></p>
                 <p>
                     ... or <a href='#create'>create your own level!<a> 
                 </p>
@@ -163,11 +129,21 @@ peanutty.addContactListener
             level.canvasContainer.append(success)
 
 
-#Track the ball and move the screen along with it
+# Track the ball and move the screen along with it
 adjustScreen = () =>
-    return unless level.lastKeyPress in [74,75,76]
     window.adjustScreenRunning = true
 
+    unless level.adjustingZoom
+        ballY = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).y
+                
+        if ballY > peanutty.screen.viewPort.top - (peanutty.screen.dimensions.height * 0.1)
+            level.adjustingZoom = true
+            peanutty.screen.zoom
+                percentage: level.elements.ball.GetLinearVelocity().y * -2
+                out: true
+                time: 300
+                callback: () => level.adjustingZoom = false
+ 
     maxRight = peanutty.screen.viewPort.right - (peanutty.screen.dimensions.width * 0.8)
     maxLeft = peanutty.screen.viewPort.left + (peanutty.screen.dimensions.width * 0.1)
     
@@ -179,6 +155,7 @@ adjustScreen = () =>
     else
         $.timeout 50, adjustScreen
 adjustScreen() unless window.adjustScreenRunning?
+
 
 # Add some instructions
 instructions = $(document.createElement("DIV"))
@@ -193,38 +170,37 @@ header = level.elements.header = $(document.createElement("DIV"))
 header.css
     height: '30px'
     fontSize: '20pt'
-header.html("Topsy Turvy")
+header.html("Jump from platform to platform.")
 instructions.append(header)
 
 note = level.elements.note = $(document.createElement("DIV"))
-note.html(
-    """
-    Get the ball to the goal!
-    """
-)
+note.html("Use the 'k' key to move forward, 'j' to move back, and the 'l' key to jump.")
 
 instructions.append(note)
 level.canvasContainer.append(instructions)
 
-keyInstructions = level.elements.keyInstructions = $(document.createElement("DIV"))
-keyInstructions.css
-    position: 'absolute'
-    top: 5
-    left: 5
-keyCommands = []
-keyCommands.push("'j' & 'k' to move left & right")
-keyCommands.push("'l' to flip gravity")
-keyCommands.push("'n' & 'm' to zoom in & out")
-keyCommands.push('Drag to pan left, right, up & down')
-keyInstructions.html(keyCommands.join("<br/>"))    
-level.canvasContainer.append(keyInstructions)
-
 
 # Add an input to take focus away from the code section (there has to be a better solution)
 input = level.elements.input = $(document.createElement("input"))
-input.css(position: 'absolute', top: 420, left: -1000, height: '1px', width: '1px')
+input.css(position: 'absolute', top: 420, left: 49, height: '1px', width: '1px', backgroundColor: '#E6E6E6', cursor: 'pointer')
 view.el.append(input)
 input[0].focus()
 input[0].blur()
+level.magicPowers = () =>
+    secretNote = level.elements.secretNote = $(document.createElement("P"))
+    secretNote.css(color: 'red')
+    level.elements.ball.GetFixtureList().SetDrawData(color: new b2d.Common.b2Color(1, 0, 0))
+    secretNote.html("Magic powers! Now you can fly! When you're in the air hit 'l' to keep going up!")
+    instructions.append(secretNote)
+    ballIsInContactWithGround = () => true
+    upCommand = () => "level.pushBall(0, -50)"
+    
+input.bind 'click', () =>
+    peanutty.addToScript
+        command:
+            """
+            level.magicPowers()
+            """
+        time: 0
 
 peanutty.sign('@jaredcosulich', 'jaredcosulich')

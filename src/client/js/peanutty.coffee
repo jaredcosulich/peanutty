@@ -264,7 +264,10 @@
             bodyDef.type = b2d.Dynamics.b2Body[if static then "b2_staticBody" else "b2_dynamicBody"]
         
             body = @world.CreateBody(bodyDef)
-            body.CreateFixture(fixtureDef) for fixtureDef in fixtureDefs
+            for fixtureDef in fixtureDefs
+                fixtureDef.userData = userData unless fixtureDef.userData?
+                fixtureDef.drawData = drawData unless fixtureDef.drawData?
+                body.CreateFixture(fixtureDef)
              
             bodyDef.position.x = body.GetWorldCenter().x
             bodyDef.position.y = body.GetWorldCenter().y

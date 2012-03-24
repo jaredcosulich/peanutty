@@ -69,6 +69,7 @@
       };
 
       Home.prototype.renderView = function() {
+        var _this = this;
         if (navigator.userAgent.indexOf("Chrome") === -1) {
           this.el.html(this._requireTemplate('templates/chrome_only.html').render());
           return;
@@ -76,6 +77,9 @@
         this.el.html(this.templates.main.render());
         this.resizeAreas();
         $(window).bind('resize', this.resizeAreas);
+        $(window).bind('keydown', function(e) {
+          if (e.keyCode === 119) return Peanutty.runScript();
+        });
         level.canvasContainer = this.$('#canvas_container');
         this.initTabs();
         this.initTopButtons();
@@ -89,6 +93,7 @@
       Home.prototype.initCodeSaving = function() {
         var editorName, loadCode, _i, _len, _ref, _results,
           _this = this;
+        if (this.data.params.nosave != null) return;
         loadCode = null;
         _ref = ['script', 'level', 'environment'];
         _results = [];
@@ -173,7 +178,13 @@
           $('.code_message').remove();
           peanutty.destroyWorld();
           _this.removeLevelElements();
-          return Peanutty.runScript();
+          Peanutty.runScript();
+          if (_this.f8Message == null) {
+            _this.f8Message = true;
+            return peanutty.sendCodeMessage({
+              message: "You can also run your script by hitting F8 at any time."
+            });
+          }
         });
         this.$('#code_buttons .load_level').bind('click', function(e) {
           return peanutty.sendCodeMessage({
@@ -334,11 +345,37 @@
           }
         });
       },
-      'level/:name': function(name) {
+      'level/:level': function(level) {
+        if (level.indexOf('&') > -1) return;
         return $('#content').view({
           name: 'Home',
           data: {
-            level: name
+            level: level
+          }
+        });
+      },
+      'level/:level&:params': function(level, paramInfo) {
+        var param, params, _i, _len, _ref;
+        params = {};
+        _ref = (function() {
+          var _j, _len, _ref, _results;
+          _ref = paramInfo.split(/&/);
+          _results = [];
+          for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+            param = _ref[_j];
+            _results.push(param.split(/\=/));
+          }
+          return _results;
+        })();
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          param = _ref[_i];
+          params[param[0]] = param[1];
+        }
+        return $('#content').view({
+          name: 'Home',
+          data: {
+            level: level,
+            params: params
           }
         });
       }

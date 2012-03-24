@@ -41,6 +41,9 @@
 
             @resizeAreas()
             $(window).bind 'resize', @resizeAreas
+            
+            $(window).bind 'keydown', (e) => 
+                Peanutty.runScript() if e.keyCode == 119
 
             level.canvasContainer = @$('#canvas_container')
             @initTabs()
@@ -54,6 +57,7 @@
             @loadSolutions()
         
         initCodeSaving: () =>
+            return if @data.params.nosave?
             loadCode = null 
             for editorName in ['script', 'level', 'environment']
                 do (editorName) =>
@@ -123,6 +127,14 @@
                 peanutty.destroyWorld()
                 @removeLevelElements()
                 Peanutty.runScript()
+                unless @f8Message?
+                    @f8Message = true
+                    peanutty.sendCodeMessage
+                        message:
+                            """
+                                You can also run your script by hitting F8 at any time.
+                            """
+                    
             @$('#code_buttons .load_level').bind 'click', (e) =>
                 peanutty.sendCodeMessage
                     message:
@@ -227,8 +239,15 @@
             $('#content').view
                 name: 'Home'
                 data: {level: 'hello_world'} 
-        'level/:name': (name) ->
+        'level/:level': (level) ->
+            return if level.indexOf('&') > -1
             $('#content').view
                 name: 'Home'
-                data: {level: name}
+                data: {level: level}
+        'level/:level&:params': (level, paramInfo) ->
+            params = {}
+            params[param[0]] = param[1] for param in (param.split(/\=/) for param in paramInfo.split(/&/))
+            $('#content').view
+                name: 'Home'
+                data: {level: level, params: params}
 )(ender)
