@@ -55,7 +55,7 @@ task 'build:index', 'Build the static index page', ->
 task 'build:client', 'Build the development environment', ->
     source = './src/client'
     target = './build/client'
-    fs.mkdir target, 0755, (err) ->
+    fs.mkdir target, '0755', (err) ->
         buildClientJS source, target, () ->
             buildClientCSS source, target, () ->
                 buildClientHTML source, target, () ->
