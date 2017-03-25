@@ -1,3 +1,2 @@
-
-
-node server.js
+cake install
+cake run
