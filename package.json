@@ -4,8 +4,8 @@
     "version": "0.0.0",
     "devDependencies": {
         "coffee-script": "latest",
-        "ender": "latest",
         "less": "latest",
-        "jsdom": "latest"
+        "jsdom": "latest",
+        "node-static": "latest"
     }
 }

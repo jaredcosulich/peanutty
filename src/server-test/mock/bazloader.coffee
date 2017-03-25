@@ -1,1 +1,0 @@
-exports.test = require('baz').test
