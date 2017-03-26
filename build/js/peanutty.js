@@ -288,8 +288,8 @@
         message = message.replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
         this.codeMessage.find('div').html(message);
         this.codeMessage.css({
-          top: this.scriptEditor.offsetTop,
-          right: $(document.body).width() - this.scriptEditor.offsetLeft + (parseInt($(document.body).css('paddingRight')) * 2)
+          top: this.scriptEditor.container.offsetTop,
+          right: $(document.body).width() - this.scriptEditor.container.offsetLeft + (parseInt($(document.body).css('paddingRight')) * 2)
         });
         return this.codeMessage.addClass('expanded');
       };
@@ -376,7 +376,11 @@
       Peanutty.prototype.polyFixtureDef = function(arg) {
         var drawData, fixDef, path, point, scaledPath, userData;
         path = arg.path, drawData = arg.drawData, userData = arg.userData;
-        fixDef = this.createFixtureDef(_arg);
+        fixDef = this.createFixtureDef({
+          path: path,
+          drawData: drawData,
+          userData: userData
+        });
         fixDef.userData = userData;
         fixDef.drawData = drawData;
         fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape;
@@ -540,9 +544,15 @@
         var x, y;
         x = arg.x, y = arg.y;
         if (this.currentShape != null) {
-          return this.continueFreeformShape(_arg);
+          return this.continueFreeformShape({
+            x: x,
+            y: y
+          });
         } else {
-          return this.initFreeformShape(_arg);
+          return this.initFreeformShape({
+            x: x,
+            y: y
+          });
         }
       };
 
@@ -569,7 +579,10 @@
           start: point,
           path: [point]
         };
-        return this.startFreeformShape(_arg);
+        return this.startFreeformShape({
+          x: x,
+          y: y
+        });
       };
 
       Peanutty.prototype.startFreeformShape = function(arg) {

@@ -154,19 +154,6 @@
                   commandElements.addClass('highlight')
                   $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
 
-            # console.log(endLine, view.editorValues, view.getScriptCode())
-            #
-            # if @scriptEditor.getSession().getValue().length > 0 && time > 0
-            #     @scriptEditor.insert("peanutty.wait(#{parseInt(time)})\n")
-            #     commandLength += 1
-            #
-            # @scriptEditor.insert("#{command}\n\n")
-            # $.timeout 10, () =>
-            #     lines = $(@scriptEditor.container).find(".ace_line")
-            #     commandElements = $(lines[lines.length - commandLength - 2...lines.length - 2])
-            #     commandElements.addClass('highlight')
-            #     $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
-
         searchObjectList: ({object, searchFunction, limit}) =>
             foundObjects = []
             while object?
@@ -190,9 +177,9 @@
                              .replace(/\>/g, '&gt;')
             @codeMessage.find('div').html(message)
             @codeMessage.css
-                top: @scriptEditor.offsetTop
+                top: @scriptEditor.container.offsetTop
                 right: $(document.body).width() -
-                       @scriptEditor.offsetLeft +
+                       @scriptEditor.container.offsetLeft +
                        (parseInt($(document.body).css('paddingRight')) * 2)
             @codeMessage.addClass('expanded')
 
@@ -256,7 +243,7 @@
             return body
 
         polyFixtureDef: ({path, drawData, userData}) =>
-            fixDef = @createFixtureDef(_arg)
+            fixDef = @createFixtureDef({path: path, drawData: drawData, userData: userData})
             fixDef.userData = userData
             fixDef.drawData = drawData
             fixDef.shape = new b2d.Collision.Shapes.b2PolygonShape
@@ -365,9 +352,9 @@
 
         addToFreeformShape: ({x,y}) =>
             if @currentShape?
-                @continueFreeformShape(_arg)
+                @continueFreeformShape({x: x, y: y})
             else
-                @initFreeformShape(_arg)
+                @initFreeformShape({x: x, y: y})
 
         addTempToFreeformShape: ({x,y}) =>
             @tempPoint = new b2d.Common.Math.b2Vec2(x, y)
@@ -383,7 +370,7 @@
             @currentShape =
                 start: point
                 path: [point]
-            @startFreeformShape(_arg)
+            @startFreeformShape({x: x, y: y})
 
         startFreeformShape: ({x, y}) =>
             @startShape()

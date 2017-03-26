@@ -63,19 +63,24 @@
             return
             return if @data.params.nosave?
             loadCode = null
+            levelName = level.name or @data.level
             for editorName in ['script', 'level', 'environment']
                 do (editorName) =>
-                    editor = @["#{editorName}Editor"]
-                    levelName = level.name or @data.level
                     existingScript = localStorage.getItem("#{levelName}_#{editorName}")
-                    if existingScript? && existingScript.length > 0 && existingScript != editor.getSession().getValue()
+                    if existingScript? && existingScript.length > 0 && existingScript != @getCode(editorName)
                         if loadCode || (!loadCode? && confirm('You have some old code for this level.\n\nWould you like to load it?'))
-                            editor.getSession().setValue(existingScript)
+                            # console.log('LOAD', editorName, existingScript) if editorName == 'script'
+                            @editorValues[editorName] = existingScript
                             loadCode = true
                         else
                             loadCode = false
-                    editor.getSession().on 'change', () =>
-                        localStorage.setItem("#{levelName}_#{editorName}", editor.getSession().getValue())
+
+            # console.log('DISPLAY', @editorValues.script)
+            @scriptEditor.getSession().setValue(@editorValues.script)
+            @scriptEditor.getSession().on 'change', () =>
+              for editorName in ['script', 'level', 'environment']
+                  # console.log('SET', editorName, @getCode(editorName)) if editorName == 'script'
+                  localStorage.setItem("#{levelName}_#{editorName}", @getCode(editorName))
 
         initEditors: () =>
             # editor monkey patch

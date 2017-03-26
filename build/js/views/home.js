@@ -97,37 +97,45 @@
       };
 
       Home.prototype.initCodeSaving = function() {
-        var editorName, i, len, loadCode, ref, results;
+        var editorName, fn, i, len, levelName, loadCode, ref;
         return;
         if (this.data.params.nosave != null) {
           return;
         }
         loadCode = null;
+        levelName = level.name || this.data.level;
         ref = ['script', 'level', 'environment'];
-        results = [];
+        fn = (function(_this) {
+          return function(editorName) {
+            var existingScript;
+            existingScript = localStorage.getItem(levelName + "_" + editorName);
+            if ((existingScript != null) && existingScript.length > 0 && existingScript !== _this.getCode(editorName)) {
+              if (loadCode || ((loadCode == null) && confirm('You have some old code for this level.\n\nWould you like to load it?'))) {
+                _this.editorValues[editorName] = existingScript;
+                return loadCode = true;
+              } else {
+                return loadCode = false;
+              }
+            }
+          };
+        })(this);
         for (i = 0, len = ref.length; i < len; i++) {
           editorName = ref[i];
-          results.push((function(_this) {
-            return function(editorName) {
-              var editor, existingScript, levelName;
-              editor = _this[editorName + "Editor"];
-              levelName = level.name || _this.data.level;
-              existingScript = localStorage.getItem(levelName + "_" + editorName);
-              if ((existingScript != null) && existingScript.length > 0 && existingScript !== editor.getSession().getValue()) {
-                if (loadCode || ((loadCode == null) && confirm('You have some old code for this level.\n\nWould you like to load it?'))) {
-                  editor.getSession().setValue(existingScript);
-                  loadCode = true;
-                } else {
-                  loadCode = false;
-                }
-              }
-              return editor.getSession().on('change', function() {
-                return localStorage.setItem(levelName + "_" + editorName, editor.getSession().getValue());
-              });
-            };
-          })(this)(editorName));
+          fn(editorName);
         }
-        return results;
+        this.scriptEditor.getSession().setValue(this.editorValues.script);
+        return this.scriptEditor.getSession().on('change', (function(_this) {
+          return function() {
+            var j, len1, ref1, results;
+            ref1 = ['script', 'level', 'environment'];
+            results = [];
+            for (j = 0, len1 = ref1.length; j < len1; j++) {
+              editorName = ref1[j];
+              results.push(localStorage.setItem(levelName + "_" + editorName, _this.getCode(editorName)));
+            }
+            return results;
+          };
+        })(this));
       };
 
       Home.prototype.initEditors = function() {
