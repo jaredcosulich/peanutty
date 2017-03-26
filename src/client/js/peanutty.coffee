@@ -136,18 +136,36 @@
         addToScript: ({command, time}) =>
             CoffeeScript.run(command)
             commandLength = command.split("\n").length
-            endLine = @scriptEditor.getSession().getValue().split("\n").length + 1
-            @scriptEditor.gotoLine(endLine)
-            if @scriptEditor.getSession().getValue().length > 0 && time > 0
-                @scriptEditor.insert("peanutty.wait(#{parseInt(time)})\n")
+            scriptCode = view.getScriptCode()
+            endLine = scriptCode.split("\n").length + 1
+
+            if scriptCode.length > 0 && time > 0
+                scriptCode += "\npeanutty.wait(#{parseInt(time)})\n"
                 commandLength += 1
 
-            @scriptEditor.insert("#{command}\n\n")
-            $.timeout 10, () =>
-                lines = $(@scriptEditor.container).find(".ace_line")
-                commandElements = $(lines[lines.length - commandLength - 2...lines.length - 2])
-                commandElements.addClass('highlight')
-                $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
+            scriptCode += "#{command}\n\n"
+            view.editorValues.script = scriptCode
+
+            if view.activeTab == 'script'
+              @scriptEditor.getSession().setValue(scriptCode)
+              $.timeout 10, =>
+                  lines = $(@scriptEditor.container).find(".ace_line")
+                  commandElements = $(lines[lines.length - commandLength - 2...lines.length - 2])
+                  commandElements.addClass('highlight')
+                  $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
+
+            # console.log(endLine, view.editorValues, view.getScriptCode())
+            #
+            # if @scriptEditor.getSession().getValue().length > 0 && time > 0
+            #     @scriptEditor.insert("peanutty.wait(#{parseInt(time)})\n")
+            #     commandLength += 1
+            #
+            # @scriptEditor.insert("#{command}\n\n")
+            # $.timeout 10, () =>
+            #     lines = $(@scriptEditor.container).find(".ace_line")
+            #     commandElements = $(lines[lines.length - commandLength - 2...lines.length - 2])
+            #     commandElements.addClass('highlight')
+            #     $.timeout 1000, () => $(@scriptEditor.container).find(".ace_line").removeClass('highlight')
 
         searchObjectList: ({object, searchFunction, limit}) =>
             foundObjects = []
