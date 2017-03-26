@@ -31,9 +31,9 @@ peanutty.createPoly
             drawData:
                 color: new b2d.Common.b2Color(0, 0, 0.8)
                 alpha: 0.9
-        )                  
+        )
     ]
-    static: true
+    fixed: true
     userData: {sling: true}
 
 peanutty.createPoly
@@ -48,16 +48,16 @@ peanutty.createPoly
             drawData:
                 color: new b2d.Common.b2Color(0, 0, 0)
                 alpha: 0.9
-        )                  
+        )
     ]
-    static: true
+    fixed: true
     userData: {stick: true}
 
 level.elements.ball = peanutty.createBall
     x: 150
     y: 140
     radius: 20
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0.8, 0.6, 0.5)
         alpha: 1
@@ -67,7 +67,7 @@ peanutty.createBox
     y: 70
     height: 30
     width: 5
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0)
         alpha: 0.7
@@ -84,9 +84,9 @@ peanutty.createPoly
             drawData:
                 color: new b2d.Common.b2Color(0, 0, 0)
                 alpha: 0.6
-        )                  
+        )
     ]
-    static: true
+    fixed: true
     userData: {stick: true}
 
 peanutty.createPoly
@@ -101,7 +101,7 @@ peanutty.createPoly
             drawData:
                 color: new b2d.Common.b2Color(0, 0, 0.8)
                 alpha: 0.6
-        ),                  
+        ),
         peanutty.polyFixtureDef(
             path: [
                 {x: 134, y: 120},
@@ -112,17 +112,17 @@ peanutty.createPoly
             drawData:
                 color: new b2d.Common.b2Color(0, 0, 0.8)
                 alpha: 0.7
-        )                  
+        )
     ]
-    static: true
+    fixed: true
     userData: {sling: true}
-    
-    
+
+
 # interact with the slingshot
 peanutty.canvas.bind 'mousedown', (e) =>
     level.dragStart = peanutty.screen.canvasToWorld(new b2d.Common.Math.b2Vec2(e.offsetX, e.offsetY))
     level.dragBallStart = level.elements.ball.GetPosition().Copy()
-    
+
 peanutty.canvas.bind 'mousemove', (e) =>
     return unless level.dragStart?
     dragPoint = peanutty.screen.canvasToWorld(new b2d.Common.Math.b2Vec2(e.offsetX, e.offsetY))

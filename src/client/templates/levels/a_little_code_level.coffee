@@ -18,8 +18,8 @@ peanutty.createGround
     y: 30
     width: 300
     height: 10
-    
-# Create the ball 
+
+# Create the ball
 ball = peanutty.createBall
     x: 240
     y: 50
@@ -27,7 +27,7 @@ ball = peanutty.createBall
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0.8)
         alpha: 0.8
-        
+
 # Create the pinball
 pinball = peanutty.createBall
     x: 120
@@ -37,18 +37,18 @@ pinball = peanutty.createBall
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0)
         alpha: 0.8
-        
+
 # Create the goal
 goal = peanutty.createBox
     x: 980
     y: 85
     height: 50
     width: 10
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0.8)
         alpha: 0.8
-        
+
 # Create the striker
 level.striker = peanutty.createBox
     x: 10
@@ -68,8 +68,8 @@ level.pullBackStriker = () =>
     level.strikerInterval = setInterval(
         (() =>
             clearInterval(level.strikerInterval) if level.striker.GetPosition().x < -2.5
-            changeVec = new b2d.Common.Math.b2Vec2((level.striker.GetPosition().x + 2.5) / 50, 0) 
-            level.striker.GetPosition().Subtract(changeVec)  
+            changeVec = new b2d.Common.Math.b2Vec2((level.striker.GetPosition().x + 2.5) / 50, 0)
+            level.striker.GetPosition().Subtract(changeVec)
         ),
         10
     )
@@ -83,8 +83,8 @@ level.releaseStriker = () =>
             clearInterval(level.strikerInterval) if level.striker.GetPosition().x < 0 && !level.striker.IsAwake()
             if level.striker.GetPosition().x > 1 || !level.striker.IsAwake()
                 level.striker.SetAwake(false)
-                changeVec = new b2d.Common.Math.b2Vec2(0.01, 0) 
-                level.striker.GetPosition().Subtract(changeVec)  
+                changeVec = new b2d.Common.Math.b2Vec2(0.01, 0)
+                level.striker.GetPosition().Subtract(changeVec)
         ),
         10
     )
@@ -131,7 +131,7 @@ launchButton.bind 'mouseup', () =>
             level.releaseStriker()
             """
         time: level.getTimeDiff()
-        
+
 level.canvasContainer.append(launchButton)
 
 launchInstructions = level.elements.launchInstructions = $(document.createElement("DIV"))
@@ -154,13 +154,13 @@ peanutty.addContactListener
                 """
                 <h4>Nicely done.</h4>
                 <p>
-                    Got a creative solution? 
-                    Let me know: 
+                    Got a creative solution?
+                    Let me know:
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
                 <p>How about a <a href='#level/stack_em'>slightly harder level ></a></p>
                 <p>
-                    ... or <a href='#create'>create your own level!<a> 
+                    ... or <a href='#create'>create your own level!<a>
                 </p>
                 """
             )
@@ -198,4 +198,3 @@ peanutty.canvas.css(cursor: 'default')
 
 # Signed
 peanutty.sign('@jaredcosulich', 'jaredcosulich')
-

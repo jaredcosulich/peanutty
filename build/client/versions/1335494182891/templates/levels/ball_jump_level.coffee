@@ -94,7 +94,7 @@ goal = peanutty.createBox
     y: 600
     height: 150
     width: 10
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0.8)
         alpha: 0.8

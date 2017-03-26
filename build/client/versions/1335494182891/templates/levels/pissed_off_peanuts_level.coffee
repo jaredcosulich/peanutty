@@ -33,7 +33,7 @@ level.elements.sling1 = peanutty.createPoly
                 alpha: 0.9
         )                  
     ]
-    static: true
+    fixed: true
     userData: {sling: true}
 
 peanutty.createPoly
@@ -50,14 +50,14 @@ peanutty.createPoly
                 alpha: 0.9
         )                  
     ]
-    static: true
+    fixed: true
     userData: {stick: true}
 
 level.elements.ball = peanutty.createBall
     x: 150
     y: 140
     radius: 20
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0.8, 0.6, 0.5)
         alpha: 1
@@ -67,7 +67,7 @@ peanutty.createBox
     y: 70
     height: 30
     width: 5
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0)
         alpha: 0.7
@@ -86,7 +86,7 @@ peanutty.createPoly
                 alpha: 0.6
         )                  
     ]
-    static: true
+    fixed: true
     userData: {stick: true}
 
 level.elements.sling2 = peanutty.createPoly
@@ -114,7 +114,7 @@ level.elements.sling2 = peanutty.createPoly
                 alpha: 0.7
         )                  
     ]
-    static: true
+    fixed: true
     userData: {sling: true}
     
     

@@ -15,7 +15,7 @@ ball = peanutty.createBall
     x: 400
     y: 440
     radius: 20
-    drawData: 
+    drawData:
         color: new b2d.Common.b2Color(0, 0, 0.8)
         alpha: 0.8
 
@@ -31,8 +31,8 @@ bucket = peanutty.createPoly
         peanutty.polyFixtureDef
              path: [{x: 700, y: 280},{x: 710, y: 280},{x: 710, y: 180},{x: 700, y: 180}]
     ]
-    static: true
-bucketBottom = peanutty.searchObjectList( 
+    fixed: true
+bucketBottom = peanutty.searchObjectList(
     object: bucket.GetFixtureList()
     searchFunction: (fixture) -> fixture.GetUserData()? && fixture.GetUserData().bottom
     limit: 1
@@ -54,20 +54,20 @@ peanutty.addContactListener
                 """
                 <h4>Success! Nice Job!</h4>
                 <p>
-                    Got a creative solution? 
-                    Let me know: 
+                    Got a creative solution?
+                    Let me know:
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
                  <p>On to the <a href='#level/a_little_code'>next level ></a>...</p>
                 <p>
-                    ... or <a href='#create'>create your own level!<a> 
+                    ... or <a href='#create'>create your own level!<a>
                 </p>
                 """
             )
             level.canvasContainer.append(success)
-            
-    
-    
+
+
+
 # Add the instructions
 title = level.elements.title = $(document.createElement("DIV"))
 title.css
@@ -87,19 +87,19 @@ peanutty.createGround
     y: 20
     width: 100
     height: 10
-    
+
 peanutty.createBall
     x: 80
     y: 40
     radius: 15
-    static: true
-    
+    fixed: true
+
 cannon = peanutty.createBox
     x: 70
     y: 80
     width: 60
     height: 20
-    static: true
+    fixed: true
 cannon.SetPositionAndAngle(cannon.GetPosition(), (Math.PI * 3/4))
 
 cannonControl = level.elements.cannonControl = $(document.createElement("DIV"))
@@ -118,12 +118,12 @@ cannonControl.html(
     </a>
     <a id='try_again' class="btn primary" style='display: none;'>
         Reload
-    </a>    
+    </a>
     """
 )
 level.canvasContainer.append(cannonControl)
 
-# Cannon Firing Method  
+# Cannon Firing Method
 level.fireCannon = ({angle, force}) =>
     cannonball = peanutty.createBall
         x: 125
@@ -158,6 +158,6 @@ level.find('#try_again').bind 'click', () =>
     level.find('#cannon_force').val(forceVal)
     level.find('#try_again').hide()
     level.find('#fire_cannon').show()
-  
-  
+
+
 peanutty.sign('@jaredcosulich', 'jaredcosulich')

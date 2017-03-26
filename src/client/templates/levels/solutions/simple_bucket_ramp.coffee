@@ -9,10 +9,10 @@ peanutty.createPoly
         {x: 605, y: 310},
         {x: 450, y: 310}
     ]
-    static: true
+    fixed: true
 
 
 # Fire the cannon!
 level.fireCannon
-    angle: 70 
+    angle: 70
     force: 15

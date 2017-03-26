@@ -8,4 +8,4 @@ for i in [0..10]
         y: 200 + (i*42)
         width: 10 + (200 * Math.random())
         height: 20
-        static: false
+        fixed: false

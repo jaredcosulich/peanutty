@@ -31,7 +31,7 @@ bucket = peanutty.createPoly
         peanutty.polyFixtureDef
              path: [{x: 700, y: 280},{x: 710, y: 280},{x: 710, y: 180},{x: 700, y: 180}]
     ]
-    static: true
+    fixed: true
 bucketBottom = peanutty.searchObjectList( 
     object: bucket.GetFixtureList()
     searchFunction: (fixture) -> fixture.GetUserData()? && fixture.GetUserData().bottom
@@ -92,14 +92,14 @@ peanutty.createBall
     x: 80
     y: 40
     radius: 15
-    static: true
+    fixed: true
     
 cannon = peanutty.createBox
     x: 70
     y: 80
     width: 60
     height: 20
-    static: true
+    fixed: true
 cannon.SetPositionAndAngle(cannon.GetPosition(), (Math.PI * 3/4))
 
 cannonControl = level.elements.cannonControl = $(document.createElement("DIV"))

@@ -9,7 +9,7 @@ peanutty.createPoly
         {x: 605, y: 310},
         {x: 450, y: 310}
     ]
-    static: true
+    fixed: true
 
 
 # Fire the cannon!

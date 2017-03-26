@@ -3,8 +3,8 @@ Peanutty.createEnvironment()
 
 scale = 15 * (peanutty.canvas.width() / 835)
 peanutty.screen.setLevelScale(scale)
-    
-    
+
+
 # Create all the platforms
 for groundInfo in [
     {width: 600, x: 300, color: new b2d.Common.b2Color(0, 0.6, 0)},
@@ -27,7 +27,7 @@ for groundInfo in [
 level.elements.ball = peanutty.createBall
     x: 200
     y: 450
-    radius: 20   
+    radius: 20
     density: 0.2
     restitution: 0.2
     drawData:
@@ -40,27 +40,27 @@ ballIsInContactWithGround = () =>
         return true if contactEdge? && contactEdge.contact.IsTouching()
         contactEdge = contactEdge.next
     return false
-    
+
 level.pushBall = (x, y) =>
     return if x > 0 and level.elements.ball.GetLinearVelocity().x > 50
     level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(x, y), level.elements.ball.GetWorldCenter()) if ballIsInContactWithGround()
 
 upCommand = () => "level.pushBall(0, #{level.elements.ball.GetLinearVelocity().x * -10})"
-$(window).bind 'keydown', (e) =>  
+$(window).bind 'keydown', (e) =>
     return if level.editorHasFocus()
     switch e.keyCode
-        when 74 #j - left   
+        when 74 #j - left
             peanutty.addToScript
                 command:
                     """
-                    level.pushBall(-40, 0) 
+                    level.pushBall(-40, 0)
                     """
                 time: level.getTimeDiff()
         when 75 #k - right
             peanutty.addToScript
                 command:
                     """
-                    level.pushBall(40, 0) 
+                    level.pushBall(40, 0)
                     """
                 time: level.getTimeDiff()
         when 76 #l - up
@@ -82,9 +82,9 @@ ballForces = setInterval((
                 $(window).unbind 'keydown'
                 view.resetLevel()
                 return
-            
+
         return unless ballIsInContactWithGround() && level.elements.ball.GetLinearVelocity().x > 0
-        level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(-0.2, 0), level.elements.ball.GetWorldCenter()) 
+        level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(-0.2, 0), level.elements.ball.GetWorldCenter())
     ), 20
 )
 
@@ -94,7 +94,7 @@ goal = peanutty.createBox
     y: 600
     height: 150
     width: 10
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0.8)
         alpha: 0.8
@@ -110,13 +110,13 @@ peanutty.addContactListener
                 """
                 <h4>Excellent!</h4>
                 <p>
-                    Got a creative solution? 
-                    Let me know: 
+                    Got a creative solution?
+                    Let me know:
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
                 <p>How about a <a href='#level/topsy_turvy'>topsy turvy level ></p>
                 <p>
-                    ... or <a href='#create'>create your own level!<a> 
+                    ... or <a href='#create'>create your own level!<a>
                 </p>
                 """
             )
@@ -135,7 +135,7 @@ adjustScreen = () =>
 
     unless level.adjustingZoom
         ballY = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).y
-                
+
         if ballY > peanutty.screen.viewPort.top - (peanutty.screen.dimensions.height * 0.1)
             level.adjustingZoom = true
             peanutty.screen.zoom
@@ -143,15 +143,15 @@ adjustScreen = () =>
                 out: true
                 time: 300
                 callback: () => level.adjustingZoom = false
- 
+
     maxRight = peanutty.screen.viewPort.right - (peanutty.screen.dimensions.width * 0.8)
     maxLeft = peanutty.screen.viewPort.left + (peanutty.screen.dimensions.width * 0.1)
-    
+
     ballX = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).x + (level.elements.ball.GetLinearVelocity().x);
     if ballX > maxRight
         peanutty.screen.pan(x: (ballX - maxRight), time: 50, callback: adjustScreen)
-    else if ballX < maxLeft 
-        peanutty.screen.pan(x: (ballX - maxLeft), time: 50, callback: adjustScreen) 
+    else if ballX < maxLeft
+        peanutty.screen.pan(x: (ballX - maxLeft), time: 50, callback: adjustScreen)
     else
         $.timeout 50, adjustScreen
 adjustScreen() unless window.adjustScreenRunning?
@@ -194,7 +194,7 @@ level.magicPowers = () =>
     instructions.append(secretNote)
     ballIsInContactWithGround = () => true
     upCommand = () => "level.pushBall(0, -50)"
-    
+
 input.bind 'click', () =>
     peanutty.addToScript
         command:

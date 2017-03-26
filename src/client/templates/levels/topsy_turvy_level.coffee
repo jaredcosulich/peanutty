@@ -9,8 +9,8 @@ peanutty.world.SetGravity(new b2d.Common.Math.b2Vec2(0,50))
 $.timeout 2000, () =>
     peanutty.screen.zoom
         scale: 10
-        time: 300 
-    
+        time: 300
+
 # Create all the platforms
 for groundInfo in [
     {width: 600,  x: 1100,  y: 700  },
@@ -41,7 +41,7 @@ for groundInfo in [
 level.elements.ball = peanutty.createBall
     x: 1100
     y: 900
-    radius: 20   
+    radius: 20
     density: 0.2
     restitution: 0.2
     drawData:
@@ -54,7 +54,7 @@ ballIsInContactWithGround = () =>
         return true if contactEdge? && contactEdge.contact.IsTouching()
         contactEdge = contactEdge.next
     return false
-    
+
 level.pushBall = (x, y) =>
     return if x > 0 and level.elements.ball.GetLinearVelocity().x > 50
     level.elements.ball.ApplyForce(new b2d.Common.Math.b2Vec2(x, y), level.elements.ball.GetWorldCenter()) if ballIsInContactWithGround()
@@ -68,18 +68,18 @@ level.toggleGravity = () =>
 $(window).bind 'keydown', (e) =>
     return if level.editorHasFocus()
     switch e.keyCode
-        when 74 #j - left   
+        when 74 #j - left
             peanutty.addToScript
                 command:
                     """
-                    level.pushBall(-40, 0) 
+                    level.pushBall(-40, 0)
                     """
                 time: level.getTimeDiff()
         when 75 #k - right
             peanutty.addToScript
                 command:
                     """
-                    level.pushBall(40, 0) 
+                    level.pushBall(40, 0)
                     """
                 time: level.getTimeDiff()
         when 76 #l - up
@@ -108,7 +108,7 @@ goal = peanutty.createBox
     y: 2250
     height: 50
     width: 10
-    static: true
+    fixed: true
     drawData:
         color: new b2d.Common.b2Color(0, 0, 0.8)
         alpha: 0.8
@@ -124,13 +124,13 @@ peanutty.addContactListener
                 """
                 <h4>Excellent!</h4>
                 <p>
-                    Got a creative solution? 
-                    Let me know: 
+                    Got a creative solution?
+                    Let me know:
                     <a href='http://twitter.com/jaredcosulich' target='_blank'>@jaredcosulich</a>
                 </p>
                 <p>More levels coming soon...</p>
                 <p>
-                    ... or <a href='#create'>create your own level!<a> 
+                    ... or <a href='#create'>create your own level!<a>
                 </p>
                 """
             )
@@ -157,7 +157,7 @@ peanutty.canvas.bind 'mousedown', (e) =>
     level.draggingCanvas = true
 
 $(window).bind 'mouseup', (e) =>
-    level.draggingCanvas = false  
+    level.draggingCanvas = false
 
 peanutty.canvas.bind 'mousemove', (e) =>
     return unless level.draggingCanvas
@@ -183,30 +183,30 @@ adjustScreen = () =>
     ballX = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).x;
     if ballX > maxRight
         x = (ballX - maxRight)
-    else if ballX < maxLeft 
+    else if ballX < maxLeft
         x = (ballX - maxLeft)
-    
+
     y = 0
     ballY = peanutty.screen.worldToScreen(level.elements.ball.GetPosition()).y;
-    
+
     if ballY > 4000 or ballY < -2000
         level.elements.stopAdjusting = true
         if !level.elements.success? && confirm('Would you like to try again?')
             $(window).unbind 'keydown'
             view.resetLevel()
         return
-        
+
     if ballY > maxTop
         y = (ballY - maxTop)
-    else if ballY < maxBottom 
+    else if ballY < maxBottom
         y = (ballY - maxBottom)
-    
+
     if x != 0 or y != 0
         peanutty.screen.pan(x: x, y: y, time: 50, callback: adjustScreen)
     else
         clearTimeout(level.elements.adjustScreenTimeout) if level.elements.adjustScreenTimeout
         level.elements.adjustScreenTimeout = $.timeout 50, adjustScreen
-        
+
 adjustScreen() unless window.adjustScreenRunning?
 
 
@@ -246,7 +246,7 @@ keyCommands.push("'j' & 'k' to move left & right")
 keyCommands.push("'l' to flip gravity")
 keyCommands.push("'n' & 'm' to zoom in & out")
 keyCommands.push('Drag to pan left, right, up & down')
-keyInstructions.html(keyCommands.join("<br/>"))    
+keyInstructions.html(keyCommands.join("<br/>"))
 level.canvasContainer.append(keyInstructions)
 
 

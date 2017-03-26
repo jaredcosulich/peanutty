@@ -9,7 +9,7 @@ peanutty.createPoly
         {x: 375, y: 520},
         {x: 365, y: 560}
     ]
-    static: true
+    fixed: true
 
 peanutty.createPoly
     path: [
@@ -18,12 +18,10 @@ peanutty.createPoly
         {x: 740, y: 285},
         {x: 770, y: 410}
     ]
-    static: true
+    fixed: true
 
 
 #Fire the cannon!
 level.fireCannon
     angle: 70
     force: 40
-
-
