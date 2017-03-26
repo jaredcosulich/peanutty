@@ -1,8 +1,0 @@
-{
-    "private": true,
-    "version": "0.0.0",
-    "name": "mingl-server-tests",
-    "dependencies": {
-        "ender-vows": "latest"
-    }
-}
