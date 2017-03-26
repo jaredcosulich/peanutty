@@ -1,0 +1,9 @@
+{
+    "private": true,
+    "version": "0.0.0",
+    "name": "mingl-tests",
+    "dependencies": {
+        "node-compat": "latest",
+        "ender-vows": "latest"
+    }
+}

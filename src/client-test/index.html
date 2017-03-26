@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Mingl Tests</title>
+
+    {:stylesheets}
+    <link rel="stylesheet" href="{}" type="text/css" />
+    {/stylesheets}
+
+    {:scripts}
+    <script src="{}" type="text/javascript" charset="utf-8"></script>
+    {/scripts}
+
+    {:templates}
+    <script data-src="{src}" type="text/html" charset="utf-8">
+        {&text}
+    </script>
+    {/templates}
+
+    <script type="text/javascript" charset="utf-8">
+        (function($) {{
+            var ready, vows;
+            vows = require('vows');
+            ready = require('domready');
+            ready(function() {{ vows.run(); }});
+        }})(ender);
+    </script>
+    
+</head>
+<body>
+    <!-- Test Results -->
+	<pre id="vows-results"></pre>
+</body>
+</html>
